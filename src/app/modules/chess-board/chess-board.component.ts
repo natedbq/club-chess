@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ChessBoard } from 'src/app/chess-logic/chess-board';
 import { CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares, pieceImagePaths } from 'src/app/chess-logic/models';
 import { SelectedSquare } from './models';
@@ -12,7 +12,10 @@ import { FENConverter } from 'src/app/chess-logic/FENConverter';
   styleUrls: ['./chess-board.component.css']
 })
 export class ChessBoardComponent implements OnInit, OnDestroy {
+  @Input() isPreview: boolean = false;
+
   public pieceImagePaths = pieceImagePaths;
+
 
   protected chessBoard = new ChessBoard();
   public chessBoardView: (FENChar | null)[][] = this.chessBoard.chessBoardView;
@@ -119,6 +122,10 @@ export class ChessBoardComponent implements OnInit, OnDestroy {
   }
 
   private selectingPiece(x: number, y: number): void {
+    if(this.isPreview){
+      return
+    }
+    
     if (this.gameOverMessage !== undefined) return;
     const piece: FENChar | null = this.chessBoardView[x][y];
     if (!piece) return;
