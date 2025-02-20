@@ -22,7 +22,7 @@
 
 </div>
 
-<button *ng-if="isPreview" (click)="flipBoard()">Flip</button>
+<button *ngIf="!isPreview" (click)="flipBoard()">Flip</button>
 
 <h2 *ngIf="gameOverMessage" class="game-over-message">
     {{gameOverMessage}}
@@ -36,7 +36,7 @@
     </span>
 </div>
 
-<app-move-list *ng-if="isPreview" [moveList]="moveList" [gameHistoryPointer]="gameHistoryPointer" [gameHistoryLength]="gameHistory.length"
+<app-move-list *ngIf="!isPreview" [moveList]="moveList" [gameHistoryPointer]="gameHistoryPointer" [gameHistoryLength]="gameHistory.length"
     (showPreviousPositionEvent)="showPreviousPosition($event)">
 
 </app-move-list>
