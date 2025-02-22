@@ -14,7 +14,7 @@ import { Data, Game } from 'src/app/utilities/data';
 })
 export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isPreview: boolean = false;
-  @Input() position: string[] = Data.defaultGame();
+  @Input() game: Game| null = null;
 
   public pieceImagePaths = pieceImagePaths;
 
@@ -76,26 +76,15 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public save(): void {
-    const game: Game = {
-        title: "Advanced Caro-Kann",
-        opening: "Caro-Kann",
-        position:["r","n","b","q","k","b","n","r",
-              "p","p","o","o","p","p","p","p",
-              "o","o","p","o","o","o","o","o",
-              "o","o","o","p","P","o","o","o",
-              "o","o","o","P","o","o","o","o",
-              "o","o","o","o","o","o","o","o",
-              "P","P","P","o","o","P","P","P",
-              "R","N","B","Q","K","B","N","R"],
-        fromWhitePerspective: false,
-        whiteTurn: false
-    };
-    Data.save(game,this.chessBoard);
+    if(this.game)
+      Data.save(this.game,this.chessBoard);
   }
 
   public ngOnChanges(changes: SimpleChanges){
-    this.chessBoard.update(this.position);
-    this.chessBoardView = this.chessBoard.chessBoardView;
+    if(this.game){
+      this.chessBoard.update(this.game.fen);
+      this.chessBoardView = this.chessBoard.chessBoardView;
+    }
   }
 
   public ngOnDestroy(): void {

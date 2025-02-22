@@ -61,53 +61,71 @@ export class ChessBoard {
         this._gameHistory = [{ board: this.chessBoardView, lastMove: this._lastMove, checkState: this._checkState }];
     }
 
-    public update(position: string[]): void {
-        position.forEach((c, i) => {
-            let piece: Piece | null = null;
-            switch(c){
-                case "p":
-                    piece = new Pawn(Color.Black);
-                    break;
-                case "n":
-                    piece = new Knight(Color.Black);
-                    break;
-                case "b":
-                    piece = new Bishop(Color.Black);
-                    break;
-                case "r":
-                    piece = new Rook(Color.Black);
-                    break;
-                case "q":
-                    piece = new Queen(Color.Black);
-                    break;
-                case "k":
-                    piece = new King(Color.Black);
-                    break;
-                case "P":
-                    piece = new Pawn(Color.White);
-                    break;
-                case "N":
-                    piece = new Knight(Color.White);
-                    break;
-                case "B":
-                    piece = new Bishop(Color.White);
-                    break;
-                case "R":
-                    piece = new Rook(Color.White);
-                    break;
-                case "Q":
-                    piece = new Queen(Color.White);
-                    break;
-                case "K":
-                    piece = new King(Color.White);
-                    break;
-            }
+    public update(fen: string): void {
+        let row = 7;
 
-            let row = Math.floor(i / 8);
-            let col = i % 8;
-            
-            this.chessBoard[7 - row][col] = piece;
+        let parts = fen.split(" ");
+        let position = parts[0].split('/');
+
+        [...position].forEach((r, i) => {
+            let piece: Piece | null = null;
+            let col = 0;
+            [...r].forEach(c => {
+                piece = null;
+                switch(c){
+                    case "p":
+                        piece = new Pawn(Color.Black);
+                        break;
+                    case "n":
+                        piece = new Knight(Color.Black);
+                        break;
+                    case "b":
+                        piece = new Bishop(Color.Black);
+                        break;
+                    case "r":
+                        piece = new Rook(Color.Black);
+                        break;
+                    case "q":
+                        piece = new Queen(Color.Black);
+                        break;
+                    case "k":
+                        piece = new King(Color.Black);
+                        break;
+                    case "P":
+                        piece = new Pawn(Color.White);
+                        break;
+                    case "N":
+                        piece = new Knight(Color.White);
+                        break;
+                    case "B":
+                        piece = new Bishop(Color.White);
+                        break;
+                    case "R":
+                        piece = new Rook(Color.White);
+                        break;
+                    case "Q":
+                        piece = new Queen(Color.White);
+                        break;
+                    case "K":
+                        piece = new King(Color.White);
+                        break;
+
+                }
+                if(/\d+/.test(c)){
+                    let n = Number(c);
+                    for(let x = 0; x < n; x++){
+                        this.chessBoard[row][col] = piece;
+                        col++;
+                    }
+                }else{
+                    this.chessBoard[row][col] = piece;
+                    col++;
+                }
+            });
+            row--;
         });
+
+        
     }
 
     public get playerColor(): Color {
