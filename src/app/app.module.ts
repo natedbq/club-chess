@@ -9,12 +9,14 @@ import { NavMenuComponent } from './modules/nav-menu/nav-menu.component';
 import { AppRoutingModule } from './routes/app-routing.module';
 import { PlayAgainstComputerDialogComponent } from './modules/play-against-computer-dialog/play-against-computer-dialog.component';
 import { MoveListComponent } from './modules/move-list/move-list.component';
+import { RepertoireMenuComponent } from './modules/repertoire-menu/repertoire-menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ChessBoardComponent,
     ComputerModeComponent,
+    RepertoireMenuComponent,
   ],
   imports: [
     BrowserModule,

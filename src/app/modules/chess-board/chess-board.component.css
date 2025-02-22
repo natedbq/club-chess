@@ -2,9 +2,19 @@
     display: flex;
     justify-content: center;
     flex-direction: column-reverse;
-    width: 480px;
-    height: 480px;
+    width: 800px;
+    height: 800px;
+    margin: 5px;
 }
+
+.chess-board.small {
+    display: flex;
+    justify-content: center;
+    flex-direction: column-reverse;
+    width: 240px;
+    height: 240px;
+}
+
 
 .rotated {
     transform: rotate(180deg);
@@ -19,13 +29,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 60px;
-    width: 60px;
+    height: 100px;
+    width: 100px;
     cursor: pointer;
     border: 1px solid white;
     background-color: white;
 }
 
+.square.small {
+    height: 30px;
+    width: 30px;
+}
 
 .game-over-message {
     color: white;
@@ -59,7 +73,11 @@
 }
 
 .piece {
-    width: 50px;
+    width: 90px;
+}
+
+.piece.small {
+    width: 25px;
 }
 
 .selected-square {
