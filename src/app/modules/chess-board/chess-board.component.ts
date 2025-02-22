@@ -1,18 +1,20 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ChessBoard } from 'src/app/chess-logic/chess-board';
 import { CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares, pieceImagePaths } from 'src/app/chess-logic/models';
 import { SelectedSquare } from './models';
 import { ChessBoardService } from './chess-board.service';
 import { Subscription, filter, fromEvent, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
+import { Data, Game } from 'src/app/utilities/data';
 
 @Component({
   selector: 'app-chess-board',
   templateUrl: './chess-board.component.html',
   styleUrls: ['./chess-board.component.css']
 })
-export class ChessBoardComponent implements OnInit, OnDestroy {
+export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isPreview: boolean = false;
+  @Input() position: string[] = Data.defaultGame();
 
   public pieceImagePaths = pieceImagePaths;
 
@@ -42,7 +44,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy {
       [FENChar.BlackKnight, FENChar.BlackBishop, FENChar.BlackRook, FENChar.BlackQueen];
   }
 
-  public flipMode: boolean = false;
+  @Input() flipMode: boolean = false;
   private subscriptions$ = new Subscription();
 
   constructor(protected chessBoardService: ChessBoardService) { }
@@ -71,6 +73,29 @@ export class ChessBoardComponent implements OnInit, OnDestroy {
       .subscribe();
 
     this.subscriptions$.add(keyEventSubscription$);
+  }
+
+  public save(): void {
+    const game: Game = {
+        title: "Advanced Caro-Kann",
+        opening: "Caro-Kann",
+        position:["r","n","b","q","k","b","n","r",
+              "p","p","o","o","p","p","p","p",
+              "o","o","p","o","o","o","o","o",
+              "o","o","o","p","P","o","o","o",
+              "o","o","o","P","o","o","o","o",
+              "o","o","o","o","o","o","o","o",
+              "P","P","P","o","o","P","P","P",
+              "R","N","B","Q","K","B","N","R"],
+        fromWhitePerspective: false,
+        whiteTurn: false
+    };
+    Data.save(game,this.chessBoard);
+  }
+
+  public ngOnChanges(changes: SimpleChanges){
+    this.chessBoard.update(this.position);
+    this.chessBoardView = this.chessBoard.chessBoardView;
   }
 
   public ngOnDestroy(): void {

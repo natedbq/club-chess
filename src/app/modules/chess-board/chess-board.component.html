@@ -1,42 +1,54 @@
-<div class="chess-board" [ngClass]="{'rotated': flipMode,'small': isPreview}">
-    <div *ngFor="let row of chessBoardView; let x = index" class="row">
-        <div *ngFor="let piece of row; let y = index" class="square" [ngClass]="{'dark': isSquareDark(x, y), 
-            'light':!isSquareDark(x, y),
-            'selected-square': isSquareSelected(x, y),
-            'last-move': isSquareLastMove(x, y),
-            'king-in-check': isSquareChecked(x, y),
-            'promotion-square': isSquarePromotionSquare(x, y),
-            'small': isPreview
 
-        }
+
+<table>
+    <tr>
+        <td>
+            <div class="chess-board" [ngClass]="{'rotated': flipMode,'small': isPreview}">
+                <div *ngFor="let row of chessBoardView; let x = index" class="row">
+                    <div *ngFor="let piece of row; let y = index" class="square" [ngClass]="{'dark': isSquareDark(x, y), 
+                        'light':!isSquareDark(x, y),
+                        'selected-square': isSquareSelected(x, y),
+                        'last-move': isSquareLastMove(x, y),
+                        'king-in-check': isSquareChecked(x, y),
+                        'promotion-square': isSquarePromotionSquare(x, y),
+                        'small': isPreview
             
-            " (click)="move(x, y)">
+                    }
+                        
+                        " (click)="move(x, y)">
+            
+                        <div [ngClass]="{'safe-square': isSquareSafeForSelectedPiece(x, y)}"></div>
+            
+                        <img *ngIf="piece" [src]="pieceImagePaths[piece]" [alt]="piece" class="piece"
+                            [ngClass]="{'rotated': flipMode, 'small': isPreview}">
+                    </div>
+                </div>
+            
+            
+            </div>
+            
+            <button class="btn" *ngIf="!isPreview" (click)="flipBoard()">Flip</button>
+            
+            <button  class="btn" *ngIf="!isPreview" (click)="save()">Save</button>
+            
+            <h2 *ngIf="gameOverMessage" class="game-over-message">
+                {{gameOverMessage}}
+            </h2>
+            
+            <div *ngIf="isPromotionActive" class="promotion-dialog">
+                <img *ngFor="let piece of promotionPieces()" [src]="pieceImagePaths[piece]" (click)="promotePiece(piece)">
+            
+                <span class="close-promotion-dialog" (click)="closePawnPromotionDialog()">
+                    &times;
+                </span>
+            </div>
+            
+        </td>
+        <td>
+            <app-move-list *ngIf="!isPreview" [moveList]="moveList" [gameHistoryPointer]="gameHistoryPointer" [gameHistoryLength]="gameHistory.length"
+                (showPreviousPositionEvent)="showPreviousPosition($event)">
 
-            <div [ngClass]="{'safe-square': isSquareSafeForSelectedPiece(x, y)}"></div>
-
-            <img *ngIf="piece" [src]="pieceImagePaths[piece]" [alt]="piece" class="piece"
-                [ngClass]="{'rotated': flipMode, 'small': isPreview}">
-        </div>
-    </div>
-
-
-</div>
-
-<button *ngIf="!isPreview" (click)="flipBoard()">Flip</button>
-
-<h2 *ngIf="gameOverMessage" class="game-over-message">
-    {{gameOverMessage}}
-</h2>
-
-<div *ngIf="isPromotionActive" class="promotion-dialog">
-    <img *ngFor="let piece of promotionPieces()" [src]="pieceImagePaths[piece]" (click)="promotePiece(piece)">
-
-    <span class="close-promotion-dialog" (click)="closePawnPromotionDialog()">
-        &times;
-    </span>
-</div>
-
-<app-move-list *ngIf="!isPreview" [moveList]="moveList" [gameHistoryPointer]="gameHistoryPointer" [gameHistoryLength]="gameHistory.length"
-    (showPreviousPositionEvent)="showPreviousPosition($event)">
-
-</app-move-list>
+            </app-move-list>
+        </td>
+    </tr>
+</table>

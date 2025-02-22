@@ -1,4 +1,5 @@
 import { columns } from "../modules/chess-board/models";
+import { Data } from "../utilities/data";
 import { FENConverter } from "./FENConverter";
 import { CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares } from "./models";
 import { Bishop } from "./pieces/bishop";
@@ -32,6 +33,7 @@ export class ChessBoard {
     private _gameHistory: GameHistory;
 
     constructor() {
+
         this.chessBoard = [
             [
                 new Rook(Color.White), new Knight(Color.White), new Bishop(Color.White), new Queen(Color.White),
@@ -54,8 +56,58 @@ export class ChessBoard {
                 new King(Color.Black), new Bishop(Color.Black), new Knight(Color.Black), new Rook(Color.Black)
             ],
         ];
+
         this._safeSquares = this.findSafeSqures();
         this._gameHistory = [{ board: this.chessBoardView, lastMove: this._lastMove, checkState: this._checkState }];
+    }
+
+    public update(position: string[]): void {
+        position.forEach((c, i) => {
+            let piece: Piece | null = null;
+            switch(c){
+                case "p":
+                    piece = new Pawn(Color.Black);
+                    break;
+                case "n":
+                    piece = new Knight(Color.Black);
+                    break;
+                case "b":
+                    piece = new Bishop(Color.Black);
+                    break;
+                case "r":
+                    piece = new Rook(Color.Black);
+                    break;
+                case "q":
+                    piece = new Queen(Color.Black);
+                    break;
+                case "k":
+                    piece = new King(Color.Black);
+                    break;
+                case "P":
+                    piece = new Pawn(Color.White);
+                    break;
+                case "N":
+                    piece = new Knight(Color.White);
+                    break;
+                case "B":
+                    piece = new Bishop(Color.White);
+                    break;
+                case "R":
+                    piece = new Rook(Color.White);
+                    break;
+                case "Q":
+                    piece = new Queen(Color.White);
+                    break;
+                case "K":
+                    piece = new King(Color.White);
+                    break;
+            }
+
+            let row = Math.floor(i / 8);
+            let col = i % 8;
+            
+            this.chessBoard[7 - row][col] = piece;
+        });
     }
 
     public get playerColor(): Color {

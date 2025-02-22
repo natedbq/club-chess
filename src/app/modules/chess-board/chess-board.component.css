@@ -4,6 +4,7 @@
     flex-direction: column-reverse;
     width: 800px;
     height: 800px;
+    margin: 5px;
 }
 
 .chess-board.small {

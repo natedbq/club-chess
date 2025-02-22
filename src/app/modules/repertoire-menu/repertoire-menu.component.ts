@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Data, Game } from 'src/app/utilities/data';
 
 @Component({
   selector: 'app-repertoire-menu',
@@ -7,4 +8,22 @@ import { Component } from '@angular/core';
 })
 export class RepertoireMenuComponent {
 
+  previews: Game[] = [];
+
+  constructor(){
+    this.init();
+  }
+
+  init(): void {
+    this.previews = Data.getData();
+
+  }
+
+  public whiteGames(): Game[] {
+    return this.previews.filter(p => p.fromWhitePerspective);
+  }
+  
+  public blackGames(): Game[] {
+    return this.previews.filter(p => !p.fromWhitePerspective);
+  }
 }
