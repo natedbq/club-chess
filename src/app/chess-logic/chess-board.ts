@@ -76,6 +76,8 @@ export class ChessBoard {
         let parts = fen.split(" ");
         
         this._playerColor = parts[1] == 'w' ? Color.White : Color.Black;
+        this.fiftyMoveRuleCounter = Number(parts[4]);
+        this.fullNumberOfMoves = Number(parts[5]);
 
         let position = parts[0].split('/');
 
@@ -144,7 +146,7 @@ export class ChessBoard {
             row--;
         });
 
-        
+        this._boardAsFEN = fen;
     }
 
     public get playerColor(): Color {
@@ -337,13 +339,20 @@ export class ChessBoard {
         if (!this._lastMove) return false;
         const { piece, prevX, prevY, currX, currY } = this._lastMove;
 
-        if (
-            !(piece instanceof Pawn) ||
-            pawn.color !== this._playerColor ||
-            Math.abs(currX - prevX) !== 2 ||
-            pawnX !== currX ||
-            Math.abs(pawnY - currY) !== 1
-        ) return false;
+        let enPassant = this._boardAsFEN.split(" ")[3];
+        let enPassantColumn = "abcdefgh".indexOf(enPassant.charAt(0));
+        if(Math.abs(pawnY - enPassantColumn) != 1){
+            return false;
+        }
+        if(pawn.color == Color.White){
+            if(pawnX != 4){
+                return false;
+            }
+        }else{
+            if(pawnX != 3){
+                return false;
+            }
+        }
 
         const pawnNewPositionX: number = pawnX + (pawn.color === Color.White ? 1 : -1);
         const pawnNewPositionY: number = currY;
@@ -442,10 +451,10 @@ export class ChessBoard {
         this.storeMove(promotedPieceType);
         this.updateGameHistory();
 
-        this._safeSquares = safeSquares;
         if (this._playerColor === Color.White) this.fullNumberOfMoves++;
         this._boardAsFEN = this.FENConverter.convertBoardToFEN(this.chessBoard, this._playerColor, this._lastMove, this.fiftyMoveRuleCounter, this.fullNumberOfMoves, this._castleState);
         this.updateThreeFoldRepetitionDictionary(this._boardAsFEN);
+        this._safeSquares = this.findSafeSqures();
 
 
         this._isGameOver = this.isGameFinished();
