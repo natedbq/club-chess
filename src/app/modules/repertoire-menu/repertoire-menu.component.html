@@ -8,7 +8,7 @@
         </tr>
         <tr>
             <td  *ngFor="let game of whiteGames()"> 
-                <app-chess-board [isPreview]="true" [position]="game.position"> </app-chess-board>
+                <app-chess-board [isPreview]="true" [game]="game"> </app-chess-board>
             </td>
         </tr>
     </table>
@@ -23,7 +23,7 @@
         </tr>
         <tr>
             <td  *ngFor="let game of blackGames()"> 
-                <app-chess-board [isPreview]="true" [position]="game.position" [flipMode]="true"> </app-chess-board>
+                <app-chess-board [isPreview]="true" [game]="game" [flipMode]="true"> </app-chess-board>
             </td>
         </tr>
     </table>

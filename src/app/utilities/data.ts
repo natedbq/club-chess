@@ -2,9 +2,9 @@ import data from 'src/fake-data/data.json'
 import { ChessBoard } from '../chess-logic/chess-board';
 
 export interface Game {
-    position: string[];
     title: string;
     opening: string;
+    fen: string;
     fromWhitePerspective: boolean;
     whiteTurn: boolean;
 }
