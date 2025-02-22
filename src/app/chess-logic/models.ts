@@ -78,4 +78,12 @@ export type GameHistory = {
     lastMove: LastMove | undefined;
     checkState: CheckState;
     board: (FENChar | null)[][];
+    boardAsFEN: string;
 }[];
+
+export class CastleState{
+    blackKingSide: boolean = true;
+    blackQueenSide: boolean = true;
+    whiteKingSide: boolean = true;
+    whiteQueenSide: boolean = true;
+}

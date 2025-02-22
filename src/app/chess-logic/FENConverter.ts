@@ -1,5 +1,6 @@
 import { columns } from "../modules/chess-board/models";
-import { Color, LastMove } from "./models";
+import { ChessBoard } from "./chess-board";
+import { CastleState, Color, LastMove } from "./models";
 import { King } from "./pieces/king";
 import { Pawn } from "./pieces/pawn";
 import { Piece } from "./pieces/piece";
@@ -13,7 +14,8 @@ export class FENConverter {
         playerColor: Color,
         lastMove: LastMove | undefined,
         fiftyMoveRuleCounter: number,
-        numberOfFullMoves: number
+        numberOfFullMoves: number,
+        castleState: CastleState
     ): string {
         let FEN: string = "";
 
@@ -40,9 +42,18 @@ export class FENConverter {
             FEN += (i === 0) ? FENRow : FENRow + "/";
         }
 
+        let castleStateFEN: string = '';
+        castleStateFEN += castleState.whiteKingSide ? 'K' : '';  
+        castleStateFEN += castleState.whiteQueenSide ? 'Q' : '';  
+        castleStateFEN += castleState.blackKingSide ? 'k' : '';  
+        castleStateFEN += castleState.blackQueenSide ? 'q' : '';      
+
+        castleStateFEN = castleStateFEN == '' ? '-' : castleStateFEN;
+
         const player: string = playerColor === Color.White ? "w" : "b";
         FEN += " " + player;
-        FEN += " " + this.castlingAvailability(board);
+        //FEN += " " + this.castlingAvailability(board);
+        FEN += " " + castleStateFEN
         FEN += " " + this.enPassantPosibility(lastMove, playerColor);
         FEN += " " + fiftyMoveRuleCounter * 2;
         FEN += " " + numberOfFullMoves;

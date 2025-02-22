@@ -76,13 +76,12 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public save(): void {
-    if(this.game)
-      Data.save(this.game,this.chessBoard);
+    console.log(this.chessBoard.boardAsFEN);
   }
 
   public ngOnChanges(changes: SimpleChanges){
     if(this.game){
-      this.chessBoard.update(this.game.fen);
+      this.chessBoard.loadFromFEN(this.game.fen);
       this.chessBoardView = this.chessBoard.chessBoardView;
     }
   }

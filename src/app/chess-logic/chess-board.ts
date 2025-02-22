@@ -1,7 +1,7 @@
 import { columns } from "../modules/chess-board/models";
 import { Data } from "../utilities/data";
 import { FENConverter } from "./FENConverter";
-import { CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares } from "./models";
+import { CastleState, CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares } from "./models";
 import { Bishop } from "./pieces/bishop";
 import { King } from "./pieces/king";
 import { Knight } from "./pieces/knight";
@@ -17,6 +17,10 @@ export class ChessBoard {
     private _safeSquares: SafeSquares;
     private _lastMove: LastMove | undefined;
     private _checkState: CheckState = { isInCheck: false };
+    private _castleState: CastleState = new CastleState();
+
+
+
     private fiftyMoveRuleCounter: number = 0;
 
     private _isGameOver: boolean = false;
@@ -58,14 +62,31 @@ export class ChessBoard {
         ];
 
         this._safeSquares = this.findSafeSqures();
-        this._gameHistory = [{ board: this.chessBoardView, lastMove: this._lastMove, checkState: this._checkState }];
+
+
+        let fenConvert = new FENConverter();
+        let boardAsFEN = fenConvert.convertBoardToFEN(this.chessBoard, this.playerColor, this._lastMove, this.fiftyMoveRuleCounter, this.fullNumberOfMoves, this._castleState)
+
+        this._gameHistory = [{ board: this.chessBoardView, lastMove: this._lastMove, checkState: this._checkState,  boardAsFEN: boardAsFEN}];
     }
 
-    public update(fen: string): void {
+    public loadFromFEN(fen: string): void {
         let row = 7;
 
         let parts = fen.split(" ");
+        
+        this._playerColor = parts[1] == 'w' ? Color.White : Color.Black;
+        this.fiftyMoveRuleCounter = Number(parts[4]);
+        this.fullNumberOfMoves = Number(parts[5]);
+
         let position = parts[0].split('/');
+
+        this._castleState = {
+            blackKingSide: parts[2].includes('k'),
+            blackQueenSide: parts[2].includes('q'),
+            whiteKingSide: parts[2].includes('K'),
+            whiteQueenSide: parts[2].includes('Q')
+        };
 
         [...position].forEach((r, i) => {
             let piece: Piece | null = null;
@@ -125,7 +146,7 @@ export class ChessBoard {
             row--;
         });
 
-        
+        this._boardAsFEN = fen;
     }
 
     public get playerColor(): Color {
@@ -177,6 +198,7 @@ export class ChessBoard {
     private areCoordsValid(x: number, y: number): boolean {
         return x >= 0 && y >= 0 && x < this.chessBoardSize && y < this.chessBoardSize;
     }
+
 
     public isInCheck(playerColor: Color, checkingCurrentPosition: boolean): boolean {
         for (let x = 0; x < this.chessBoardSize; x++) {
@@ -317,13 +339,20 @@ export class ChessBoard {
         if (!this._lastMove) return false;
         const { piece, prevX, prevY, currX, currY } = this._lastMove;
 
-        if (
-            !(piece instanceof Pawn) ||
-            pawn.color !== this._playerColor ||
-            Math.abs(currX - prevX) !== 2 ||
-            pawnX !== currX ||
-            Math.abs(pawnY - currY) !== 1
-        ) return false;
+        let enPassant = this._boardAsFEN.split(" ")[3];
+        let enPassantColumn = "abcdefgh".indexOf(enPassant.charAt(0));
+        if(Math.abs(pawnY - enPassantColumn) != 1){
+            return false;
+        }
+        if(pawn.color == Color.White){
+            if(pawnX != 4){
+                return false;
+            }
+        }else{
+            if(pawnX != 3){
+                return false;
+            }
+        }
 
         const pawnNewPositionX: number = pawnX + (pawn.color === Color.White ? 1 : -1);
         const pawnNewPositionY: number = currY;
@@ -338,28 +367,45 @@ export class ChessBoard {
     private canCastle(king: King, kingSideCastle: boolean): boolean {
         if (king.hasMoved) return false;
 
+        if(king.color == Color.White){
+            if(kingSideCastle && !this._castleState.whiteKingSide){
+                return false;
+            }
+            
+            if(!kingSideCastle && !this._castleState.whiteQueenSide){
+                return false;
+            }
+        }else{
+            if(kingSideCastle && !this._castleState.blackKingSide){
+                return false;
+            }
+            
+            if(!kingSideCastle && !this._castleState.blackQueenSide){
+                return false;
+            }
+        }
+
         const kingPositionX: number = king.color === Color.White ? 0 : 7;
         const kingPositionY: number = 4;
-        const rookPositionX: number = kingPositionX;
-        const rookPositionY: number = kingSideCastle ? 7 : 0;
-        const rook: Piece | null = this.chessBoard[rookPositionX][rookPositionY];
 
-        if (!(rook instanceof Rook) || rook.hasMoved || this._checkState.isInCheck) return false;
+        if (this._checkState.isInCheck) return false;
 
         const firstNextKingPositionY: number = kingPositionY + (kingSideCastle ? 1 : -1);
         const secondNextKingPositionY: number = kingPositionY + (kingSideCastle ? 2 : -2);
-
-        if (this.chessBoard[kingPositionX][firstNextKingPositionY] || this.chessBoard[kingPositionX][secondNextKingPositionY]) return false;
-
-        if (!kingSideCastle && this.chessBoard[kingPositionX][1]) return false;
-
-
 
         return this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, firstNextKingPositionY) &&
             this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, secondNextKingPositionY);
     }
 
+
+    /*
+        NOTE: this goober mixed up his arguments. 
+            prevX= row
+            prevY = col
+    */
     public move(prevX: number, prevY: number, newX: number, newY: number, promotedPieceType: FENChar | null): void {
+        this.updateCastleState(prevY, prevX);
+
         if (this._isGameOver) throw new Error("Game is over, you cant play move");
 
         if (!this.areCoordsValid(prevX, prevY) || !this.areCoordsValid(newX, newY)) return;
@@ -405,13 +451,45 @@ export class ChessBoard {
         this.storeMove(promotedPieceType);
         this.updateGameHistory();
 
-        this._safeSquares = safeSquares;
         if (this._playerColor === Color.White) this.fullNumberOfMoves++;
-        this._boardAsFEN = this.FENConverter.convertBoardToFEN(this.chessBoard, this._playerColor, this._lastMove, this.fiftyMoveRuleCounter, this.fullNumberOfMoves);
+        this._boardAsFEN = this.FENConverter.convertBoardToFEN(this.chessBoard, this._playerColor, this._lastMove, this.fiftyMoveRuleCounter, this.fullNumberOfMoves, this._castleState);
         this.updateThreeFoldRepetitionDictionary(this._boardAsFEN);
+        this._safeSquares = this.findSafeSqures();
 
 
         this._isGameOver = this.isGameFinished();
+    }
+
+    private updateCastleState(col: number, row: number){
+        let piece = this.chessBoard[row][col];
+
+        if(piece){
+            if(piece instanceof King){
+                if(piece.color == Color.White){
+                    this._castleState.whiteKingSide = false;
+                    this._castleState.whiteQueenSide = false;
+                }else{
+                    this._castleState.blackKingSide = false;
+                    this._castleState.blackQueenSide = false;
+                }
+            }else if(piece instanceof Rook){
+                if(piece.color == Color.White){
+                    if(col == 0){
+                        this._castleState.whiteQueenSide = false;
+                    }
+                    if(col == 7){
+                        this._castleState.whiteKingSide = false;
+                    }
+                }else{
+                    if(col == 0){
+                        this._castleState.blackQueenSide = false;
+                    }
+                    if(col == 7){
+                        this._castleState.blackKingSide = false;
+                    }
+                }
+            }
+        }
     }
 
     private handlingSpecialMoves(piece: Piece, prevX: number, prevY: number, newX: number, newY: number, moveType: Set<MoveType>): void {
@@ -620,10 +698,13 @@ export class ChessBoard {
     }
 
     private updateGameHistory(): void {
+        let fenConvert = new FENConverter();
+
         this._gameHistory.push({
             board: [...this.chessBoardView.map(row => [...row])],
             checkState: { ...this._checkState },
-            lastMove: this._lastMove ? { ...this._lastMove } : undefined
+            lastMove: this._lastMove ? { ...this._lastMove } : undefined,
+            boardAsFEN: fenConvert.convertBoardToFEN(this.chessBoard, this.playerColor, this._lastMove, this.fiftyMoveRuleCounter, this.fullNumberOfMoves, this._castleState)
         });
     }
 }
