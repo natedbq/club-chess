@@ -404,7 +404,7 @@ export class ChessBoard {
             prevY = col
     */
     public move(prevX: number, prevY: number, newX: number, newY: number, promotedPieceType: FENChar | null): void {
-        this.updateCastleState(prevY, prevX);
+        this.updateCastleState(prevY, prevX, newY, newX);
 
         if (this._isGameOver) throw new Error("Game is over, you cant play move");
 
@@ -460,8 +460,25 @@ export class ChessBoard {
         this._isGameOver = this.isGameFinished();
     }
 
-    private updateCastleState(col: number, row: number){
+    private updateCastleState(col: number, row: number, newCol: number, newRow: number){
         let piece = this.chessBoard[row][col];
+
+        if(newRow == 7){
+            if(newCol == 0){
+                this._castleState.blackQueenSide = false;
+            }
+            if(newCol == 7){
+                this._castleState.blackKingSide = false;
+            }
+        }
+        if(newRow == 0){
+            if(newCol == 0){
+                this._castleState.whiteQueenSide = false;
+            }
+            if(newCol == 7){
+                this._castleState.whiteKingSide = false;
+            }
+        }
 
         if(piece){
             if(piece instanceof King){
