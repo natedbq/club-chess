@@ -5,7 +5,8 @@ import { SelectedSquare } from './models';
 import { ChessBoardService } from './chess-board.service';
 import { Subscription, filter, fromEvent, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
-import { Data, Game } from 'src/app/utilities/data';
+import { Game } from 'src/app/utilities/data';
+import { Study } from '../../chess-logic/models';
 
 @Component({
   selector: 'app-chess-board',
@@ -15,6 +16,8 @@ import { Data, Game } from 'src/app/utilities/data';
 export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isPreview: boolean = false;
   @Input() game: Game| null = null;
+  @Input() study: Study | null = null;
+  flipMode: boolean = false;
 
   public pieceImagePaths = pieceImagePaths;
 
@@ -44,7 +47,6 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       [FENChar.BlackKnight, FENChar.BlackBishop, FENChar.BlackRook, FENChar.BlackQueen];
   }
 
-  @Input() flipMode: boolean = false;
   private subscriptions$ = new Subscription();
 
   constructor(protected chessBoardService: ChessBoardService) { }
@@ -83,6 +85,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     if(this.game){
       this.chessBoard.loadFromFEN(this.game.fen);
       this.chessBoardView = this.chessBoard.chessBoardView;
+      this.flipMode = !this.game.fromWhitePerspective; // we only flip if player is Black. Its not racist, though.
     }
   }
 

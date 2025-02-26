@@ -10,6 +10,7 @@ import { AppRoutingModule } from './routes/app-routing.module';
 import { PlayAgainstComputerDialogComponent } from './modules/play-against-computer-dialog/play-against-computer-dialog.component';
 import { MoveListComponent } from './modules/move-list/move-list.component';
 import { RepertoireMenuComponent } from './modules/repertoire-menu/repertoire-menu.component';
+import { StudyComponent } from './modules/study/study.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { RepertoireMenuComponent } from './modules/repertoire-menu/repertoire-me
     ChessBoardComponent,
     ComputerModeComponent,
     RepertoireMenuComponent,
+    StudyComponent,
   ],
   imports: [
     BrowserModule,

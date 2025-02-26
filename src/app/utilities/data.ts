@@ -2,6 +2,7 @@ import data from 'src/fake-data/data.json'
 import { ChessBoard } from '../chess-logic/chess-board';
 
 export interface Game {
+    studyId: string;
     title: string;
     opening: string;
     fen: string;
@@ -11,10 +12,6 @@ export interface Game {
 
 export class Data {
 
-    static getData(): Game[] {
-        
-        return data.games;
-    }
 
     static save(game: Game, chessBoard: ChessBoard): void {        
         const jsonString = JSON.stringify(chessBoard,null,2);

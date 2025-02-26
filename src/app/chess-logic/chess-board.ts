@@ -142,11 +142,23 @@ export class ChessBoard {
                     this.chessBoard[row][col] = piece;
                     col++;
                 }
+                if(piece instanceof Pawn){
+                    if(piece.color == Color.White){
+                        if(row != 1){
+                            piece.hasMoved = true;
+                        }
+                    }else{
+                        if(row != 6){
+                            piece.hasMoved = true;
+                        }
+                    }
+                }
             });
             row--;
         });
 
         this._boardAsFEN = fen;
+        this._safeSquares = this.findSafeSqures();
     }
 
     public get playerColor(): Color {
@@ -263,7 +275,7 @@ export class ChessBoard {
         return isPositionSafe;
     }
 
-    private findSafeSqures(): SafeSquares {
+    public findSafeSqures(): SafeSquares {
         const safeSqures: SafeSquares = new Map<string, Coords[]>();
 
         for (let x = 0; x < this.chessBoardSize; x++) {

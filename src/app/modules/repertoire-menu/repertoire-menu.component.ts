@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Data, Game } from 'src/app/utilities/data';
 import { StudyService } from '../../services/study.service';
+import { Router } from '@angular/router';
+import { Color } from '../../chess-logic/models';
 
 @Component({
   selector: 'app-repertoire-menu',
@@ -11,7 +13,7 @@ export class RepertoireMenuComponent {
 
   previews: Game[] = [];
 
-  constructor(private studyService: StudyService){
+  constructor(private router: Router, private studyService: StudyService){
     this.init();
   }
 
@@ -21,10 +23,11 @@ export class RepertoireMenuComponent {
         s.forEach((study) => {
           console.log(study.id);
           this.previews.push(<Game>{
+            studyId: study.id,
             title: study.title,
             opening: study.title,
             fen: study.fen,
-            fromWhitePerspective: study.perspective == 0
+            fromWhitePerspective: study.perspective == Color.White
           })
         } )
     });
@@ -36,5 +39,9 @@ export class RepertoireMenuComponent {
   
   public blackGames(): Game[] {
     return this.previews.filter(p => !p.fromWhitePerspective);
+  }
+
+  public loadStudy(id: string){
+    this.router.navigate(['study/' + id]);
   }
 }
