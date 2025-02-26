@@ -34,27 +34,3 @@ export const stockfishLevels: Readonly<Record<number, number>> = {
     5: 15
 }
 
-export interface Continuation {
-    id: string;
-    description: string;
-    movesToPosition: string[];
-    position: Position;
-}
-
-export interface Study {
-    id: string;
-    title: string;
-    description: string;
-    perspective: Color;
-    continuation: Continuation;
-    fen:string;
-}
-
-export interface Position {
-    id: string;
-    title: string;
-    tags: string[];
-    description: string;
-    fen: string;
-    continuations: Continuation[];
-}
