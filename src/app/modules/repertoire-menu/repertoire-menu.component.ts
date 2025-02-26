@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Data, Game } from 'src/app/utilities/data';
+import { StudyService } from '../../services/study.service';
 
 @Component({
   selector: 'app-repertoire-menu',
@@ -10,13 +11,23 @@ export class RepertoireMenuComponent {
 
   previews: Game[] = [];
 
-  constructor(){
+  constructor(private studyService: StudyService){
     this.init();
   }
 
   init(): void {
-    this.previews = Data.getData();
-
+    this.studyService.getSimpleStudies().subscribe(s => {
+        this.previews = [];
+        s.forEach((study) => {
+          console.log(study.id);
+          this.previews.push(<Game>{
+            title: study.title,
+            opening: study.title,
+            fen: study.fen,
+            fromWhitePerspective: study.perspective == 0
+          })
+        } )
+    });
   }
 
   public whiteGames(): Game[] {
