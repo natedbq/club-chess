@@ -1,0 +1,28 @@
+<h3>Moves</h3>
+<div>
+    <button mat-icon-button color="primary" 
+        (click)="first()">
+        <mat-icon>first_page</mat-icon>
+    </button>
+
+    <button mat-icon-button color="primary" 
+        (click)="previous()">
+        <mat-icon>navigate_before</mat-icon>
+    </button>
+
+    <button mat-icon-button color="primary"
+        (click)="next()">
+        <mat-icon>navigate_next</mat-icon>
+    </button>
+
+    <button mat-icon-button color="primary"
+        (click)="last()">
+        <mat-icon>last_page</mat-icon>
+    </button>
+</div>
+<div class="move-list">
+    <div class="row" *ngFor="let fullMove of getPreviousMoves(); let i = index">
+        <div class="move-number">{{i + 1}}.</div>
+        <div class="move" *ngFor="let move of fullMove" (click)="goto(move)">{{move}}</div>
+    </div>
+</div>

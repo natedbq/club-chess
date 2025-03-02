@@ -14,9 +14,7 @@ export class Data {
 
 
     static save(game: Game, chessBoard: ChessBoard): void {        
-        const jsonString = JSON.stringify(chessBoard,null,2);
-        
-        console.log(jsonString);
+        console.log(chessBoard.boardAsFEN, chessBoard.moveList[chessBoard.moveList.length - 1])
     } 
 
     static defaultGame(): string[] {
