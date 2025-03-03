@@ -11,6 +11,10 @@ import { PlayAgainstComputerDialogComponent } from './modules/play-against-compu
 import { MoveListComponent } from './modules/move-list/move-list.component';
 import { RepertoireMenuComponent } from './modules/repertoire-menu/repertoire-menu.component';
 import { StudyComponent } from './modules/study/study.component';
+import { StudyNavigationComponent } from './modules/study-navigation/study-navigation.component';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -19,6 +23,7 @@ import { StudyComponent } from './modules/study/study.component';
     ComputerModeComponent,
     RepertoireMenuComponent,
     StudyComponent,
+    StudyNavigationComponent,
   ],
   imports: [
     BrowserModule,
@@ -26,7 +31,8 @@ import { StudyComponent } from './modules/study/study.component';
     AppRoutingModule,
     NavMenuComponent,
     PlayAgainstComputerDialogComponent,
-    MoveListComponent
+    MoveListComponent,
+    CommonModule, MatButtonModule, MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

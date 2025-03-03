@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
-import { Study } from "../chess-logic/models";
+import { Continuation, Move, Position, Study } from "../chess-logic/models";
 
 @Injectable({
   providedIn: 'root'
@@ -14,19 +14,67 @@ export class StudyService {
 
   public getStudies(): Observable<Study[]> {
     return this.http.get<Study[]>(this.api + '/study/studies').pipe(map((studies) => {
-        return <Study[]>studies
+        return studies.map(s => this.toStudy(s));
     }));
   }
 
   public getStudy(id: string): Observable<Study> {
-    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((studies) => {
-      return <Study>studies
+    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((study) => {
+      return this.toStudy(study)
   }));
   }
   
   public getSimpleStudies(): Observable<Study[]> {
     return this.http.get<Study[]>(this.api + '/study/simplestudies').pipe(map((studies) => {
-        return <Study[]>studies
+        return studies.map(s => {
+          return this.toStudy(s);
+        })
     }));
+  }
+
+  private toStudy(data: any): Study{
+    let study = new Study();
+    study.id = data.id;
+    study.title = data.title;
+    study.description = data.description;
+    study.perspective = data.perspective;
+    study.fen = data.fen;
+
+    if(data.continuation){
+      study.continuation = this.toContinuation(data.continuation);
+    }
+    return study;
+  }
+
+  private toContinuation(data: any): Continuation {
+    let cont = new Continuation();
+    cont.description = data.description;
+    cont.id = data.id;
+    if(data.movesToPosition)
+      cont.movesToPosition = data.movesToPosition.map((m: Move)=> this.toMove(m));
+    if(data.position)
+      cont.position = this.toPosition(data.position);
+
+    return cont;
+  }
+
+  private toMove(data: any): Move {
+    let move = new Move();
+    move.fen = data.fen;
+    move.name = data.name;
+    return move;
+  }
+
+  private toPosition(data: any): Position {
+    let position = new Position();
+    position.id = data.id;
+    position.title = data.title;
+    position.tags = data.tags;
+    position.description = data.description;
+    if(data.move)
+      position.move = this.toMove(data.move);
+    if(data.continuations)
+      position.continuations = data.continuations.map((c: Continuation) => this.toContinuation(c));
+    return position;
   }
 }

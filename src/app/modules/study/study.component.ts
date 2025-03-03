@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Color, Study } from '../../chess-logic/models';
+import { Color, Continuation, Move, Position, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { Game } from '../../utilities/data';
 
@@ -24,15 +24,26 @@ export class StudyComponent implements OnInit {
             studyId: s.id,
             title: s.title,
             opening: s.title,
-            fen: s.continuation.position.fen,
+            fen: s.continuation?.movesToPosition[0].fen,
             fromWhitePerspective: s.perspective == Color.White
           };
-
         });
       }
     }
 
     ngOnInit(): void {
       
+    }
+
+    updateBoard = (move: Move | null): void => {
+      if(move && this.game && move.fen && this.study){
+        this.game = <Game>{
+        studyId: this.study.id,
+        title: this.study.title,
+        opening: this.study.title,
+        fen: move.fen,
+        fromWhitePerspective: this.study.perspective == Color.White
+      };
+      }
     }
 }

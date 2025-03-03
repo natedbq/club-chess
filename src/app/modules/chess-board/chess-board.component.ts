@@ -78,7 +78,8 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public save(): void {
-    console.log(this.chessBoard.boardAsFEN);
+    let move = this.chessBoard.moveList[this.chessBoard.moveList.length - 1]?.length == 1 ? this.chessBoard.moveList[this.chessBoard.moveList.length - 1][0] : this.chessBoard.moveList[this.chessBoard.moveList.length - 1][1]
+    console.log(this.chessBoard.boardAsFEN,'-',move);
   }
 
   public ngOnChanges(changes: SimpleChanges){

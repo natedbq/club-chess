@@ -1,2 +1,11 @@
 
-<app-chess-board  [game]="game" > </app-chess-board>
+<table>
+    <tr>
+        <td>
+            <app-chess-board  [game]="game" > </app-chess-board>
+        </td>
+        <td style="vertical-align: top;">
+            <app-study-navigation [study]="study" [onUpdate]="updateBoard"></app-study-navigation>
+        </td>
+    </tr>
+</table>

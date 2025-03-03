@@ -21,7 +21,6 @@ export class RepertoireMenuComponent {
     this.studyService.getSimpleStudies().subscribe(s => {
         this.previews = [];
         s.forEach((study) => {
-          console.log(study.id);
           this.previews.push(<Game>{
             studyId: study.id,
             title: study.title,

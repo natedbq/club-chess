@@ -88,27 +88,32 @@ export class CastleState{
     whiteQueenSide: boolean = true;
 }
 
-export interface Continuation {
-    id: string;
-    description: string;
-    movesToPosition: string[];
-    position: Position;
+export class Continuation {
+    id: string | null = null;
+    description: string | null = null;
+    movesToPosition: Move[] = [];
+    position: Position | null = null;
 }
 
-export interface Study {
-    id: string;
-    title: string;
-    description: string;
-    perspective: Color;
-    continuation: Continuation;
-    fen:string;
+export class Study {
+    id: string | null = null;
+    title: string | null = null;
+    description: string | null = null;
+    perspective: Color | null = null;
+    continuation: Continuation | null = null;
+    fen:string | null = null;
 }
 
-export interface Position {
-    id: string;
-    title: string;
-    tags: string[];
-    description: string;
-    fen: string;
-    continuations: Continuation[];
+export class Position {
+    id: string | null = null;
+    title: string | null = null;
+    tags: string[] = [];
+    description: string | null = null;
+    move: Move | null = null;
+    continuations: Continuation[] = [];
+}
+
+export class Move {
+    fen: string | null = null;
+    name: string | null = null;
 }
