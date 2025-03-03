@@ -1,4 +1,20 @@
+<h1>{{getTitle()}}</h1>
+
 <h3>Moves</h3>
+
+<div class="variation-list" [ngClass]="{ 'disabled': getVariations().length == 0}">
+    <h4>Variations</h4>
+</div>
+<div>
+    <div class="move-list">
+        <div *ngIf="getVariations().length == 0" class="move disabled">
+            <div class="move" >-</div>
+        </div>
+        <div class="row">
+            <div class="move" *ngFor="let name of getVariations()" (click)="next(name)">{{name}}</div>
+        </div>
+    </div>
+</div>
 <div>
     <button mat-icon-button color="primary" 
         (click)="first()">

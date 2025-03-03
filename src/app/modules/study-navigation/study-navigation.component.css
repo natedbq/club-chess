@@ -6,6 +6,18 @@
     /*  column-reverse is interesting to consider as well */
 }
 
+.variation-list {
+    padding-top: 5px;
+}
+
+.variation-list.disabled {
+    color: #282828;
+}
+
+.move.disabled {
+    color: #282828;
+}
+
 .move-list::-webkit-scrollbar {
     display: none;
 }
@@ -32,6 +44,7 @@
 .move {
     cursor: pointer;
     width: 100px;
+    padding-left: 2px;
 }
 
 .move:hover {

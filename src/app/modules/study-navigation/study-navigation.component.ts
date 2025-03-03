@@ -26,6 +26,14 @@ export class StudyNavigationComponent {
       
   }
 
+  getTitle = (): string => {
+    return this.studyPointer.getTitle();
+  }
+
+  getVariations = (): string[] => {
+    return this.studyPointer.getVariations();
+  }
+
   goto = (name: string): void => {
     let sp = this.studyPointer.goto(name);
     if(sp && sp.pointer){
@@ -70,8 +78,8 @@ export class StudyNavigationComponent {
     return moves;
   }
 
-  next(){
-    let sp = this.studyPointer.next();
+  next(name: string | null = null){
+    let sp = this.studyPointer.next(name);
     if(sp.pointer){
       this.studyPointer = sp;
     }
@@ -114,24 +122,19 @@ class StudyPointer{
       let i = studyPointer.pointer.movesToPosition.findIndex(m => m.name == name);
       if(i > -1){
         studyPointer.index = i;
-        console.log('found at',i)
         return studyPointer;
       }
 
-      console.log('goto continuation parent')
       return studyPointer.gotoHelper(name, studyPointer.parent);
     }
     if(studyPointer?.pointer instanceof Position){
       if(studyPointer.pointer.move?.name == name){
-        console.log('found in position')
         return studyPointer;
       }
 
-      console.log('goto position parent')
       return studyPointer.gotoHelper(name, studyPointer?.parent ?? null);
     }
 
-    console.log('uh oh')
     return this;
   }
 
@@ -146,8 +149,6 @@ class StudyPointer{
     return null;
   }
 
-  
-
   next(name: string | null = null): StudyPointer {
     if(this.pointer instanceof Continuation){
       this.index++;
@@ -160,12 +161,20 @@ class StudyPointer{
       return studyPointer;
     }
     if(this.pointer instanceof Position){
+      let continuation: Continuation | null;
       if(!name){
-        let continuation = this.pointer.continuations[0];
-        let studyPointer = new StudyPointer(this, continuation);
-        return studyPointer;
+        continuation = this.pointer.continuations[0];
+      }else{
+        continuation = this.pointer.continuations.filter(c => (c.movesToPosition.length && c.movesToPosition[0].name === name) || c.position?.move?.name === name)[0];
+        if(!continuation){
+          console.log('ff')
+        }
       }
-      let continuation = this.pointer.continuations.filter(c => c.movesToPosition[0].name === name)[0];
+      
+      if(continuation && continuation.movesToPosition && !continuation.movesToPosition.length){
+        return new StudyPointer(this, continuation.position)
+      }
+
       let studyPointer = new StudyPointer(this, continuation);
       return studyPointer;
     }
@@ -175,7 +184,6 @@ class StudyPointer{
 
   public previous(): StudyPointer | null {
     if(this.pointer instanceof Continuation){
-      console.log('cont')
       this.index--;
       if(this.index >= 0){
         return this;
@@ -201,5 +209,33 @@ class StudyPointer{
     }
 
     return [];
+  }
+
+  public getVariations(): string[] {
+    if(this.pointer instanceof Position){
+      return this.pointer.continuations.map((c) => {
+        if(c.movesToPosition.length == 0){
+          return c.position?.move?.name ?? '-';
+        }
+
+        return c.movesToPosition[0].name ?? '-';
+      })
+    }
+
+    return [];
+  }
+
+  getTitle(): string {
+    if(this.pointer instanceof Continuation){
+      let parent = this.parent?.pointer;
+      if(parent instanceof Position){
+        return parent.title ?? '-';
+      }
+    }
+    if(this.pointer instanceof Position){
+      return this.pointer.title ?? '-';
+    }
+
+    return 'Chess';
   }
 }
