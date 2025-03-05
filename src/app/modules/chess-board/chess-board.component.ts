@@ -16,7 +16,6 @@ import { Move, Study } from '../../chess-logic/models';
 export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isPreview: boolean = false;
   @Input() game: Game| null = null;
-  @Input() study: Study | null = null;
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
   flipMode: boolean = false;
 
