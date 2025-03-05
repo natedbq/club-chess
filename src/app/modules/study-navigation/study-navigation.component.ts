@@ -128,6 +128,22 @@ export class StudyPointer{
     return this;
   }
 
+  hasNext(name: string): boolean {
+    if(this.pointer instanceof Continuation){
+      if(this.index + 1 == this.pointer.movesToPosition.length - 1){
+        return this.pointer.position?.move?.name == name
+      }
+
+      return this.pointer.movesToPosition[this.index + 1 ].name == name;
+    }
+    if(this.pointer instanceof Position){
+      
+      return this.pointer.continuations.some(c => c.movesToPosition[0].name == name)
+    }
+
+    return false;
+  }
+
   peek(): Move | null {
     if(this.pointer instanceof Continuation){
       return this.pointer.movesToPosition[this.index];
@@ -224,5 +240,13 @@ export class StudyPointer{
     }
 
     return 'Chess';
+  }
+
+  addMove(move: Move): void { 
+    if(this.hasNext(move.name ?? '-')){
+      return 
+    }else{
+      
+    }
   }
 }

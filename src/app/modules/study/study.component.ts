@@ -14,7 +14,6 @@ import { StudyEditor } from './study-editor';
 export class StudyComponent implements OnInit {
     study: Study | null = null;
     studyPointer: StudyPointer = new StudyPointer(null);
-    studyEditor: StudyEditor = new StudyEditor(this.studyPointer);
     game: Game | null = null;
     isWhitePerspective: boolean = true;
 
@@ -24,7 +23,6 @@ export class StudyComponent implements OnInit {
         this.studyService.getStudy(studyId).subscribe(s => {
           this.study = s;
           this.studyPointer = new StudyPointer(null,this.study?.continuation);
-          this.studyEditor = new StudyEditor(this.studyPointer);
           this.isWhitePerspective = s.perspective == Color.White;
           this.game = <Game>{
             studyId: s.id,
@@ -70,7 +68,14 @@ export class StudyComponent implements OnInit {
     }
     updateStudy = (move: Move | null): void => {
       if(move) {
-        this.studyEditor.addMove(move);
+        if(this.studyPointer.hasNext(move.name ?? '-')){
+          
+        }else{
+
+        }
       }
     }
+    
+
+    
 }
