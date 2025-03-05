@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Color, Continuation, Move, Position, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { Game } from '../../utilities/data';
+import { StudyPointer } from '../study-navigation/study-navigation.component';
+import { StudyEditor } from './study-editor';
 
 @Component({
   selector: 'app-study',
@@ -11,6 +13,8 @@ import { Game } from '../../utilities/data';
 })
 export class StudyComponent implements OnInit {
     study: Study | null = null;
+    studyPointer: StudyPointer = new StudyPointer(null);
+    studyEditor: StudyEditor = new StudyEditor(this.studyPointer);
     game: Game | null = null;
     isWhitePerspective: boolean = true;
 
@@ -19,6 +23,8 @@ export class StudyComponent implements OnInit {
       if(studyId){
         this.studyService.getStudy(studyId).subscribe(s => {
           this.study = s;
+          this.studyPointer = new StudyPointer(null,this.study?.continuation);
+          this.studyEditor = new StudyEditor(this.studyPointer);
           this.isWhitePerspective = s.perspective == Color.White;
           this.game = <Game>{
             studyId: s.id,
@@ -35,7 +41,23 @@ export class StudyComponent implements OnInit {
       
     }
 
+    destroyItAll = (): void => {
+      if(this.study?.continuation?.position){
+        let p = new Position();
+        p.tags = [];
+        p.title = 'Poopoopeepee';
+        p.description = 'dd';
+        p.move = new Move();
+        p.continuations = [];
+        p.move.name = "kill";
+        p.move.fen = 'rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq d6 0 4'
+        this.study.continuation.position = p;
+
+      }
+    }
+
     updateBoard = (move: Move | null): void => {
+      console.log()
       if(move && this.game && move.fen && this.study){
         this.game = <Game>{
         studyId: this.study.id,
@@ -44,6 +66,11 @@ export class StudyComponent implements OnInit {
         fen: move.fen,
         fromWhitePerspective: this.study.perspective == Color.White
       };
+      }
+    }
+    updateStudy = (move: Move | null): void => {
+      if(move) {
+        this.studyEditor.addMove(move);
       }
     }
 }

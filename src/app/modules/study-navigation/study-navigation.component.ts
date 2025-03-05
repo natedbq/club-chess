@@ -9,21 +9,11 @@ import { SlicePipe } from '@angular/common';
 })
 export class StudyNavigationComponent {
 
-  @Input() study: Study | null = null;
+  @Input() studyPointer: StudyPointer = new StudyPointer(null);
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('please provide study navigation with update callback')};
   moves: Move[] = [];
-  studyPointer: StudyPointer = new StudyPointer(null);
 
   public ngOnChanges(changes: SimpleChanges){
-    if(this.study){
-      this.studyPointer = new StudyPointer(null,this.study.continuation);
-      this.studyPointer.pointer = this.study.continuation;
-      this.studyPointer.listMoves()
-    }
-      this.study?.continuation?.movesToPosition.forEach(m => {
-        this.moves.push(m)
-      });
-      
   }
 
   getTitle = (): string => {
@@ -101,7 +91,7 @@ export class StudyNavigationComponent {
 }
 
 
-class StudyPointer{
+export class StudyPointer{
   parent: StudyPointer | null = null;
   pointer: Continuation | Position | null = null;
   index: number = 0;
@@ -166,9 +156,6 @@ class StudyPointer{
         continuation = this.pointer.continuations[0];
       }else{
         continuation = this.pointer.continuations.filter(c => (c.movesToPosition.length && c.movesToPosition[0].name === name) || c.position?.move?.name === name)[0];
-        if(!continuation){
-          console.log('ff')
-        }
       }
       
       if(continuation && continuation.movesToPosition && !continuation.movesToPosition.length){

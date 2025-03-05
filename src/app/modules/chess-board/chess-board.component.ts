@@ -6,7 +6,7 @@ import { ChessBoardService } from './chess-board.service';
 import { Subscription, filter, fromEvent, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
 import { Game } from 'src/app/utilities/data';
-import { Study } from '../../chess-logic/models';
+import { Move, Study } from '../../chess-logic/models';
 
 @Component({
   selector: 'app-chess-board',
@@ -17,6 +17,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isPreview: boolean = false;
   @Input() game: Game| null = null;
   @Input() study: Study | null = null;
+  @Input() onUpdate: (move: Move | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
   flipMode: boolean = false;
 
   public pieceImagePaths = pieceImagePaths;
@@ -178,12 +179,18 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   protected updateBoard(prevX: number, prevY: number, newX: number, newY: number, promotedPiece: FENChar | null): void {
-    this.chessBoard.move(prevX, prevY, newX, newY, promotedPiece);
+    let moveName = this.chessBoard.move(prevX, prevY, newX, newY, promotedPiece);
     this.chessBoardView = this.chessBoard.chessBoardView;
     this.markLastMoveAndCheckState(this.chessBoard.lastMove, this.chessBoard.checkState);
     this.unmarkingPreviouslySlectedAndSafeSquares();
     this.chessBoardService.chessBoardState$.next(this.chessBoard.boardAsFEN);
+
     this.gameHistoryPointer++;
+
+    let move = new Move();
+    move.name = moveName;
+    move.fen = this.chessBoard.boardAsFEN
+    this.onUpdate(move)
   }
 
   public promotePiece(piece: FENChar): void {
