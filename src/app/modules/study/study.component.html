@@ -5,7 +5,7 @@
             <app-chess-board  [game]="game" [onUpdate]="updateStudy"> </app-chess-board>
         </td>
         <td style="vertical-align: top;">
-            <app-study-navigation [studyPointer]="studyPointer" [onUpdate]="updateBoard"></app-study-navigation>
+            <app-study-navigation [studyNav]="studyNav" [onUpdate]="updateBoard"></app-study-navigation>
         </td>
     </tr>
     <button (click)="destroyItAll()">uh oh</button>

@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Color, Continuation, Move, Position, Study } from '../../chess-logic/models';
+import { Color, Move, Position, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { Game } from '../../utilities/data';
-import { StudyPointer } from '../study-navigation/study-navigation.component';
-import { StudyEditor } from './study-editor';
+import { StudyNavigator } from './classes/study-navigator';
 
 @Component({
   selector: 'app-study',
@@ -13,7 +12,7 @@ import { StudyEditor } from './study-editor';
 })
 export class StudyComponent implements OnInit {
     study: Study | null = null;
-    studyPointer: StudyPointer = new StudyPointer(null);
+    studyNav: StudyNavigator = new StudyNavigator(new Study());
     game: Game | null = null;
     isWhitePerspective: boolean = true;
 
@@ -22,7 +21,7 @@ export class StudyComponent implements OnInit {
       if(studyId){
         this.studyService.getStudy(studyId).subscribe(s => {
           this.study = s;
-          this.studyPointer = new StudyPointer(null,this.study?.continuation);
+          this.studyNav = new StudyNavigator(this.study);
           this.isWhitePerspective = s.perspective == Color.White;
           this.game = <Game>{
             studyId: s.id,
@@ -55,7 +54,6 @@ export class StudyComponent implements OnInit {
     }
 
     updateBoard = (move: Move | null): void => {
-      console.log()
       if(move && this.game && move.fen && this.study){
         this.game = <Game>{
         studyId: this.study.id,
@@ -66,12 +64,13 @@ export class StudyComponent implements OnInit {
       };
       }
     }
+    i = 0;
     updateStudy = (move: Move | null): void => {
       if(move) {
-        if(this.studyPointer.hasNext(move.name ?? '-')){
-          
+        if(this.studyNav.hasNext(move.name ?? '-')){
+          this.studyNav.next(move.name)
         }else{
-
+          this.studyNav.addMove(move);
         }
       }
     }
