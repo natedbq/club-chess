@@ -6,6 +6,10 @@
     /*  column-reverse is interesting to consider as well */
 }
 
+.navigator{
+    padding: 20px;
+}
+
 .variation-list {
     padding-top: 5px;
 }
