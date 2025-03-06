@@ -415,14 +415,14 @@ export class ChessBoard {
             prevX= row
             prevY = col
     */
-    public move(prevX: number, prevY: number, newX: number, newY: number, promotedPieceType: FENChar | null): void {
+    public move(prevX: number, prevY: number, newX: number, newY: number, promotedPieceType: FENChar | null): string {
         this.updateCastleState(prevY, prevX, newY, newX);
 
         if (this._isGameOver) throw new Error("Game is over, you cant play move");
 
-        if (!this.areCoordsValid(prevX, prevY) || !this.areCoordsValid(newX, newY)) return;
+        if (!this.areCoordsValid(prevX, prevY) || !this.areCoordsValid(newX, newY)) return '-';
         const piece: Piece | null = this.chessBoard[prevX][prevY];
-        if (!piece || piece.color !== this._playerColor) return;
+        if (!piece || piece.color !== this._playerColor) return '-';
 
         const pieceSafeSquares: Coords[] | undefined = this._safeSquares.get(prevX + "," + prevY);
         if (!pieceSafeSquares || !pieceSafeSquares.find(coords => coords.x === newX && coords.y === newY))
@@ -460,7 +460,7 @@ export class ChessBoard {
         else if (!moveType.size)
             moveType.add(MoveType.BasicMove);
 
-        this.storeMove(promotedPieceType);
+        let moveName = this.storeMove(promotedPieceType);
         this.updateGameHistory();
 
         if (this._playerColor === Color.White) this.fullNumberOfMoves++;
@@ -470,6 +470,8 @@ export class ChessBoard {
 
 
         this._isGameOver = this.isGameFinished();
+
+        return moveName;
     }
 
     private updateCastleState(col: number, row: number, newCol: number, newRow: number){
@@ -664,7 +666,7 @@ export class ChessBoard {
         }
     }
 
-    private storeMove(promotedPiece: FENChar | null): void {
+    private storeMove(promotedPiece: FENChar | null): string {
         const { piece, currX, currY, prevX, prevY, moveType } = this._lastMove!;
         let pieceName: string = !(piece instanceof Pawn) ? piece.FENChar.toUpperCase() : "";
         let move: string;
@@ -688,6 +690,8 @@ export class ChessBoard {
             this._moveList[this.fullNumberOfMoves - 1] = [move];
         else
             this._moveList[this.fullNumberOfMoves - 1].push(move);
+
+        return move
     }
 
     private startingPieceCoordsNotation(): string {

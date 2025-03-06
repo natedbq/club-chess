@@ -1,44 +1,47 @@
-<h1>{{getTitle()}}</h1>
 
-<h3>Moves</h3>
+<div class="navigator">
+    <h1>{{getTitle()}}</h1>
 
-<div class="variation-list" [ngClass]="{ 'disabled': getVariations().length == 0}">
-    <h4>Variations</h4>
-</div>
-<div>
+    <h3>Moves</h3>
+    <div class="variation-list" [ngClass]="{ 'disabled': getVariations().length == 0}">
+        <h4><i class="bi bi-eye show-toggle"> </i> Variations</h4>
+    </div>
+    <div>
+        <div class="move-list">
+            <div *ngIf="getVariations().length == 0" class="move disabled">
+                <div >-</div>
+            </div>
+            <div class="row">
+                <div class="move" *ngFor="let name of getVariations()" (click)="next(name)">{{name}}</div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button mat-icon-button color="primary" 
+            (click)="first()">
+            <mat-icon>first_page</mat-icon>
+        </button>
+    
+        <button mat-icon-button color="primary" 
+            (click)="previous()">
+            <mat-icon>navigate_before</mat-icon>
+        </button>
+    
+        <button mat-icon-button color="primary"
+            (click)="next()">
+            <mat-icon>navigate_next</mat-icon>
+        </button>
+    
+        <button mat-icon-button color="primary"
+            (click)="last()">
+            <mat-icon>last_page</mat-icon>
+        </button>
+    </div>
     <div class="move-list">
-        <div *ngIf="getVariations().length == 0" class="move disabled">
-            <div class="move" >-</div>
-        </div>
-        <div class="row">
-            <div class="move" *ngFor="let name of getVariations()" (click)="next(name)">{{name}}</div>
+        <div class="row" *ngFor="let fullMove of getPreviousMoves(); let i = index">
+            <div class="move-number">{{i + 1}}.</div>
+            <div class="move" *ngFor="let move of fullMove" (click)="goto(move)">{{move}}</div>
         </div>
     </div>
-</div>
-<div>
-    <button mat-icon-button color="primary" 
-        (click)="first()">
-        <mat-icon>first_page</mat-icon>
-    </button>
-
-    <button mat-icon-button color="primary" 
-        (click)="previous()">
-        <mat-icon>navigate_before</mat-icon>
-    </button>
-
-    <button mat-icon-button color="primary"
-        (click)="next()">
-        <mat-icon>navigate_next</mat-icon>
-    </button>
-
-    <button mat-icon-button color="primary"
-        (click)="last()">
-        <mat-icon>last_page</mat-icon>
-    </button>
-</div>
-<div class="move-list">
-    <div class="row" *ngFor="let fullMove of getPreviousMoves(); let i = index">
-        <div class="move-number">{{i + 1}}.</div>
-        <div class="move" *ngFor="let move of fullMove" (click)="goto(move)">{{move}}</div>
-    </div>
+    
 </div>
