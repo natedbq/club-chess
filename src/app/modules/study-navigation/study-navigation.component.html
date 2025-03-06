@@ -3,15 +3,19 @@
     <h1>{{getTitle()}}</h1>
 
     <h3>Moves</h3>
-    <div class="variation-list" [ngClass]="{ 'disabled': getVariations().length == 0}">
-        <h4><i class="bi bi-eye show-toggle"> </i> Variations</h4>
+    <div class="variation-list" [ngClass]="{ 'disabled': getVariations().length == 0 || !showVariations}">
+        <h4>
+            <i class="bi bi-eye show-toggle" (click)="hide()" *ngIf="showVariations"> </i> 
+            <i class="bi bi-eye-slash show-toggle" (click)="show()" *ngIf="!showVariations"> </i> 
+            Variations
+        </h4>
     </div>
     <div>
         <div class="move-list">
-            <div *ngIf="getVariations().length == 0" class="move disabled">
+            <div *ngIf="getVariations().length == 0 || !showVariations" class="move disabled">
                 <div >-</div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="showVariations">
                 <div class="move" *ngFor="let name of getVariations()" (click)="next(name)">{{name}}</div>
             </div>
         </div>
