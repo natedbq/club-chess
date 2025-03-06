@@ -138,8 +138,15 @@ class StudyPointer{
       return this.pointer.movesToPosition[this.index + 1 ].name == name;
     }
     if(this.pointer instanceof Position){
-      
-      return this.pointer.continuations.some(c => c.movesToPosition[0].name == name)
+      console.log(JSON.stringify(this.pointer.continuations))
+      return this.pointer.continuations.some(c => //c.movesToPosition[0] && c.movesToPosition[0].name == name)
+        {
+          if(c.movesToPosition.length){
+            return c.movesToPosition[0].name == name;
+          }
+          return c.position?.move?.name == name
+        }
+      );
     }
 
     return false;
