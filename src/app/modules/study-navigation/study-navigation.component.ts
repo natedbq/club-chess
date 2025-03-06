@@ -13,6 +13,15 @@ export class StudyNavigationComponent {
   @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('please provide study navigation with update callback')};
   moves: Move[] = [];
+  showVariations: boolean = true;
+
+  show(): void {
+    this.showVariations = true;
+  }
+
+  hide(): void {
+    this.showVariations = false;
+  }
 
   first(): void {
 
