@@ -90,9 +90,21 @@ export class CastleState{
 
 export class Continuation {
     id: string | null = null;
+    title: string | null = null;
     description: string | null = null;
     movesToPosition: Move[] = [];
     position: Position | null = null;
+
+    public copy(): Continuation {
+        let c = new Continuation();
+        c.id = this.id;
+        c.title = this.title;
+        c.description = this.description;
+        c.movesToPosition = this.movesToPosition.map(m => m.copy());
+        c.position = this.position;
+
+        return c;
+    }
 }
 
 export class Study {
@@ -116,4 +128,11 @@ export class Position {
 export class Move {
     fen: string | null = null;
     name: string | null = null;
+
+    public copy(): Move {
+        let m = new Move();
+        m.name = this.name;
+        m.fen = this.fen;
+        return m;
+    }
 }

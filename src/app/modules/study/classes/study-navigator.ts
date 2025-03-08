@@ -82,7 +82,7 @@ export class StudyNavigator {
 
   addMove(move: Move){
     if(!this.hasNext(move.name ?? '-')){
-      
+      this.studyPointer = this.studyPointer.addMove(move);
     }
   }
 
@@ -137,8 +137,8 @@ class StudyPointer{
 
       return this.pointer.movesToPosition[this.index + 1 ].name == name;
     }
+
     if(this.pointer instanceof Position){
-      console.log(JSON.stringify(this.pointer.continuations))
       return this.pointer.continuations.some(c => //c.movesToPosition[0] && c.movesToPosition[0].name == name)
         {
           if(c.movesToPosition.length){
@@ -250,11 +250,67 @@ class StudyPointer{
     return 'Chess';
   }
 
-  addMove(move: Move): void { 
+  addMove(move: Move): StudyPointer { 
     if(this.hasNext(move.name ?? '-')){
-      return 
+      return this;
     }else{
-      
+      if(this.pointer instanceof Continuation){
+        return this.addToContinuation(move);
+      }
+      if(this.pointer instanceof Position){
+        return this.addToPosition(move);
+      }
+
+      return this;
     }
+  }
+
+  addToContinuation(move: Move): StudyPointer {
+    let c = <Continuation>this.pointer;
+    if(this.index + 1 >= c.movesToPosition.length){
+      c.movesToPosition.push(move);
+      return this;
+    }else{
+      let part1 = c.movesToPosition.slice(0, this.index + 1);
+      let part2 = c.movesToPosition.slice(this.index + 1);
+      
+      let newC1 = c.copy();
+      newC1.id = crypto.randomUUID();
+      newC1.movesToPosition = part2;
+
+      let newC2 = c.copy();
+      newC2.id = crypto.randomUUID();
+      newC2.movesToPosition = [move];
+
+      let p = new Position();
+      p.continuations = [newC1, newC2];
+      p.description = c.description;
+      p.title = c.title;
+      p.tags = [];
+      p.move = part1[part1.length - 1];
+      p.id = crypto.randomUUID();
+
+      c.movesToPosition = c.movesToPosition.slice(0, this.index);
+      c.position = p;
+
+      let studyPointer = new StudyPointer(this, p);
+      this.index--;
+
+      return studyPointer;
+    }
+  }
+
+  addToPosition(move: Move): StudyPointer{
+    let p = <Position>this.pointer;
+
+    let c = new Continuation();
+    c.id = crypto.randomUUID();
+    c.title = p.title;
+    c.description = p.description;
+    c.movesToPosition = [move];
+
+    p.continuations.push(c);
+
+    return this;
   }
 }
