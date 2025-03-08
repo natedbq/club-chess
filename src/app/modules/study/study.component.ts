@@ -38,21 +38,6 @@ export class StudyComponent implements OnInit {
       
     }
 
-    destroyItAll = (): void => {
-      if(this.study?.continuation?.position){
-        let p = new Position();
-        p.tags = [];
-        p.title = 'Poopoopeepee';
-        p.description = 'dd';
-        p.move = new Move();
-        p.continuations = [];
-        p.move.name = "kill";
-        p.move.fen = 'rnbqkb1r/ppp1pp1p/5np1/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq d6 0 4'
-        this.study.continuation.position = p;
-
-      }
-    }
-
     updateBoard = (move: Move | null): void => {
       if(move && this.game && move.fen && this.study){
         this.game = <Game>{
@@ -64,17 +49,15 @@ export class StudyComponent implements OnInit {
       };
       }
     }
-    i = 0;
+    
     updateStudy = (move: Move | null): void => {
       if(move) {
         if(this.studyNav.hasNext(move.name ?? '-')){
           this.studyNav.next(move.name)
         }else{
           this.studyNav.addMove(move);
+          this.studyNav.next(move.name)
         }
       }
     }
-    
-
-    
 }

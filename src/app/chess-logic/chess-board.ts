@@ -158,6 +158,7 @@ export class ChessBoard {
         });
 
         this._boardAsFEN = fen;
+        
         this._safeSquares = this.findSafeSqures();
     }
 
@@ -166,9 +167,81 @@ export class ChessBoard {
     }
 
     public get chessBoardView(): (FENChar | null)[][] {
-        return this.chessBoard.map(row => {
-            return row.map(piece => piece instanceof Piece ? piece.FENChar : null);
-        })
+        let fen = this.boardAsFEN;
+            let chessBoard:(FENChar | null)[][] = [
+                        [null, null, null, null, null, null, null, null],
+                        [null, null, null, null, null, null, null, null],
+                        [null, null, null, null, null, null, null, null],
+                        [null, null, null, null, null, null, null, null],
+                        [null, null, null, null, null, null, null, null],
+                        [null, null, null, null, null, null, null, null],
+                        [null, null, null, null, null, null, null, null],
+                        [null, null, null, null, null, null, null, null]
+                    ];
+                    let row = 7;
+            
+                    let parts = fen.split(" ");
+                    let position = parts[0].split('/');
+                
+                    [...position].forEach((r, i) => {
+                        let piece: FENChar | null = null;
+                        let col = 0;
+                        [...r].forEach(c => {
+                            piece = null;
+                            switch(c){
+                                case "p":
+                                    piece = FENChar.BlackPawn
+                                    break;
+                                case "n":
+                                    piece = FENChar.BlackKnight
+                                    break;
+                                case "b":
+                                    piece = FENChar.BlackBishop
+                                    break;
+                                case "r":
+                                    piece = FENChar.BlackRook
+                                    break;
+                                case "q":
+                                    piece = FENChar.BlackQueen
+                                    break;
+                                case "k":
+                                    piece = FENChar.BlackKing
+                                    break;
+                                case "P":
+                                    piece = FENChar.WhitePawn
+                                    break;
+                                case "N":
+                                    piece = FENChar.WhiteKnight
+                                    break;
+                                case "B":
+                                    piece = FENChar.WhiteBishop
+                                    break;
+                                case "R":
+                                    piece = FENChar.WhiteRook
+                                    break;
+                                case "Q":
+                                    piece = FENChar.WhiteQueen
+                                    break;
+                                case "K":
+                                    piece = FENChar.WhiteKing
+                                    break;
+            
+                            }
+                            if(/\d+/.test(c)){
+                                let n = Number(c);
+                                for(let x = 0; x < n; x++){
+                                    chessBoard[row][col] = null;
+                                    col++;
+                                }
+                            }else{
+                                chessBoard[row][col] = piece;
+                                col++;
+                            }
+                        });
+                        row--;
+                    });
+        
+                    return chessBoard;
     }
 
     public get safeSquares(): SafeSquares {

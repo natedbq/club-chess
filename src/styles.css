@@ -27,3 +27,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .show-toggle {
     color: white
 }
+
+.page {
+    margin: 8px;
+}
