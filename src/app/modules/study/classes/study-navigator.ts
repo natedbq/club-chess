@@ -8,6 +8,10 @@ export class StudyNavigator {
       this.studyPointer = new StudyPointer(null,study?.continuation);
   }
 
+  peek = (): Move |null => {
+    return this.studyPointer.peek();
+  }
+
   getTitle = (): string => {
     return this.studyPointer.getTitle();
   }
@@ -64,6 +68,7 @@ export class StudyNavigator {
     if(sp.pointer){
       this.studyPointer = sp;
     }
+
     return this.studyPointer.peek();
   }
   previous():  Move | null {
