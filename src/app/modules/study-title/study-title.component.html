@@ -1,0 +1,6 @@
+<div class="title">
+    <h2 *ngIf="!editingTitle" (click)="editTitle()" >
+        <div>{{getTitle()}}</div>
+    </h2>
+    <h2 *ngIf="editingTitle"><input class="edit" type="text" [(ngModel)]="workingTitle" #titleInput (blur)="commitTitle()"></h2>
+</div>

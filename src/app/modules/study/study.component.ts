@@ -56,7 +56,7 @@ export class StudyComponent implements OnInit {
           this.studyNav.next(move.name)
         }else{
           this.studyNav.addMove(move);
-          this.studyNav.next(move.name)
+          this.studyNav.next(move.name);
         }
       }
     }

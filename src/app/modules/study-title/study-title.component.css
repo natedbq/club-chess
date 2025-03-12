@@ -1,0 +1,7 @@
+.title{
+    width: 100%;
+    max-width: 360px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

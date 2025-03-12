@@ -31,3 +31,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .page {
     margin: 8px;
 }
+
+.edit {
+    background-color: rgb(42, 42, 42);
+    border: none;
+    color: white;
+    width: 100%;
+}
