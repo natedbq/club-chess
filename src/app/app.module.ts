@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'; 
 
 import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from './app.component';
@@ -15,6 +16,8 @@ import { StudyNavigationComponent } from './modules/study-navigation/study-navig
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { StudyTitleComponent } from './modules/study-title/study-title.component';
+import { StudyDescriptionComponent } from './modules/study-description/study-description.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +27,8 @@ import { MatIconModule } from '@angular/material/icon';
     RepertoireMenuComponent,
     StudyComponent,
     StudyNavigationComponent,
+    StudyTitleComponent,
+    StudyDescriptionComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,7 +37,8 @@ import { MatIconModule } from '@angular/material/icon';
     NavMenuComponent,
     PlayAgainstComputerDialogComponent,
     MoveListComponent,
-    CommonModule, MatButtonModule, MatIconModule
+    CommonModule, MatButtonModule, MatIconModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

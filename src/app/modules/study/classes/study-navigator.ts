@@ -16,6 +16,18 @@ export class StudyNavigator {
     return this.studyPointer.getTitle();
   }
 
+  setTitle = (title: string): void => {
+    this.studyPointer.setTitle(title);
+  }
+
+  getDescription = (): string => {
+    return this.studyPointer.getDescription();
+  }
+
+  setDescription = (desc: string) => {
+    this.studyPointer.setDescription(desc);
+  }
+
   getVariations = (): string[] => {
     return this.studyPointer.getVariations();
   }
@@ -242,17 +254,31 @@ class StudyPointer{
   }
 
   getTitle(): string {
-    if(this.pointer instanceof Continuation){
-      let parent = this.parent?.pointer;
-      if(parent instanceof Position){
-        return parent.title ?? '-';
-      }
-    }
-    if(this.pointer instanceof Position){
-      return this.pointer.title ?? '-';
+    let title = '';
+    let nav = this;
+    let p: Continuation | Position | null = nav.pointer;
+    while(title == '' && p){
+      title = p.title ?? ''
+      p = nav.parent?.pointer ?? null
     }
 
-    return 'Chess';
+    return title;
+  }
+
+  setTitle(title: string): void {
+    if(this.pointer){
+      this.pointer.title = title;
+    }
+  }
+
+  getDescription(): string {
+    return this.pointer?.description ?? '';
+  }
+
+  setDescription(desc: string): void {
+    if(this.pointer){
+      this.pointer.description = desc;
+    }
   }
 
   addMove(move: Move): StudyPointer { 
