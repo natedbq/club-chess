@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
-import { Continuation, Move, Position, Study } from "../chess-logic/models";
+import { Move, Position, Study } from "../chess-logic/models";
 
 @Injectable({
   providedIn: 'root'
@@ -38,24 +38,12 @@ export class StudyService {
     study.title = data.title;
     study.description = data.description;
     study.perspective = data.perspective;
-    study.fen = data.fen;
+    study.summaryFEN = data.summaryFEN;
 
-    if(data.continuation){
-      study.continuation = this.toContinuation(data.continuation);
+    if(data.position){
+      study.position = this.toPosition(data.position);
     }
     return study;
-  }
-
-  private toContinuation(data: any): Continuation {
-    let cont = new Continuation();
-    cont.description = data.description;
-    cont.id = data.id;
-    if(data.movesToPosition)
-      cont.movesToPosition = data.movesToPosition.map((m: Move)=> this.toMove(m));
-    if(data.position)
-      cont.position = this.toPosition(data.position);
-
-    return cont;
   }
 
   private toMove(data: any): Move {
@@ -73,8 +61,8 @@ export class StudyService {
     position.description = data.description;
     if(data.move)
       position.move = this.toMove(data.move);
-    if(data.continuations)
-      position.continuations = data.continuations.map((c: Continuation) => this.toContinuation(c));
+    if(data.positions)
+      position.positions = data.positions.map((c: Position) => this.toPosition(c));
     return position;
   }
 }

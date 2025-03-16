@@ -1,5 +1,5 @@
 import { Component, Input, SimpleChanges, EventEmitter, Output } from '@angular/core';
-import { Continuation, Move, Position, Study } from '../../chess-logic/models';
+import { Move, Position, Study } from '../../chess-logic/models';
 import { SlicePipe } from '@angular/common';
 import { StudyNavigator } from '../study/classes/study-navigator';
 

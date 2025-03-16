@@ -25,7 +25,7 @@ export class RepertoireMenuComponent {
             studyId: study.id,
             title: study.title,
             opening: study.title,
-            fen: study.fen,
+            fen: study.summaryFEN,
             fromWhitePerspective: study.perspective == Color.White
           })
         } )

@@ -27,7 +27,7 @@ export class StudyComponent implements OnInit {
             studyId: s.id,
             title: s.title,
             opening: s.title,
-            fen: s.continuation?.movesToPosition[0].fen,
+            fen: s.position?.move?.fen,
             fromWhitePerspective: s.perspective == Color.White
           };
         });
