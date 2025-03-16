@@ -36,7 +36,6 @@ export class StudyDescriptionComponent {
   commitDescription = (): void => {
     this.editingDescription = false;
     this.studyNav.setDescription(this.workingDescription);
-    console.log(this.getDescription())
   }
 
 }
