@@ -184,7 +184,6 @@ class StudyPointer{
     let nav: StudyPointer | null = this;
     let p: Position | null = nav.pointer;
     while(title == '' && nav != null){
-      console.log(p)
       title = p?.title ?? ''
       p = nav.parent?.pointer ?? null;
       nav = nav.parent
@@ -230,6 +229,8 @@ class StudyPointer{
     c.tags = p.tags;
     c.move = move;
     c.positions = []
+
+    p.positions.push(c);
 
     return this;
   }

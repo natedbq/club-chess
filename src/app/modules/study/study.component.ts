@@ -55,6 +55,7 @@ export class StudyComponent implements OnInit {
         if(this.studyNav.hasNext(move.name ?? '-')){
           this.studyNav.next(move.name)
         }else{
+          console.log('ddd')
           this.studyNav.addMove(move);
           this.studyNav.next(move.name);
         }
