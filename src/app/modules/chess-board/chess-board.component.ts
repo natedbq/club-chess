@@ -18,6 +18,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() game: Game| null = null;
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
   flipMode: boolean = false;
+  lastFEN: string = '-';
 
   public pieceImagePaths = pieceImagePaths;
 
@@ -87,7 +88,25 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       this.chessBoard.loadFromFEN(this.game.fen);
       this.chessBoardView = this.chessBoard.chessBoardView;
       this.flipMode = !this.game.fromWhitePerspective; // we only flip if player is Black. Its not racist, though.
+      if(this.lastFEN != '-' && this.lastFEN != this.game.fen){
+        this.moveSound(new Set<MoveType>([this.pickSoundForNavigator()]));
+      }
+      this.lastFEN = this.game.fen;
     }
+  }
+
+  pickSoundForNavigator(): MoveType {
+    let last = this.lastFEN.split(' ')[0];
+    let now = this.game?.fen?.split(' ')[0] ?? '';
+    if(((last.match(/P/g) || []).length > (now.match(/P/) || []).length && (last.match(/[NBRQ]/g) || []).length  < (now.match(/[NBRQ]/g) || []).length) 
+      || ((last.match(/p/g) || []).length > (now.match(/p/) || []).length && (last.match(/[nbrq]/g) || []).length  < (now.match(/[nbrq]/g) || []).length)){
+      return MoveType.Promotion;
+    }
+    if((last.match(/\D/g) || []).length > (now.match(/\D/g) || []).length){
+      return MoveType.Capture;
+    }
+
+    return MoveType.BasicMove;
   }
 
   public ngOnDestroy(): void {

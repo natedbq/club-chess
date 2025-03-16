@@ -1,0 +1,7 @@
+TODO b/sounds
+- Add check sound FX
+- Only play non basic sound when navigating forward in study 
+
+TODO b/navigation
+- go to start position
+- go to end of study
