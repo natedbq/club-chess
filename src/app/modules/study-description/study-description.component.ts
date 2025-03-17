@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { Study } from '../../chess-logic/models';
 import { StudyNavigator } from '../study/classes/study-navigator';
 
@@ -7,10 +7,10 @@ import { StudyNavigator } from '../study/classes/study-navigator';
   templateUrl: './study-description.component.html',
   styleUrls: ['./study-description.component.css']
 })
-export class StudyDescriptionComponent {
+export class StudyDescriptionComponent implements OnChanges{
   @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
   @Input() editable: boolean = true;
-  @ViewChild('titleInput') titleInput: any;
+  @ViewChild('descInput') descInput: any;
 
   editingDescription: boolean = false;
   workingDescription: string = '';
@@ -23,12 +23,17 @@ export class StudyDescriptionComponent {
     return desc;
   }
 
+  public ngOnChanges(changes: SimpleChanges){
+      this.workingDescription = this.getDescription();
+    }
+
   editDescription = (): void => {
     if(this.editable){
       this.editingDescription = true;
-      this.workingDescription = this.getDescription();
+      let desc = this.getDescription();
+      this.workingDescription = desc == '...' ? '' : desc;
       setTimeout(()=>{
-        this.titleInput.nativeElement.focus();
+        this.descInput.nativeElement.focus();
       },0);
     }
   }
