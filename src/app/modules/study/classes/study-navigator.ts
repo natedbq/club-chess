@@ -99,6 +99,10 @@ export class StudyNavigator {
   hasNext(name: string): boolean {
     return this.studyPointer.hasNext(name);
   }
+
+  getPointer(): StudyPointer {
+    return this.studyPointer;
+  }
 }
 
 
