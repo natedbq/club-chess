@@ -1,8 +1,8 @@
-<div>
-    <div>
-        <textarea class="description" rows="10" cols="80"  (blur)="commitDescription()" [(ngModel)]="workingDescription">{{getDescription()}}</textarea>
+
+    <div class="description">
+        <div class="desc-content" *ngIf="!editingDescription" (click)="editDescription()">{{getDescription()}}</div>
+        <textarea  *ngIf="editingDescription" type="text" [(ngModel)]="workingDescription" #descInput (blur)="commitDescription()"></textarea>
     </div>
-</div>
 
 <!--
 This is my chess study and I love it. Because it is good because Kamala Harris invented chess and she is black and that is good. Actually its really good.
