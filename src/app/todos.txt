@@ -5,3 +5,16 @@ TODO b/sounds
 TODO b/navigation
 - go to start position
 - go to end of study
+
+TODO b/drag-n-drop
+- Drag pieces to make move
+
+TODO b/scoring 
+- Player gets a score based on whether they respond to computer move according to their study or engine accuracy
+
+TODO b/interactive
+- study responds to player move 
+- study responds to player move with 1 second delay
+- study responds by selecting a random move from position variations
+- study responds to player by playing a computer recommended move 
+- study weighs move options and plays one the player typically responds less accurately to; dependency b/scoring
