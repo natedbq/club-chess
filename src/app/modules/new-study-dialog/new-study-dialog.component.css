@@ -1,0 +1,18 @@
+.choose-side {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.king-img {
+    width: 50px;
+    cursor: pointer;
+}
+
+.selected {
+    border: 2px white solid;
+    border-radius: 4px;
+}
+.not-selected {
+    border: 2px transparent solid;
+    border-radius: 4px;
+}
