@@ -29,6 +29,10 @@ TODO b/sounds
 TODO b/navigation
 - go to start position
 - go to end of study
+- make Main-Line
+    - button next to current move 
+    - button makes the node and parent nodes the first in the list of positions in all parents 
+    - causes spamming the next move button follow this line, and last move button follow this line
 
 TODO b/drag-n-drop
 - Drag pieces to make move

@@ -11,14 +11,26 @@ export class StudyNavigator {
       this.study = study;
   }
 
+  isStudyDirty = (): boolean => {
+    return this.study.isDirty;
+  }
+
   getStudy(): Study {
     let firstPosition = this.studyPointer.getRoot();
     this.study.position = firstPosition;
     return this.study;
   }
 
+  peekDirty = (): boolean => {
+    return this.studyPointer.peekDirty();
+  }
+
   peek = (): Move |null => {
     return this.studyPointer.peek();
+  }
+
+  canBeKey = (): boolean => {
+    return this.studyPointer.canBeKey();
   }
 
   getTitle = (): string => {
@@ -153,12 +165,27 @@ class StudyPointer{
     return false;
   }
 
+  peekDirty(): boolean {
+    return this.pointer?.isDirty ?? false;
+  }
+
   peek(): Move | null {
     if(this.pointer instanceof Position){
       return this.pointer.move;
     }
 
     return null;
+  }
+
+  canBeKey(): boolean {
+    let nav: StudyPointer | null = this.parent;
+    let canBeKeyPosition = true;
+    while(nav != null){
+      canBeKeyPosition = canBeKeyPosition && (nav.pointer?.positions.length ?? 0) <= 1;
+      nav = nav.parent
+    }
+
+    return canBeKeyPosition;
   }
 
   next(name: string | null = null): StudyPointer {

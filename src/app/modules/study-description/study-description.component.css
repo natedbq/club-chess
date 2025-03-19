@@ -2,7 +2,7 @@
     width: 200px;
     height: 600px;
     border: none;
-    background-color: rgb(42, 42, 42);
+    background-color: var(--gray);
     color: white;
     resize: none;
     margin: 7px;

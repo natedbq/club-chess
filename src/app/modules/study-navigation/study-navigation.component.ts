@@ -12,8 +12,31 @@ export class StudyNavigationComponent {
 
   @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('please provide study navigation with update callback')};
+  @Input() saveAction: () => void = () => {};
   moves: Move[] = [];
   showVariations: boolean = true;
+
+  canBeKey = (): boolean => {
+    return this.studyNav.canBeKey();
+  }
+
+  isKeyPosition = (): boolean => {
+    let move = this.studyNav.peek();
+    return move?.fen == this.studyNav.getStudy().summaryFEN;
+  }
+
+  makeKeyPosition = (): void => {
+    let study = this.studyNav.getStudy();
+    let move = this.studyNav.peek();
+    if(move && !this.isKeyPosition()){
+      study.isDirty = true;
+      study.summaryFEN = move.fen;
+    }
+  }
+
+  getMoveDetail = (): MoveDetail => {
+    return {name:this.studyNav.peek()?.name ?? '-', isDirty: this.studyNav.peekDirty() };
+  }
 
   show(): void {
     this.showVariations = true;
