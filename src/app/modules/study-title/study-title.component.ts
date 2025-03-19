@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild ,AfterViewInit  } from '@angular/core';
+import { Component, Input, ViewChild ,AfterViewInit, OnChanges, SimpleChanges  } from '@angular/core';
 import { StudyNavigator } from '../study/classes/study-navigator';
 import { Study } from '../../chess-logic/models';
 
@@ -7,7 +7,7 @@ import { Study } from '../../chess-logic/models';
   templateUrl: './study-title.component.html',
   styleUrls: ['./study-title.component.css']
 })
-export class StudyTitleComponent {
+export class StudyTitleComponent implements OnChanges {
   @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
   @Input() editable: boolean = true;
   @ViewChild('titleInput') titleInput: any;
@@ -17,6 +17,10 @@ export class StudyTitleComponent {
 
   isStudyDirty = (): boolean => {
     return this.studyNav.isStudyDirty();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.workingTitle = '';
   }
 
   getTitle = (): string => {

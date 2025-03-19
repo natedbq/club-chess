@@ -1,14 +1,14 @@
 <div class="page">
     <div class="padding-v-3">
-        <button class="btn b1">New Study</button>
+        <button class="btn b1" (click)="newStudy()">New Study</button>
     </div>
     <div ></div>
-    <div >
+    <div *ngIf="whiteGames().length">
         <h1>White</h1>
         <table>
             <tr>
                 <td  *ngFor="let game of whiteGames()"> 
-                    <h3>{{game.title}}</h3>
+                    <h3>{{game.title}} <button class="btn btn-icon btn-delete"><i class="bi bi-trash3 inline-block" (click)="delete(game)"></i></button></h3>
                 </td>
             </tr>
             <tr>
@@ -18,7 +18,7 @@
             </tr>
         </table>
     </div>
-    <div>
+    <div *ngIf="blackGames().length">
         <h1>Black</h1>
         <table>
             <tr>

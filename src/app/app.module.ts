@@ -18,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { StudyTitleComponent } from './modules/study-title/study-title.component';
 import { StudyDescriptionComponent } from './modules/study-description/study-description.component';
+import { NewStudyDialogComponent } from './modules/new-study-dialog/new-study-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { StudyDescriptionComponent } from './modules/study-description/study-des
     AppRoutingModule,
     NavMenuComponent,
     PlayAgainstComputerDialogComponent,
+    NewStudyDialogComponent,
     MoveListComponent,
     CommonModule, MatButtonModule, MatIconModule,
     FormsModule

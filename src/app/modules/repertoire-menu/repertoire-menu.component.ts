@@ -3,6 +3,8 @@ import { Data, Game } from 'src/app/utilities/data';
 import { StudyService } from '../../services/study.service';
 import { Router } from '@angular/router';
 import { Color } from '../../chess-logic/models';
+import { NewStudyDialogComponent } from '../new-study-dialog/new-study-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-repertoire-menu',
@@ -13,7 +15,7 @@ export class RepertoireMenuComponent {
 
   previews: Game[] = [];
 
-  constructor(private router: Router, private studyService: StudyService){
+  constructor(private router: Router, private studyService: StudyService, private dialog: MatDialog){
     this.init();
   }
 
@@ -45,6 +47,6 @@ export class RepertoireMenuComponent {
   }
 
   public newStudy(): void {
-
+      this.dialog.open(NewStudyDialogComponent);
   }
 }
