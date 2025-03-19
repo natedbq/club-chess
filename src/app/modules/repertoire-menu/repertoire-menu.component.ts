@@ -43,4 +43,8 @@ export class RepertoireMenuComponent {
   public loadStudy(id: string){
     this.router.navigate(['study/' + id]);
   }
+
+  public newStudy(): void {
+
+  }
 }
