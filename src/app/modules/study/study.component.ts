@@ -39,6 +39,7 @@ export class StudyComponent implements OnInit {
     }
 
     save = (): void => {
+      this.study = this.studyNav.getStudy();
       if(this.study){
         this.studyService.saveStudy(this.study).subscribe({
           

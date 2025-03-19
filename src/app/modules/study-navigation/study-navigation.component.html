@@ -14,7 +14,7 @@
                 <div >-</div>
             </div>
             <div class="row" *ngIf="showVariations">
-                <div class="move" *ngFor="let name of getVariations()" (click)="next(name)">{{name}}</div>
+                <div class="move" *ngFor="let move of getVariations()"  [ngClass]="{'dirty': move.isDirty}" (click)="next(move.name)">{{move.name}}</div>
             </div>
         </div>
     </div>
@@ -42,7 +42,7 @@
     <div class="move-list">
         <div class="row" *ngFor="let fullMove of getPreviousMoves(); let i = index">
             <div class="move-number">{{i + 1}}.</div>
-            <div class="move" *ngFor="let move of fullMove" (click)="goto(move)">{{move}}</div>
+            <div class="move" [ngClass]="{'dirty': move.isDirty}" *ngFor="let move of fullMove" (click)="goto(move.name)">{{move.name}}</div>
         </div>
     </div>
     

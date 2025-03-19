@@ -97,6 +97,7 @@ export class Study {
     perspective: Color | null = null;
     position: Position | null = null;
     summaryFEN:string | null = null;
+    isDirty: boolean = true;
 }
 
 export class Position {
@@ -106,6 +107,7 @@ export class Position {
     description: string | null = null;
     move: Move | null = null;
     positions: Position[] = [];
+    isDirty: boolean = true;
 }
 
 export class Move {
