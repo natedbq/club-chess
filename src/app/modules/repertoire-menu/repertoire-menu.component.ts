@@ -34,6 +34,13 @@ export class RepertoireMenuComponent {
     });
   }
 
+  public delete(game: Game): void {
+    this.studyService.deleteStudy(game.studyId).subscribe({
+      complete: () => window.location.reload(),
+      error: (e) => console.log(e)
+    });
+  }
+
   public whiteGames(): Game[] {
     return this.previews.filter(p => p.fromWhitePerspective);
   }
