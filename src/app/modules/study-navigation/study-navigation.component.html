@@ -1,6 +1,11 @@
 
 <div class="navigator">
     <h3>Moves</h3>
+    <div>
+        <h3 class="inline-block padding-right" [ngClass]="{dirty: getMoveDetail().isDirty}">{{getMoveDetail().name}}</h3>
+        <button class="btn btn-icon btn-commit" [ngClass]="{highlight: isKeyPosition()}"><i class="bi bi-key inline-block" *ngIf="canBeKey()" (click)="makeKeyPosition()"></i></button>
+        <button class="btn btn-icon btn-commit"><i class="bi bi-floppy inline-block" (click)="saveAction()"></i></button>
+    </div>
     <div class="variation-list" [ngClass]="{ 'disabled': getVariations().length == 0 || !showVariations}">
         <h4>
             <i class="bi bi-eye show-toggle" (click)="hide()" *ngIf="showVariations"> </i> 
