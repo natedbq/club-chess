@@ -1,4 +1,4 @@
-<div class="title">
+<div class="title" [ngClass]="{dirty: isStudyDirty()}">
     <h2 *ngIf="!editingTitle" (click)="editTitle()" >
         <div>{{getTitle()}}</div>
     </h2>

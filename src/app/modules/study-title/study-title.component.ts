@@ -15,6 +15,10 @@ export class StudyTitleComponent {
   editingTitle: boolean = false;
   workingTitle: string = '';
 
+  isStudyDirty = (): boolean => {
+    return this.studyNav.isStudyDirty();
+  }
+
   getTitle = (): string => {
     let title = this.studyNav.getTitle();
     return title;
