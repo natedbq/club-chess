@@ -7,6 +7,7 @@ import { Subscription, filter, fromEvent, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
 import { Game } from 'src/app/utilities/data';
 import { Move, Study } from '../../chess-logic/models';
+import { StudyService } from '../../services/study.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -17,6 +18,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isPreview: boolean = false;
   @Input() game: Game| null = null;
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
+  @Input() saveAction: () => void = () => {};
   flipMode: boolean = false;
   lastFEN: string = '-';
 
@@ -79,8 +81,13 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public save(): void {
-    let move = this.chessBoard.moveList[this.chessBoard.moveList.length - 1]?.length == 1 ? this.chessBoard.moveList[this.chessBoard.moveList.length - 1][0] : this.chessBoard.moveList[this.chessBoard.moveList.length - 1][1]
-    console.log(this.chessBoard.boardAsFEN,'-',move);
+    try{
+      let move = this.chessBoard.moveList[this.chessBoard.moveList.length - 1]?.length == 1 ? this.chessBoard.moveList[this.chessBoard.moveList.length - 1][0] : this.chessBoard.moveList[this.chessBoard.moveList.length - 1][1]
+      console.log(this.chessBoard.boardAsFEN,'-',move);
+    }catch(e){
+      console.log(e);
+    }
+    this.saveAction();
   }
 
   public ngOnChanges(changes: SimpleChanges){

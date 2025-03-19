@@ -12,6 +12,10 @@ export class StudyService {
 
   constructor(private http: HttpClient) { }
 
+  public saveStudy(study: Study): Observable<Object> {
+    return this.http.post(this.api + '/study', study);
+  }
+
   public getStudies(): Observable<Study[]> {
     return this.http.get<Study[]>(this.api + '/study/studies').pipe(map((studies) => {
         return studies.map(s => this.toStudy(s));
@@ -61,8 +65,11 @@ export class StudyService {
     position.description = data.description;
     if(data.move)
       position.move = this.toMove(data.move);
-    if(data.positions)
+    if(data.positions){
       position.positions = data.positions.map((c: Position) => this.toPosition(c));
+    }else{
+      position.positions = [];
+    }
     return position;
   }
 }

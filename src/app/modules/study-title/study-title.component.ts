@@ -17,9 +17,6 @@ export class StudyTitleComponent {
 
   getTitle = (): string => {
     let title = this.studyNav.getTitle();
-    if(title == ''){
-      title = 'Untitled';
-    }
     return title;
   }
 

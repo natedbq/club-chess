@@ -3,9 +3,11 @@ import { Move, Position, Study } from "../../../chess-logic/models";
 export class StudyNavigator {
 
   private studyPointer: StudyPointer;
+  private study: Study;
 
   constructor(study: Study){
       this.studyPointer = new StudyPointer(null,study?.position);
+      this.study = study;
   }
 
   peek = (): Move |null => {
@@ -13,7 +15,11 @@ export class StudyNavigator {
   }
 
   getTitle = (): string => {
-    return this.studyPointer.getTitle();
+    let title = this.studyPointer.getTitle();
+    if(title == ''){
+      title = this.study.title ?? 'Untitled';
+    }
+    return title;
   }
 
   setTitle = (title: string): void => {
