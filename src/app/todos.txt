@@ -21,3 +21,9 @@ TODO b/interactive
 
 TODO b/user-interface
 - make element sizing dynamic, chessboard, move list, description
+
+TODO b/new-study 
+- create new study
+
+TODO b/summary-fen 
+- give ability to mark position as key position, key position is saved as study's summaryFEN

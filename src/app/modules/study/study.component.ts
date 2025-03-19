@@ -38,6 +38,17 @@ export class StudyComponent implements OnInit {
       
     }
 
+    save = (): void => {
+      if(this.study){
+        this.studyService.saveStudy(this.study).subscribe({
+          
+          complete: () => console.log('Study saved'),
+          error : (e) => console.error('Error saving study:', e)
+        }
+        );;
+      }
+    }
+
     updateBoard = (move: Move | null): void => {
       if(move && this.game && move.fen && this.study){
         this.game = <Game>{
