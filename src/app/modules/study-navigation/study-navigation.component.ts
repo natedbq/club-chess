@@ -34,6 +34,10 @@ export class StudyNavigationComponent {
     }
   }
 
+  delete = (): void => {
+    
+  }
+
   getMoveDetail = (): MoveDetail => {
     return {name:this.studyNav.peek()?.name ?? '-', isDirty: this.studyNav.peekDirty() };
   }
