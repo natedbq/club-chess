@@ -265,6 +265,7 @@ class StudyPointer{
     }
   }
 
+
   addToPosition(move: Move): StudyPointer{
     let p = <Position>this.pointer;
 
