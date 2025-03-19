@@ -1,13 +1,3 @@
-TODO b/new-study 
-- create new study
-    - pop-up form to get name and perspective 
-    - new study created in ui and saved to back-end 
-    - page reloaded so new study shows 
-
-TODO b/delete-study 
-- button to delete study 
-    - confirmation prompt appears when delete button clicked 
-
 TODO b/save-load 
 - Fix: error: The specified key exceeded the maximum ModelState depth: 32
     - line gets too long. Payload gets too long. Might need to create a database :(
