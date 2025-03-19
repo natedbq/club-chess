@@ -1,4 +1,5 @@
 import { Move, Position, Study } from "../../../chess-logic/models";
+import { MoveDetail } from "../../study-navigation/study-navigation.component";
 
 export class StudyNavigator {
 
@@ -8,6 +9,12 @@ export class StudyNavigator {
   constructor(study: Study){
       this.studyPointer = new StudyPointer(null,study?.position);
       this.study = study;
+  }
+
+  getStudy(): Study {
+    let firstPosition = this.studyPointer.getRoot();
+    this.study.position = firstPosition;
+    return this.study;
   }
 
   peek = (): Move |null => {
@@ -34,7 +41,7 @@ export class StudyNavigator {
     this.studyPointer.setDescription(desc);
   }
 
-  getVariations = (): string[] => {
+  getVariations = (): MoveDetail[] => {
     return this.studyPointer.getVariations();
   }
 
@@ -46,29 +53,29 @@ export class StudyNavigator {
     return this.studyPointer.peek();
   }
 
-  getPreviousMoves(): string[][] {
+  getPreviousMoves(): MoveDetail[][] {
     //splice to dump the initial position
     let moves = this.getPreviousMovesHelper(this.studyPointer).splice(1);
 
-    let moveNames: string[][] = [];
+    let moveNames: MoveDetail[][] = [];
     for(let i = 0; i < moves.length; i++){
       if(i % 2){
         let moveIndex = moveNames[Math.floor(i / 2)];
-        moveIndex.push(moves[i].name ?? '-')
+        moveIndex.push(moves[i])
       }else{
-        moveNames.push([moves[i].name ?? '-'])
+        moveNames.push([moves[i]])
       }
     }
 
     return moveNames;
   }
 
-  getPreviousMovesHelper(p: StudyPointer | null, moves: Move[] = []): Move[] {    
+  getPreviousMovesHelper(p: StudyPointer | null, moves: MoveDetail[] = []): MoveDetail[] {    
     if(!p){
       return moves;
     }
     if(p.pointer instanceof Position && p.pointer.move){
-      return this.getPreviousMovesHelper(p.parent, moves).concat([p.pointer.move]);
+      return this.getPreviousMovesHelper(p.parent, moves).concat([{name:p.pointer.move.name ?? '-', isDirty: p.pointer.isDirty}]);
     }
 
     return moves;
@@ -179,10 +186,10 @@ class StudyPointer{
     return this;
   }
 
-  public getVariations(): string[] {
+  public getVariations(): MoveDetail[] {
     if(this.pointer instanceof Position){
       return this.pointer.positions.map((c) => {
-        return c.move?.name ?? '-';
+        return {name: c.move?.name ?? '-', isDirty: c.isDirty ?? false};
       })
     }
 
@@ -205,6 +212,7 @@ class StudyPointer{
   setTitle(title: string): void {
     if(this.pointer){
       this.pointer.title = title;
+      this.pointer.isDirty = true;
     }
   }
 
@@ -215,6 +223,7 @@ class StudyPointer{
   setDescription(desc: string): void {
     if(this.pointer){
       this.pointer.description = desc;
+      this.pointer.isDirty = true;
     }
   }
 
@@ -239,9 +248,21 @@ class StudyPointer{
     c.tags = p.tags;
     c.move = move;
     c.positions = []
+    c.isDirty = true;
 
     p.positions.push(c);
 
     return this;
+  }
+
+  getRoot(): Position | null {
+    let nav: StudyPointer | null = this;
+    let p: Position | null = nav.pointer;
+    while(nav != null){
+      p = nav.parent?.pointer ?? p;
+      nav = nav.parent
+    }
+
+    return p;
   }
 }

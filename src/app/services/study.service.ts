@@ -43,6 +43,7 @@ export class StudyService {
     study.description = data.description;
     study.perspective = data.perspective;
     study.summaryFEN = data.summaryFEN;
+    study.isDirty = false;
 
     if(data.position){
       study.position = this.toPosition(data.position);
@@ -63,6 +64,7 @@ export class StudyService {
     position.title = data.title;
     position.tags = data.tags;
     position.description = data.description;
+    position.isDirty = false;
     if(data.move)
       position.move = this.toMove(data.move);
     if(data.positions){

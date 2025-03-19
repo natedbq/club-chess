@@ -27,3 +27,19 @@ TODO b/new-study
 
 TODO b/summary-fen 
 - give ability to mark position as key position, key position is saved as study's summaryFEN
+    - Key Position may not be a branch, there must be a direct line between start position and key position with no branches in between
+- upon loading a study, study fast-forwards to key position, playing one move at a time
+
+TODO b/save-load 
+- Fix: error: The specified key exceeded the maximum ModelState depth: 32
+    - line gets too long. Payload gets too long. Might need to create a database :(
+- delete move 
+    - Add a piece to navigator that shows the move that was taken to get to the current position.
+    - trash icon appears next to the move.
+    - clicking the trash icon removes the position from the parent position
+- create database 
+    - studies are represented in a relational database in the back-end 
+    - studies reach front end in exactly the same format as they do now 
+- save button does not save the whole study, only the current node and the parent chain 
+X mark nodes as dirty if the UI edits them. Save only occurs on dirty nodes within the list of nodes defined above
+X moves in the move-list appear yellow if they are dirty

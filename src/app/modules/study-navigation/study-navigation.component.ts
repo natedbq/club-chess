@@ -50,7 +50,7 @@ export class StudyNavigationComponent {
     this.onUpdate(move);
   }
 
-  getPreviousMoves(): string[][] {
+  getPreviousMoves(): MoveDetail[][] {
     return this.studyNav.getPreviousMoves();
   }
 
@@ -58,7 +58,7 @@ export class StudyNavigationComponent {
     return this.studyNav.getTitle();
   }
 
-  getVariations(): string[] {
+  getVariations(): MoveDetail[] {
     let variations = this.studyNav.getVariations();
     if(variations.length >= 2){
       return variations;
@@ -66,4 +66,9 @@ export class StudyNavigationComponent {
     return [];
   }
 
+}
+
+export interface MoveDetail {
+  name: string;
+  isDirty: boolean;
 }
