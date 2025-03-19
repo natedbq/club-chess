@@ -3,7 +3,6 @@
     <h3>Moves</h3>
     <div>
         <h3 class="inline-block padding-right" [ngClass]="{dirty: getMoveDetail().isDirty}">{{getMoveDetail().name}}</h3>
-        <button class="btn btn-icon btn-commit" [ngClass]="{highlight: isKeyPosition()}"><i class="bi bi-key inline-block" *ngIf="canBeKey()" (click)="makeKeyPosition()"></i></button>
         <button class="btn btn-icon btn-commit" *ngIf="getMoveDetail().isDirty"><i class="bi bi-floppy inline-block" (click)="saveAction()"></i></button>
         <button class="btn btn-icon btn-delete"><i class="bi bi-trash3 inline-block" (click)="delete()"></i></button>
     </div>
