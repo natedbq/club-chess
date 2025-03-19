@@ -1,3 +1,6 @@
+TODO b/new-study 
+- create new study
+
 TODO b/save-load 
 - Fix: error: The specified key exceeded the maximum ModelState depth: 32
     - line gets too long. Payload gets too long. Might need to create a database :(
@@ -46,5 +49,4 @@ TODO b/interactive
 TODO b/user-interface
 - make element sizing dynamic, chessboard, move list, description
 
-TODO b/new-study 
-- create new study
+
