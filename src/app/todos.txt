@@ -26,7 +26,7 @@ TODO b/navigation
     - causes spamming the next move button follow this line, and last move button follow this line
 
 TODO b/drag-n-drop
-- Drag pieces to make move
+- promotion piece
 
 TODO b/scoring 
 - Player gets a score based on whether they respond to computer move according to their study or engine accuracy

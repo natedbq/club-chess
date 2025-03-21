@@ -21,6 +21,7 @@ import { StudyDescriptionComponent } from './modules/study-description/study-des
 import { NewStudyDialogComponent } from './modules/new-study-dialog/new-study-dialog.component';
 import { ConfirmDialogComponent } from './modules/confirm-dialog/confirm-dialog-component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MoveListComponent,
     CommonModule, MatButtonModule, MatIconModule,
     FormsModule,
+    DragDropModule,
     MatDialogModule,
     ConfirmDialogComponent
   ],

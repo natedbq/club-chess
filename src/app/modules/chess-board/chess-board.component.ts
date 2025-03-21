@@ -1,13 +1,13 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ChessBoard } from 'src/app/chess-logic/chess-board';
 import { CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares, pieceImagePaths } from 'src/app/chess-logic/models';
 import { SelectedSquare } from './models';
 import { ChessBoardService } from './chess-board.service';
-import { Subscription, filter, fromEvent, tap } from 'rxjs';
+import { EmptyError, Subscription, filter, fromEvent, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
 import { Game } from 'src/app/utilities/data';
 import { Move, Study } from '../../chess-logic/models';
-import { StudyService } from '../../services/study.service';
+import {CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-chess-board',
@@ -19,6 +19,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() game: Game| null = null;
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
   @Input() saveAction: () => void = () => {};
+  @ViewChild('chessBoard') chessBoardElement: any;
   flipMode: boolean = false;
   lastFEN: string = '-';
 
@@ -99,6 +100,36 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
         this.moveSound(new Set<MoveType>([this.pickSoundForNavigator()]));
       }
       this.lastFEN = this.game.fen;
+    }
+  }
+
+  onDragStart(x:number, y:number, element: HTMLElement): void {
+    if(this.flipMode){
+      this.move(x,y);
+    }else{
+      this.move(x,y);
+    }
+    console.log(x,y)
+  }
+
+  onDragEnd($event: CdkDragEnd, element: HTMLElement): void {
+    let boardRect = this.chessBoardElement.nativeElement.getBoundingClientRect();
+    let y = Math.floor(($event.dropPoint.x - boardRect.left) / (boardRect.right / 8) )
+    let x = Math.floor(($event.dropPoint.y - boardRect.top) / (boardRect.right / 8) );
+      console.log(y)
+    
+    if(!this.flipMode){
+      if(!this.isSquareSafeForSelectedPiece(7-x,y)){
+        this.chessBoardView = this.chessBoard.chessBoardView;
+      }else{
+        this.move(7-x,y);
+      }
+    }else{
+      if(!this.isSquareSafeForSelectedPiece(x,7-y)){
+          this.chessBoardView = this.chessBoard.chessBoardView;
+      }else{
+        this.move(x,7-y);
+      }
     }
   }
 
