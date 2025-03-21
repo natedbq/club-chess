@@ -19,6 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { StudyTitleComponent } from './modules/study-title/study-title.component';
 import { StudyDescriptionComponent } from './modules/study-description/study-description.component';
 import { NewStudyDialogComponent } from './modules/new-study-dialog/new-study-dialog.component';
+import { ConfirmDialogComponent } from './modules/confirm-dialog/confirm-dialog-component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,7 @@ import { NewStudyDialogComponent } from './modules/new-study-dialog/new-study-di
     StudyComponent,
     StudyNavigationComponent,
     StudyTitleComponent,
-    StudyDescriptionComponent,
+    StudyDescriptionComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +42,9 @@ import { NewStudyDialogComponent } from './modules/new-study-dialog/new-study-di
     NewStudyDialogComponent,
     MoveListComponent,
     CommonModule, MatButtonModule, MatIconModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule,
+    ConfirmDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Color } from '../../chess-logic/models';
 import { NewStudyDialogComponent } from '../new-study-dialog/new-study-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog-component';
 
 @Component({
   selector: 'app-repertoire-menu',
@@ -31,6 +32,19 @@ export class RepertoireMenuComponent {
             fromWhitePerspective: study.perspective == Color.White
           })
         } )
+    });
+  }
+
+  public delete(game: Game): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {data: {action: `Delete ${game.title}`}});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.studyService.deleteStudy(game.studyId).subscribe({
+          complete: () => window.location.reload(),
+          error: (e) => console.log(e)
+        });
+      }
     });
   }
 

@@ -16,6 +16,10 @@ export class StudyService {
     return this.http.post(this.api + '/study', study);
   }
 
+  public deleteStudy(id: string): Observable<Object> {
+    return this.http.post(this.api + '/study/delete/' + id, null);
+  }
+
   public getStudies(): Observable<Study[]> {
     return this.http.get<Study[]>(this.api + '/study/studies').pipe(map((studies) => {
         return studies.map(s => this.toStudy(s));
