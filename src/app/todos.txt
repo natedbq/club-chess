@@ -11,11 +11,6 @@ TODO b/save-load
 - save button does not save the whole study, only the current node and the parent chain, only dirty nodes
 
 TODO b/summary-fen 
-- invalidate key position 
-    - if user marks key position and then navigates backward and creates a new variation, invalidate key position 
-    - every time position is added as a branching position 
-        - follow parent chain upward
-        - if no parent node is key position, make first parent node with no branches the key position
 - upon loading a study, study fast-forwards to key position, playing one move at a time
 
 TODO b/sounds
@@ -31,7 +26,7 @@ TODO b/navigation
     - causes spamming the next move button follow this line, and last move button follow this line
 
 TODO b/drag-n-drop
-- Drag pieces to make move
+- promotion piece
 
 TODO b/scoring 
 - Player gets a score based on whether they respond to computer move according to their study or engine accuracy
@@ -46,5 +41,4 @@ TODO b/interactive
 TODO b/user-interface
 - make element sizing dynamic, chessboard, move list, description
 
-TODO b/new-study 
-- create new study
+

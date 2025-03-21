@@ -1,0 +1,16 @@
+<mat-dialog-content>
+    <h2 mat-dialog-title>New Study</h2>
+    <div class="padding">
+        <label>Title</label>
+        <input class="edit" type="text" [(ngModel)]="title">
+    </div>
+    <div class="choose-side padding">
+        <label>Perspective</label>
+        <img src="assets/pieces/white king.svg" class="king-img" [ngClass]="{'selected': perspective == 'w', 'not-selected': perspective != 'w'}" draggable="false" (click)="perspective = 'w'">
+        <img src="assets/pieces/black king.svg" class="king-img" [ngClass]="{'selected': perspective == 'b', 'not-selected': perspective != 'b'}" draggable="false" (click)="perspective = 'b'">
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="create()">Create</button>
+    <button mat-button mat-dialog-close (click)="cancel()">Cancel</button>
+</mat-dialog-actions>

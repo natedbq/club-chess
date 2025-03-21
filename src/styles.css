@@ -52,6 +52,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     display: inline-block;
 }
 
+.padding-v {
+    padding: 10px;
+}
+
+.padding-v-3 {
+    padding: 30px;
+}
+
+.padding {
+    padding: 10px;
+}
 .padding-right {
     padding-right: 10px;
 }
