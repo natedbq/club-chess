@@ -60,7 +60,6 @@
             </h2>
             
             <div *ngIf="isPromotionActive" class="promotion-dialog">
-                ttt
                 <img *ngFor="let piece of promotionPieces()" [src]="pieceImagePaths[piece]" (click)="promotePiece(piece)">
             
                 <span class="close-promotion-dialog" (click)="closePawnPromotionDialog()">

@@ -4,6 +4,7 @@ import { Color, Move, Position, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { Game } from '../../utilities/data';
 import { StudyNavigator } from './classes/study-navigator';
+import { PositionService } from '../../services/position.service';
 
 @Component({
   selector: 'app-study',
@@ -16,7 +17,7 @@ export class StudyComponent implements OnInit {
     game: Game | null = null;
     isWhitePerspective: boolean = true;
 
-    constructor(private route: ActivatedRoute, private studyService: StudyService) {
+    constructor(private route: ActivatedRoute, private studyService: StudyService, private positionService: PositionService) {
       let studyId = this.route.snapshot.paramMap.get('id');
       if(studyId){
         this.studyService.getStudy(studyId).subscribe(s => {
@@ -40,13 +41,23 @@ export class StudyComponent implements OnInit {
 
     save = (): void => {
       this.study = this.studyNav.getStudy();
+      let position = this.study.position;
       if(this.study){
         this.studyService.saveStudy(this.study).subscribe({
           
           complete: () => console.log('Study saved'),
           error : (e) => console.error('Error saving study:', e)
         }
-        );;
+        );
+      }
+
+      if(position){
+        this.positionService.save(position).subscribe({
+          
+          complete: () => console.log('Positions saved'),
+          error : (e) => console.error('Error saving position:', e)
+        }
+        );
       }
     }
 

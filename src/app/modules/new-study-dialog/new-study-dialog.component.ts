@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Color, Move, Position, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { FormsModule } from '@angular/forms';
+import { PositionService } from '../../services/position.service';
 
 @Component({
   selector: 'app-new-study-dialog',
@@ -19,7 +20,8 @@ export class NewStudyDialogComponent {
   title: string = "Untitled";
   constructor(private dialog: MatDialog,
       private router: Router,
-      private studyService: StudyService){
+      private studyService: StudyService,
+      private positionService: PositionService){
 
   }
 
@@ -34,6 +36,7 @@ export class NewStudyDialogComponent {
     study.perspective = this.perspective == 'w' ? Color.White : Color.Black;
     let position = new Position();
     study.position = position;
+    study.summaryFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     
     position.id = crypto.randomUUID();
     position.title = "";
@@ -44,8 +47,19 @@ export class NewStudyDialogComponent {
     position.move.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     position.positions = [];
 
+    study.positionId = position.id;
+
     this.studyService.saveStudy(study).subscribe({
-      complete: () => {window.location.reload();},
+      complete: () => {
+        this.positionService.save(position).subscribe({
+          complete: () => {
+            window.location.reload();
+          },
+          error: (e) => {
+            console.log(e);
+          }
+        });
+      },
       error: (e) => {
         console.log(e);
       }

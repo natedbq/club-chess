@@ -13,7 +13,15 @@ export class StudyService {
   constructor(private http: HttpClient) { }
 
   public saveStudy(study: Study): Observable<Object> {
-    return this.http.post(this.api + '/study', study);
+    let s = new Study();
+    s.id = study.id;
+    s.description = study.description;
+    s.perspective = study.perspective;
+    s.summaryFEN = study.summaryFEN;
+    s.title = study.title;
+    s.positionId = study.positionId;
+
+    return this.http.post(this.api + '/study', s);
   }
 
   public deleteStudy(id: string): Observable<Object> {
@@ -78,4 +86,6 @@ export class StudyService {
     }
     return position;
   }
+
+  
 }

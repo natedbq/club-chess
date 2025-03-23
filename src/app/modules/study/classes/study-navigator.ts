@@ -11,6 +11,20 @@ export class StudyNavigator {
       this.study = study;
   }
 
+  deleteCurrentPosition = (): void => {
+    if(this.peek()?.name == '-'){
+      return;
+    }
+
+    if(this.studyPointer.parent){
+      let moveToDelete = this.peek()?.name;
+      this.studyPointer = this.studyPointer.parent;
+      if(moveToDelete){
+        this.studyPointer.deletePosition(moveToDelete);
+      }
+    }
+  }
+
   isStudyDirty = (): boolean => {
     return this.study.isDirty;
   }
@@ -265,6 +279,23 @@ class StudyPointer{
     }
   }
 
+  deletePosition(name: string): void {
+    let index = -1;
+    if(this.pointer){
+      for(let i = 0; i < this.pointer.positions.length; i++){
+        let p = this.pointer.positions[i];
+        if(p.move?.name == name){
+          index = i;
+        }
+      }
+
+      if(index >= 0){
+        this.pointer.positions = this.pointer.positions.slice(0,index).concat(this.pointer.positions.slice(index+1))
+      }
+
+    }
+  }
+
 
   addToPosition(move: Move): StudyPointer{
     let p = <Position>this.pointer;
@@ -277,6 +308,7 @@ class StudyPointer{
     c.move = move;
     c.positions = []
     c.isDirty = true;
+    c.parentId = p.id;
 
     p.positions.push(c);
 

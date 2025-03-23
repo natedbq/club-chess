@@ -17,7 +17,8 @@ export class StudyNavigationComponent {
   showVariations: boolean = true;
 
   delete = (): void => {
-    
+    this.studyNav.deleteCurrentPosition();
+    this.onUpdate(this.studyNav.peek());
   }
 
   getMoveDetail = (): MoveDetail => {
