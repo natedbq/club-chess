@@ -48,8 +48,9 @@ export class StudyTitleComponent implements OnChanges {
 
   commitTitle = (): void => {
     this.editingTitle = false;
-    if(this.workingTitle != this.studyNav.getTitle())
-    this.studyNav.setTitle(this.workingTitle);
+    if(this.workingTitle != this.studyNav.getTitle()){
+      this.studyNav.setTitle(this.workingTitle);
+    }
   }
 
 }
