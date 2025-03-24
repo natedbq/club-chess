@@ -47,7 +47,5 @@ export class StudyService {
           return Study.toStudy(s);
         })
     }));
-  }
-
-  
+  }  
 }
