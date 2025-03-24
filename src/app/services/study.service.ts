@@ -35,8 +35,9 @@ export class StudyService {
   }
 
   public getStudy(id: string): Observable<Study> {
-    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((study) => {
-      return this.toStudy(study)
+    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((apiStudy) => {
+      let study = this.toStudy(apiStudy);
+      return study;
   }));
   }
   
@@ -56,6 +57,7 @@ export class StudyService {
     study.perspective = data.perspective;
     study.summaryFEN = data.summaryFEN;
     study.isDirty = false;
+    study.positionId = data.positionId;
 
     if(data.position){
       study.position = this.toPosition(data.position);
@@ -77,6 +79,7 @@ export class StudyService {
     position.tags = data.tags;
     position.description = data.description;
     position.isDirty = false;
+    
     if(data.move)
       position.move = this.toMove(data.move);
     if(data.positions){

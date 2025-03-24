@@ -16,21 +16,35 @@ export class StudyComponent implements OnInit {
     studyNav: StudyNavigator = new StudyNavigator(new Study());
     game: Game | null = null;
     isWhitePerspective: boolean = true;
+    loading = false;
 
     constructor(private route: ActivatedRoute, private studyService: StudyService, private positionService: PositionService) {
       let studyId = this.route.snapshot.paramMap.get('id');
+      this.loading = true;
       if(studyId){
         this.studyService.getStudy(studyId).subscribe(s => {
           this.study = s;
-          this.studyNav = new StudyNavigator(this.study);
-          this.isWhitePerspective = s.perspective == Color.White;
-          this.game = <Game>{
-            studyId: s.id,
-            title: s.title,
-            opening: s.title,
-            fen: s.position?.move?.fen,
-            fromWhitePerspective: s.perspective == Color.White
-          };
+
+          if(this.study.positionId){
+            this.positionService.getByParentId(this.study.positionId, 5).subscribe(children => {
+              if(this.study?.position?.positions){
+                this.study.position.positions = children;
+
+
+                this.studyNav = new StudyNavigator(this.study);
+                this.isWhitePerspective = s.perspective == Color.White;
+                this.game = <Game>{
+                  studyId: s.id,
+                  title: s.title,
+                  opening: s.title,
+                  fen: s.position?.move?.fen,
+                  fromWhitePerspective: s.perspective == Color.White
+                };
+              }
+              this.loading = false;
+            });
+          }
+
         });
       }
     }

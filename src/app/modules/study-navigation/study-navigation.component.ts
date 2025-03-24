@@ -44,6 +44,7 @@ export class StudyNavigationComponent {
 
   next(name: string | null = null): void {
     let tempStudyPoint = this.studyNav.getPointer();
+
     let move = this.studyNav.next(name);
 
     if(tempStudyPoint != this.studyNav.getPointer()){

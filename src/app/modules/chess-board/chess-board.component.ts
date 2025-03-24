@@ -109,14 +109,12 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     }else{
       this.move(x,y);
     }
-    console.log(x,y)
   }
 
   onDragEnd($event: CdkDragEnd, element: HTMLElement): void {
     let boardRect = this.chessBoardElement.nativeElement.getBoundingClientRect();
     let y = Math.floor(($event.dropPoint.x - boardRect.left) / (boardRect.right / 8) )
     let x = Math.floor(($event.dropPoint.y - boardRect.top) / (boardRect.right / 8) );
-      console.log(y)
     
     if(!this.flipMode){
       if(!this.isSquareSafeForSelectedPiece(7-x,y)){

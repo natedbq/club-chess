@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { finalize, forkJoin, map, Observable } from "rxjs";
+import { finalize, forkJoin, lastValueFrom, map, Observable } from "rxjs";
 import { Move, Position, Study } from "../chess-logic/models";
 
 @Injectable({
@@ -14,7 +14,6 @@ export class PositionService {
 
   public save(position: Position): Observable<Object> {
     let dirty = this.getDirtyPositions(position);
-    console.log(dirty.map(p => p.move?.name));
     var tasks = dirty.map(p => this.private_save(p));
     tasks.forEach(t => {
         t.subscribe({
@@ -25,6 +24,42 @@ export class PositionService {
           );
     })
     return forkJoin(tasks);
+  }
+
+  public getByParentId(id: string, depth:number = 0): Observable<Position[]> {
+    return this.http.get<Position[]>(this.api + `/parentId/${id}?depth=${depth}`).pipe(map((apiChildren) => {
+        let children = apiChildren.map(c => this.toPosition(c));
+        let tails: Position[] = [];
+        children.forEach(c => {
+            c.positions.forEach(gc => {
+                tails = tails.concat(this.getTailNodes(gc));
+            });
+        });
+
+        tails.forEach(t => {
+            if(t.id){
+                lastValueFrom(this.getByParentId(t.id, depth)).then(c => {
+                    t.positions = c;
+                });
+            }
+        })
+
+        return children;
+    }))
+  }
+
+  private getTailNodes(position: Position): Position[] {
+    let tails: Position[] = [];
+
+    if(position.positions.length == 0){
+        tails.push(position);
+    }else{
+        position.positions.forEach(p => {
+            tails = tails.concat(this.getTailNodes(p));
+        });
+    }
+
+    return tails;
   }
 
   private private_save(position: Position): Observable<Object> {
@@ -45,7 +80,6 @@ export class PositionService {
     let positionJobs: Position[] = [];
     
     if(position.isDirty){
-        console.log('dirty',position.move?.name)
       positionJobs.push(position);
     }
 
@@ -54,5 +88,29 @@ export class PositionService {
     })
 
     return positionJobs;
+  }
+
+  private toPosition(data: any): Position {
+    let position = new Position();
+    position.id = data.id;
+    position.title = data.title;
+    position.tags = data.tags;
+    position.description = data.description;
+    position.isDirty = false;
+    if(data.move)
+      position.move = this.toMove(data.move);
+    if(data.positions){
+      position.positions = data.positions.map((c: Position) => this.toPosition(c));
+    }else{
+      position.positions = [];
+    }
+    return position;
+  }
+
+  private toMove(data: any): Move {
+    let move = new Move();
+    move.fen = data.fen;
+    move.name = data.name;
+    return move;
   }
 }

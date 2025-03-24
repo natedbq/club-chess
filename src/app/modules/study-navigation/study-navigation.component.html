@@ -1,6 +1,6 @@
 
 <div class="navigator">
-    <h3>Moves</h3>
+    <h3 >Moves</h3>
     <div>
         <h3 class="inline-block padding-right" [ngClass]="{dirty: getMoveDetail().isDirty}">{{getMoveDetail().name}}</h3>
         <button class="btn btn-icon btn-commit" *ngIf="getMoveDetail().isDirty"><i class="bi bi-floppy inline-block" (click)="saveAction()"></i></button>
