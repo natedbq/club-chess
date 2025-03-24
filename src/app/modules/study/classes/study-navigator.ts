@@ -47,11 +47,8 @@ export class StudyNavigator {
     return this.studyPointer.canBeKey();
   }
 
-  getTitle = (): string => {
+  getTitle = (): string | null => {
     let title = this.studyPointer.getTitle();
-    if(title == ''){
-      title = this.study.title ?? 'Untitled';
-    }
     return title;
   }
 
@@ -238,7 +235,7 @@ class StudyPointer{
     return [];
   }
 
-  getTitle(): string {
+  getTitle(): string | null {
     let title = '';
     let nav: StudyPointer | null = this;
     let p: Position | null = nav.pointer;
@@ -248,7 +245,7 @@ class StudyPointer{
       nav = nav.parent
     }
 
-    return title;
+    return title == '' ? null : title;
   }
 
   setTitle(title: string): void {
@@ -303,8 +300,6 @@ class StudyPointer{
 
     let c = new Position();
     c.id = crypto.randomUUID();
-    c.title = p.title;
-    c.description = p.description;
     c.tags = p.tags;
     c.move = move;
     c.positions = []

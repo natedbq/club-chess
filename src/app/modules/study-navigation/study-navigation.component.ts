@@ -78,7 +78,7 @@ export class StudyNavigationComponent {
     return this.studyNav.getPreviousMoves();
   }
 
-  getTitle(): string {
+  getTitle(): string | null {
     return this.studyNav.getTitle();
   }
 

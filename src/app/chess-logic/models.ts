@@ -99,6 +99,22 @@ export class Study {
     summaryFEN:string | null = null;
     positionId: string | null = null;
     isDirty: boolean = true;
+
+    public static toStudy(data: any): Study{
+        let study = new Study();
+        study.id = data.id;
+        study.title = data.title;
+        study.description = data.description;
+        study.perspective = data.perspective;
+        study.summaryFEN = data.summaryFEN;
+        study.isDirty = false;
+        study.positionId = data.positionId;
+    
+        if(data.position){
+          study.position = Position.toPosition(data.position);
+        }
+        return study;
+      }  
 }
 
 export class Position {
@@ -110,6 +126,23 @@ export class Position {
     positions: Position[] = [];
     parentId: string | null = null;
     isDirty: boolean = true;
+
+    public static toPosition(data: any): Position {
+        let position = new Position();
+        position.id = data.id;
+        position.title = data.title;
+        position.tags = data.tags;
+        position.description = data.description;
+        position.isDirty = false;
+        if(data.move)
+            position.move = Move.toMove(data.move);
+        if(data.positions){
+            position.positions = data.positions.map((c: Position) => this.toPosition(c));
+        }else{
+            position.positions = [];
+        }
+        return position;
+    }
 }
 
 export class Move {
@@ -121,5 +154,12 @@ export class Move {
         m.name = this.name;
         m.fen = this.fen;
         return m;
+    }
+
+    public static toMove(data: any): Move {
+        let move = new Move();
+        move.fen = data.fen;
+        move.name = data.name;
+        return move;
     }
 }

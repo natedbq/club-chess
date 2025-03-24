@@ -25,11 +25,15 @@ export class StudyTitleComponent implements OnChanges {
 
   getTitle = (): string => {
     let title = this.studyNav.getTitle();
-    return title;
+    return title ? title : 'Untitled';
   }
 
   clearTitle = (): void => {
     this.studyNav.setTitle('');
+  }
+
+  hasTitle(): boolean {
+    return this.studyNav.getTitle() != null;
   }
 
   editTitle = (): void => {
@@ -44,6 +48,7 @@ export class StudyTitleComponent implements OnChanges {
 
   commitTitle = (): void => {
     this.editingTitle = false;
+    if(this.workingTitle != this.studyNav.getTitle())
     this.studyNav.setTitle(this.workingTitle);
   }
 
