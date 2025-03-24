@@ -48,6 +48,10 @@ export class PositionService {
     }))
   }
 
+  public delete(id: string): Observable<Object> {
+    return this.http.post(this.api + `/delete/${id}`, null);
+  }
+
   private getTailNodes(position: Position): Position[] {
     let tails: Position[] = [];
 
