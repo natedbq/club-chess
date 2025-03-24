@@ -1,0 +1,9 @@
+<mat-dialog-content>
+    <h1 mat-dialog-title *ngIf="data.action">{{data.action}}</h1>
+    <p>Are you sure?</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="onYesClick()">Yes</button>
+    <button mat-button mat-dialog-close (click)="onNoClick()">Cancel</button>
+</mat-dialog-actions>

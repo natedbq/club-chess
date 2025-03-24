@@ -1,4 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+    --yellow: #ffe100;
+    --soft-white: rgb(235, 233, 233);
+    --gray: rgb(42, 42, 42);
+    --green: rgb(12, 227, 80);
+    --blue: #66f2ff;
+    --red: rgb(249, 30, 74);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -20,7 +29,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .btn.b1 {
     margin: 5px;
-    background-color: rgb(235, 233, 233);
+    background-color: var(--soft-white);
     color: black;
 }
 
@@ -30,4 +39,59 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .page {
     margin: 8px;
+}
+
+.edit {
+    background-color: var(--gray);
+    border: none;
+    color: white;
+    width: 100%;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.padding-v {
+    padding: 10px;
+}
+
+.padding-v-3 {
+    padding: 30px;
+}
+
+.padding {
+    padding: 10px;
+}
+.padding-right {
+    padding-right: 10px;
+}
+
+.btn-icon {
+    color: white;
+    font-size: 20px;
+    border: 2px transparent solid;
+}
+
+.btn-icon:hover{
+    border: 2px white solid;
+    border-color: white;
+}
+
+.btn-delete:hover {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.btn-commit:hover {
+    color: var(--blue);
+    border-color: var(--blue);
+}
+
+.dirty{
+    color: var(--yellow);
+}
+
+.highlight {
+    color: var(--green);
 }

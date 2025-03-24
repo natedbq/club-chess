@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'; 
 
 import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from './app.component';
@@ -15,6 +16,12 @@ import { StudyNavigationComponent } from './modules/study-navigation/study-navig
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { StudyTitleComponent } from './modules/study-title/study-title.component';
+import { StudyDescriptionComponent } from './modules/study-description/study-description.component';
+import { NewStudyDialogComponent } from './modules/new-study-dialog/new-study-dialog.component';
+import { ConfirmDialogComponent } from './modules/confirm-dialog/confirm-dialog-component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -24,6 +31,8 @@ import { MatIconModule } from '@angular/material/icon';
     RepertoireMenuComponent,
     StudyComponent,
     StudyNavigationComponent,
+    StudyTitleComponent,
+    StudyDescriptionComponent
   ],
   imports: [
     BrowserModule,
@@ -31,8 +40,13 @@ import { MatIconModule } from '@angular/material/icon';
     AppRoutingModule,
     NavMenuComponent,
     PlayAgainstComputerDialogComponent,
+    NewStudyDialogComponent,
     MoveListComponent,
-    CommonModule, MatButtonModule, MatIconModule
+    CommonModule, MatButtonModule, MatIconModule,
+    FormsModule,
+    DragDropModule,
+    MatDialogModule,
+    ConfirmDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

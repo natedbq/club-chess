@@ -3,6 +3,9 @@ import { Data, Game } from 'src/app/utilities/data';
 import { StudyService } from '../../services/study.service';
 import { Router } from '@angular/router';
 import { Color } from '../../chess-logic/models';
+import { NewStudyDialogComponent } from '../new-study-dialog/new-study-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog-component';
 
 @Component({
   selector: 'app-repertoire-menu',
@@ -13,7 +16,7 @@ export class RepertoireMenuComponent {
 
   previews: Game[] = [];
 
-  constructor(private router: Router, private studyService: StudyService){
+  constructor(private router: Router, private studyService: StudyService, private dialog: MatDialog){
     this.init();
   }
 
@@ -25,10 +28,23 @@ export class RepertoireMenuComponent {
             studyId: study.id,
             title: study.title,
             opening: study.title,
-            fen: study.fen,
+            fen: study.summaryFEN,
             fromWhitePerspective: study.perspective == Color.White
           })
         } )
+    });
+  }
+
+  public delete(game: Game): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {data: {action: `Delete ${game.title}`}});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.studyService.deleteStudy(game.studyId).subscribe({
+          complete: () => window.location.reload(),
+          error: (e) => console.log(e)
+        });
+      }
     });
   }
 
@@ -42,5 +58,9 @@ export class RepertoireMenuComponent {
 
   public loadStudy(id: string){
     this.router.navigate(['study/' + id]);
+  }
+
+  public newStudy(): void {
+      this.dialog.open(NewStudyDialogComponent);
   }
 }

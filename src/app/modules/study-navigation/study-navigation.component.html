@@ -1,8 +1,11 @@
 
 <div class="navigator">
-    <h1>{{getTitle()}}</h1>
-
-    <h3>Moves</h3>
+    <h3 >Moves</h3>
+    <div>
+        <h3 class="inline-block padding-right" [ngClass]="{dirty: getMoveDetail().isDirty}">{{getMoveDetail().name}}</h3>
+        <button class="btn btn-icon btn-commit" *ngIf="getMoveDetail().isDirty"><i class="bi bi-floppy inline-block" (click)="saveAction()"></i></button>
+        <button class="btn btn-icon btn-delete"><i class="bi bi-trash3 inline-block" (click)="delete()"></i></button>
+    </div>
     <div class="variation-list" [ngClass]="{ 'disabled': getVariations().length == 0 || !showVariations}">
         <h4>
             <i class="bi bi-eye show-toggle" (click)="hide()" *ngIf="showVariations"> </i> 
@@ -16,7 +19,7 @@
                 <div >-</div>
             </div>
             <div class="row" *ngIf="showVariations">
-                <div class="move" *ngFor="let name of getVariations()" (click)="next(name)">{{name}}</div>
+                <div class="move" *ngFor="let move of getVariations()"  [ngClass]="{'dirty': move.isDirty}" (click)="next(move.name)">{{move.name}}</div>
             </div>
         </div>
     </div>
@@ -44,7 +47,7 @@
     <div class="move-list">
         <div class="row" *ngFor="let fullMove of getPreviousMoves(); let i = index">
             <div class="move-number">{{i + 1}}.</div>
-            <div class="move" *ngFor="let move of fullMove" (click)="goto(move)">{{move}}</div>
+            <div class="move" [ngClass]="{'dirty': move.isDirty}" *ngFor="let move of fullMove" (click)="goto(move.name)">{{move.name}}</div>
         </div>
     </div>
     

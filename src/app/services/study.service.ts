@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
-import { Continuation, Move, Position, Study } from "../chess-logic/models";
+import { Move, Position, Study } from "../chess-logic/models";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,22 @@ export class StudyService {
 
   constructor(private http: HttpClient) { }
 
+  public saveStudy(study: Study): Observable<Object> {
+    let s = new Study();
+    s.id = study.id;
+    s.description = study.description;
+    s.perspective = study.perspective;
+    s.summaryFEN = study.summaryFEN;
+    s.title = study.title;
+    s.positionId = study.positionId;
+
+    return this.http.post(this.api + '/study', s);
+  }
+
+  public deleteStudy(id: string): Observable<Object> {
+    return this.http.post(this.api + '/study/delete/' + id, null);
+  }
+
   public getStudies(): Observable<Study[]> {
     return this.http.get<Study[]>(this.api + '/study/studies').pipe(map((studies) => {
         return studies.map(s => this.toStudy(s));
@@ -19,8 +35,9 @@ export class StudyService {
   }
 
   public getStudy(id: string): Observable<Study> {
-    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((study) => {
-      return this.toStudy(study)
+    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((apiStudy) => {
+      let study = this.toStudy(apiStudy);
+      return study;
   }));
   }
   
@@ -38,24 +55,14 @@ export class StudyService {
     study.title = data.title;
     study.description = data.description;
     study.perspective = data.perspective;
-    study.fen = data.fen;
+    study.summaryFEN = data.summaryFEN;
+    study.isDirty = false;
+    study.positionId = data.positionId;
 
-    if(data.continuation){
-      study.continuation = this.toContinuation(data.continuation);
+    if(data.position){
+      study.position = this.toPosition(data.position);
     }
     return study;
-  }
-
-  private toContinuation(data: any): Continuation {
-    let cont = new Continuation();
-    cont.description = data.description;
-    cont.id = data.id;
-    if(data.movesToPosition)
-      cont.movesToPosition = data.movesToPosition.map((m: Move)=> this.toMove(m));
-    if(data.position)
-      cont.position = this.toPosition(data.position);
-
-    return cont;
   }
 
   private toMove(data: any): Move {
@@ -71,10 +78,17 @@ export class StudyService {
     position.title = data.title;
     position.tags = data.tags;
     position.description = data.description;
+    position.isDirty = false;
+    
     if(data.move)
       position.move = this.toMove(data.move);
-    if(data.continuations)
-      position.continuations = data.continuations.map((c: Continuation) => this.toContinuation(c));
+    if(data.positions){
+      position.positions = data.positions.map((c: Position) => this.toPosition(c));
+    }else{
+      position.positions = [];
+    }
     return position;
   }
+
+  
 }

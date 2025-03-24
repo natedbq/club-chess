@@ -88,32 +88,17 @@ export class CastleState{
     whiteQueenSide: boolean = true;
 }
 
-export class Continuation {
-    id: string | null = null;
-    title: string | null = null;
-    description: string | null = null;
-    movesToPosition: Move[] = [];
-    position: Position | null = null;
 
-    public copy(): Continuation {
-        let c = new Continuation();
-        c.id = this.id;
-        c.title = this.title;
-        c.description = this.description;
-        c.movesToPosition = this.movesToPosition.map(m => m.copy());
-        c.position = this.position;
-
-        return c;
-    }
-}
 
 export class Study {
     id: string | null = null;
     title: string | null = null;
     description: string | null = null;
     perspective: Color | null = null;
-    continuation: Continuation | null = null;
-    fen:string | null = null;
+    position: Position | null = null;
+    summaryFEN:string | null = null;
+    positionId: string | null = null;
+    isDirty: boolean = true;
 }
 
 export class Position {
@@ -122,7 +107,9 @@ export class Position {
     tags: string[] = [];
     description: string | null = null;
     move: Move | null = null;
-    continuations: Continuation[] = [];
+    positions: Position[] = [];
+    parentId: string | null = null;
+    isDirty: boolean = true;
 }
 
 export class Move {

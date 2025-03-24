@@ -1,7 +1,8 @@
 import { Component, Input, SimpleChanges, EventEmitter, Output } from '@angular/core';
-import { Continuation, Move, Position, Study } from '../../chess-logic/models';
+import { Move, Position, Study } from '../../chess-logic/models';
 import { SlicePipe } from '@angular/common';
 import { StudyNavigator } from '../study/classes/study-navigator';
+import { PositionService } from '../../services/position.service';
 
 @Component({
   selector: 'app-study-navigation',
@@ -12,8 +13,30 @@ export class StudyNavigationComponent {
 
   @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('please provide study navigation with update callback')};
+  @Input() saveAction: () => void = () => {};
   moves: Move[] = [];
   showVariations: boolean = true;
+
+  constructor(private positionService: PositionService){
+
+  }
+
+  delete = (): void => {
+    let position = this.studyNav.getPointer().pointer;
+    if(position?.id){
+      this.studyNav.deleteCurrentPosition();
+      this.positionService.delete(position.id).subscribe({
+        error: (e) => {
+          console.log(e);
+        }
+      });
+      this.onUpdate(this.studyNav.peek());
+    }
+  }
+
+  getMoveDetail = (): MoveDetail => {
+    return {name:this.studyNav.peek()?.name ?? '-', isDirty: this.studyNav.peekDirty() };
+  }
 
   show(): void {
     this.showVariations = true;
@@ -33,8 +56,13 @@ export class StudyNavigationComponent {
   }
 
   next(name: string | null = null): void {
+    let tempStudyPoint = this.studyNav.getPointer();
+
     let move = this.studyNav.next(name);
-    this.onUpdate(move);
+
+    if(tempStudyPoint != this.studyNav.getPointer()){
+      this.onUpdate(move);
+    }
   }
 
   last(): void {
@@ -46,7 +74,7 @@ export class StudyNavigationComponent {
     this.onUpdate(move);
   }
 
-  getPreviousMoves(): string[][] {
+  getPreviousMoves(): MoveDetail[][] {
     return this.studyNav.getPreviousMoves();
   }
 
@@ -54,7 +82,7 @@ export class StudyNavigationComponent {
     return this.studyNav.getTitle();
   }
 
-  getVariations(): string[] {
+  getVariations(): MoveDetail[] {
     let variations = this.studyNav.getVariations();
     if(variations.length >= 2){
       return variations;
@@ -62,4 +90,9 @@ export class StudyNavigationComponent {
     return [];
   }
 
+}
+
+export interface MoveDetail {
+  name: string;
+  isDirty: boolean;
 }

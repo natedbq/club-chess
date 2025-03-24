@@ -1,0 +1,9 @@
+
+    <div class="description">
+        <textarea readonly *ngIf="!editingDescription" (click)="editDescription()">{{getDescription()}}</textarea>
+        <textarea  *ngIf="editingDescription" type="text" [(ngModel)]="workingDescription" #descInput (blur)="commitDescription()"></textarea>
+    </div>
+
+<!--
+This is my chess study and I love it. Because it is good because Kamala Harris invented chess and she is black and that is good. Actually its really good.
+-->

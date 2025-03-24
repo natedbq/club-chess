@@ -1,12 +1,13 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ChessBoard } from 'src/app/chess-logic/chess-board';
 import { CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares, pieceImagePaths } from 'src/app/chess-logic/models';
 import { SelectedSquare } from './models';
 import { ChessBoardService } from './chess-board.service';
-import { Subscription, filter, fromEvent, tap } from 'rxjs';
+import { EmptyError, Subscription, filter, fromEvent, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
 import { Game } from 'src/app/utilities/data';
 import { Move, Study } from '../../chess-logic/models';
+import {CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-chess-board',
@@ -17,7 +18,10 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isPreview: boolean = false;
   @Input() game: Game| null = null;
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
+  @Input() saveAction: () => void = () => {};
+  @ViewChild('chessBoard') chessBoardElement: any;
   flipMode: boolean = false;
+  lastFEN: string = '-';
 
   public pieceImagePaths = pieceImagePaths;
 
@@ -78,8 +82,13 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public save(): void {
-    let move = this.chessBoard.moveList[this.chessBoard.moveList.length - 1]?.length == 1 ? this.chessBoard.moveList[this.chessBoard.moveList.length - 1][0] : this.chessBoard.moveList[this.chessBoard.moveList.length - 1][1]
-    console.log(this.chessBoard.boardAsFEN,'-',move);
+    try{
+      let move = this.chessBoard.moveList[this.chessBoard.moveList.length - 1]?.length == 1 ? this.chessBoard.moveList[this.chessBoard.moveList.length - 1][0] : this.chessBoard.moveList[this.chessBoard.moveList.length - 1][1]
+      console.log(this.chessBoard.boardAsFEN,'-',move);
+    }catch(e){
+      console.log(e);
+    }
+    this.saveAction();
   }
 
   public ngOnChanges(changes: SimpleChanges){
@@ -87,7 +96,53 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       this.chessBoard.loadFromFEN(this.game.fen);
       this.chessBoardView = this.chessBoard.chessBoardView;
       this.flipMode = !this.game.fromWhitePerspective; // we only flip if player is Black. Its not racist, though.
+      if(this.lastFEN != '-' && this.lastFEN != this.game.fen){
+        this.moveSound(new Set<MoveType>([this.pickSoundForNavigator()]));
+      }
+      this.lastFEN = this.game.fen;
     }
+  }
+
+  onDragStart(x:number, y:number, element: HTMLElement): void {
+    if(this.flipMode){
+      this.move(x,y);
+    }else{
+      this.move(x,y);
+    }
+  }
+
+  onDragEnd($event: CdkDragEnd, element: HTMLElement): void {
+    let boardRect = this.chessBoardElement.nativeElement.getBoundingClientRect();
+    let y = Math.floor(($event.dropPoint.x - boardRect.left) / (boardRect.right / 8) )
+    let x = Math.floor(($event.dropPoint.y - boardRect.top) / (boardRect.right / 8) );
+    
+    if(!this.flipMode){
+      if(!this.isSquareSafeForSelectedPiece(7-x,y)){
+        this.chessBoardView = this.chessBoard.chessBoardView;
+      }else{
+        this.move(7-x,y);
+      }
+    }else{
+      if(!this.isSquareSafeForSelectedPiece(x,7-y)){
+          this.chessBoardView = this.chessBoard.chessBoardView;
+      }else{
+        this.move(x,7-y);
+      }
+    }
+  }
+
+  pickSoundForNavigator(): MoveType {
+    let last = this.lastFEN.split(' ')[0];
+    let now = this.game?.fen?.split(' ')[0] ?? '';
+    if(((last.match(/P/g) || []).length > (now.match(/P/) || []).length && (last.match(/[NBRQ]/g) || []).length  < (now.match(/[NBRQ]/g) || []).length) 
+      || ((last.match(/p/g) || []).length > (now.match(/p/) || []).length && (last.match(/[nbrq]/g) || []).length  < (now.match(/[nbrq]/g) || []).length)){
+      return MoveType.Promotion;
+    }
+    if((last.match(/\D/g) || []).length > (now.match(/\D/g) || []).length){
+      return MoveType.Capture;
+    }
+
+    return MoveType.BasicMove;
   }
 
   public ngOnDestroy(): void {

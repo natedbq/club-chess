@@ -3,27 +3,51 @@
 <table>
     <tr>
         <td>
-            <div class="chess-board" [ngClass]="{'rotated': flipMode,'small': isPreview}">
-                <div *ngFor="let row of chessBoardView; let x = index" class="row">
-                    <div *ngFor="let piece of row; let y = index" class="square" [ngClass]="{'dark': isSquareDark(x, y), 
-                        'light':!isSquareDark(x, y),
-                        'selected-square': isSquareSelected(x, y),
-                        'last-move': isSquareLastMove(x, y),
-                        'king-in-check': isSquareChecked(x, y),
-                        'promotion-square': isSquarePromotionSquare(x, y),
-                        'small': isPreview
-            
-                    }
-                        
-                        " (click)="move(x, y)">
-            
-                        <div [ngClass]="{'safe-square': isSquareSafeForSelectedPiece(x, y)}"></div>
-            
-                        <img *ngIf="piece" [src]="pieceImagePaths[piece]" [alt]="piece" class="piece"
-                            [ngClass]="{'rotated': flipMode, 'small': isPreview}">
+            <div class="chess-board" [ngClass]="{'small': isPreview}"  #chessBoard>
+                <div *ngIf="flipMode">
+                    <!--As Black-->
+                    <div *ngFor="let row of chessBoardView; let x = index" class="row">
+                        <div  *ngFor="let piece of row.reverse(); let y = index" class="square" [ngClass]="{'dark': isSquareDark(x, 7-y), 
+                            'light':!isSquareDark(x, 7-y),
+                            'selected-square': isSquareSelected(x, 7-y),
+                            'last-move': isSquareLastMove(x, 7-y),
+                            'king-in-check': isSquareChecked(x, 7-y),
+                            'promotion-square': isSquarePromotionSquare(x, 7-y),
+                            'small': isPreview
+                
+                        }
+                            
+                            " (click)="move(x, 7-y)">
+                
+                            <div [ngClass]="{'safe-square': isSquareSafeForSelectedPiece(x, 7-y)}"></div>
+                
+                            <img #pieceImage *ngIf="piece" [src]="pieceImagePaths[piece]" [alt]="piece" class="piece"
+                                [ngClass]="{'small': isPreview}" cdkDrag (cdkDragStarted)="onDragStart(x,7-y,pieceImage)" (cdkDragEnded)="onDragEnd($event,pieceImage)">
+                        </div>
                     </div>
                 </div>
-            
+                <div *ngIf="!flipMode">
+                    <!--As White-->
+                    <div *ngFor="let row of chessBoardView.reverse(); let x = index" class="row">
+                        <div #htmlSquare  *ngFor="let piece of row; let y = index" class="square" [ngClass]="{'dark': isSquareDark(7-x, y), 
+                            'light':!isSquareDark(7-x, y),
+                            'selected-square': isSquareSelected(7-x, y),
+                            'last-move': isSquareLastMove(7-x, y),
+                            'king-in-check': isSquareChecked(7-x, y),
+                            'promotion-square': isSquarePromotionSquare(7-x, y),
+                            'small': isPreview,
+                
+                        }
+                            
+                            " (click)="move(7-x, y)">
+                
+                            <div [ngClass]="{'safe-square': isSquareSafeForSelectedPiece(7-x, y)}"></div>
+                
+                            <img #pieceImage *ngIf="piece" [src]="pieceImagePaths[piece]" [alt]="piece" class="piece"
+                                [ngClass]="{'small': isPreview}" cdkDrag (cdkDragStarted)="onDragStart(7-x,y,pieceImage)" (cdkDragEnded)="onDragEnd($event,pieceImage)" >
+                        </div>
+                    </div>
+                </div>
             
             </div>
             
