@@ -28,7 +28,7 @@ export class PositionService {
 
   public getByParentId(id: string, depth:number = 0): Observable<Position[]> {
     return this.http.get<Position[]>(this.api + `/parentId/${id}?depth=${depth}`).pipe(map((apiChildren) => {
-        let children = apiChildren.map(c => this.toPosition(c));
+        let children = apiChildren.map(c => Position.toPosition(c));
         let tails: Position[] = [];
         children.forEach(c => {
             c.positions.forEach(gc => {
@@ -92,29 +92,5 @@ export class PositionService {
     })
 
     return positionJobs;
-  }
-
-  private toPosition(data: any): Position {
-    let position = new Position();
-    position.id = data.id;
-    position.title = data.title;
-    position.tags = data.tags;
-    position.description = data.description;
-    position.isDirty = false;
-    if(data.move)
-      position.move = this.toMove(data.move);
-    if(data.positions){
-      position.positions = data.positions.map((c: Position) => this.toPosition(c));
-    }else{
-      position.positions = [];
-    }
-    return position;
-  }
-
-  private toMove(data: any): Move {
-    let move = new Move();
-    move.fen = data.fen;
-    move.name = data.name;
-    return move;
   }
 }
