@@ -13,7 +13,15 @@ export class StudyService {
   constructor(private http: HttpClient) { }
 
   public saveStudy(study: Study): Observable<Object> {
-    return this.http.post(this.api + '/study', study);
+    let s = new Study();
+    s.id = study.id;
+    s.description = study.description;
+    s.perspective = study.perspective;
+    s.summaryFEN = study.summaryFEN;
+    s.title = study.title;
+    s.positionId = study.positionId;
+
+    return this.http.post(this.api + '/study', s);
   }
 
   public deleteStudy(id: string): Observable<Object> {
@@ -27,8 +35,9 @@ export class StudyService {
   }
 
   public getStudy(id: string): Observable<Study> {
-    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((study) => {
-      return this.toStudy(study)
+    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((apiStudy) => {
+      let study = this.toStudy(apiStudy);
+      return study;
   }));
   }
   
@@ -48,6 +57,7 @@ export class StudyService {
     study.perspective = data.perspective;
     study.summaryFEN = data.summaryFEN;
     study.isDirty = false;
+    study.positionId = data.positionId;
 
     if(data.position){
       study.position = this.toPosition(data.position);
@@ -69,6 +79,7 @@ export class StudyService {
     position.tags = data.tags;
     position.description = data.description;
     position.isDirty = false;
+    
     if(data.move)
       position.move = this.toMove(data.move);
     if(data.positions){
@@ -78,4 +89,6 @@ export class StudyService {
     }
     return position;
   }
+
+  
 }

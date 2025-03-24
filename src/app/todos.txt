@@ -41,4 +41,8 @@ TODO b/interactive
 TODO b/user-interface
 - make element sizing dynamic, chessboard, move list, description
 
+TODO b/sql 
+- Server=DESKTOP-6KOUAD3\\SQLEXPRESS;Database=chess;Trusted_Connection=True;
+- log folder C:\Program Files\Microsoft SQL Server\160\Setup Bootstrap\Log\20250321_220003
+- setup ef core https://www.youtube.com/watch?v=SryQxUeChMc&list=PLdo4fOcmZ0oX7uTkjYwvCJDG2qhcSzwZ6
 

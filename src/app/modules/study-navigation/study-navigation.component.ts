@@ -2,6 +2,7 @@ import { Component, Input, SimpleChanges, EventEmitter, Output } from '@angular/
 import { Move, Position, Study } from '../../chess-logic/models';
 import { SlicePipe } from '@angular/common';
 import { StudyNavigator } from '../study/classes/study-navigator';
+import { PositionService } from '../../services/position.service';
 
 @Component({
   selector: 'app-study-navigation',
@@ -16,8 +17,21 @@ export class StudyNavigationComponent {
   moves: Move[] = [];
   showVariations: boolean = true;
 
+  constructor(private positionService: PositionService){
+
+  }
+
   delete = (): void => {
-    
+    let position = this.studyNav.getPointer().pointer;
+    if(position?.id){
+      this.studyNav.deleteCurrentPosition();
+      this.positionService.delete(position.id).subscribe({
+        error: (e) => {
+          console.log(e);
+        }
+      });
+      this.onUpdate(this.studyNav.peek());
+    }
   }
 
   getMoveDetail = (): MoveDetail => {
@@ -43,6 +57,7 @@ export class StudyNavigationComponent {
 
   next(name: string | null = null): void {
     let tempStudyPoint = this.studyNav.getPointer();
+
     let move = this.studyNav.next(name);
 
     if(tempStudyPoint != this.studyNav.getPointer()){

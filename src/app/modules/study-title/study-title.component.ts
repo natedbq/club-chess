@@ -28,6 +28,10 @@ export class StudyTitleComponent implements OnChanges {
     return title;
   }
 
+  clearTitle = (): void => {
+    this.studyNav.setTitle('');
+  }
+
   editTitle = (): void => {
     if(this.editable){
       this.editingTitle = true;
