@@ -4,12 +4,12 @@
         <td>
             <div *ngIf="loading">loading...</div>
             <div *ngIf="!loading">
-                <app-chess-board  [game]="game" [onUpdate]="updateStudy" [saveAction]="save"> </app-chess-board>
+                <app-chess-board  [moveData]="moveData" [onUpdate]="updateStudy" [saveAction]="save" [studyPerspective]="getPerspective()"> </app-chess-board>
             </div>
         </td>
         <td style="vertical-align: top;width: 380px;">
             <app-study-title [studyNav]="studyNav"></app-study-title>
-            <app-study-navigation [studyNav]="studyNav" [onUpdate]="updateBoard" [saveAction]="save"></app-study-navigation>
+            <app-study-navigation [studyNav]="studyNav" [onUpdate]="updateBoard" [saveAction]="save" [controller]="controller"></app-study-navigation>
         </td>
         <td style="vertical-align: top;">
             <app-study-description [studyNav]="studyNav"></app-study-description>

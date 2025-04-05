@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Color, Move, Position, Study } from '../../chess-logic/models';
+import { Color, Move, MoveData, Position, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
-import { Game } from '../../utilities/data';
 import { StudyNavigator } from './classes/study-navigator';
 import { PositionService } from '../../services/position.service';
+import { MoveDelegation, MoveDelegator } from '../../chess-logic/moveDelegator';
 
 @Component({
   selector: 'app-study',
@@ -14,11 +14,19 @@ import { PositionService } from '../../services/position.service';
 export class StudyComponent implements OnInit {
     study: Study | null = null;
     studyNav: StudyNavigator = new StudyNavigator(new Study());
-    game: Game | null = null;
+    moveData: MoveData | null = null;
     isWhitePerspective: boolean = true;
     loading = false;
+    controller = new StudyController();
 
     constructor(private route: ActivatedRoute, private studyService: StudyService, private positionService: PositionService) {
+      MoveDelegator.addDisqualifier((data: MoveData): boolean => {
+        return data.source != 'board';
+      });
+      MoveDelegator.addDisqualifier((data: MoveData): boolean => {
+        return data.player != this.study?.perspective
+      });
+      
       let studyId = this.route.snapshot.paramMap.get('id');
       this.loading = true;
       if(studyId){
@@ -30,15 +38,12 @@ export class StudyComponent implements OnInit {
               if(this.study?.position?.positions){
                 this.study.position.positions = children;
 
-
                 this.studyNav = new StudyNavigator(this.study);
                 this.isWhitePerspective = s.perspective == Color.White;
-                this.game = <Game>{
-                  studyId: s.id,
-                  title: s.title,
-                  opening: s.title,
-                  fen: s.position?.move?.fen,
-                  fromWhitePerspective: s.perspective == Color.White
+                this.moveData = <MoveData>{
+                  move: this.studyNav.peek(),
+                  source: 'study-component',
+                  player: s.perspective 
                 };
               }
               this.loading = false;
@@ -51,6 +56,13 @@ export class StudyComponent implements OnInit {
 
     ngOnInit(): void {
       
+    }
+
+    getPerspective = (): Color => {
+      if(this.study?.perspective){
+        return this.study.perspective;
+      }
+      return Color.White;
     }
 
     save = (): void => {
@@ -75,15 +87,10 @@ export class StudyComponent implements OnInit {
       }
     }
 
-    updateBoard = (move: Move | null): void => {
-      if(move && this.game && move.fen && this.study){
-        this.game = <Game>{
-        studyId: this.study.id,
-        title: this.study.title,
-        opening: this.study.title,
-        fen: move.fen,
-        fromWhitePerspective: this.study.perspective == Color.White
-      };
+    updateBoard = (data: MoveData): void => {
+      console.log('ddfdfdf')
+      if(data.move && this.moveData && data.move.fen && this.study){
+        this.moveData = data
       }
     }
     
@@ -95,6 +102,20 @@ export class StudyComponent implements OnInit {
           this.studyNav.addMove(move);
           this.studyNav.next(move.name);
         }
+
+        MoveDelegator.clearDelegations('navigator');
+        this.studyNav.getVariations().forEach(m => {
+          let moveDelegation: MoveDelegation = new MoveDelegation(() => true, (data: MoveData) => {
+            this.controller.next(data.move?.name ?? null);
+            console.log(m.name)
+          }, 1, 'navigator');
+          MoveDelegator.addDelegation(moveDelegation);
+          
+        })
       }
     }
+}
+
+export class StudyController {
+  public next: ( name: string | null) => void = () => {};
 }

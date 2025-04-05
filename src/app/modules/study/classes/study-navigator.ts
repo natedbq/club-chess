@@ -200,7 +200,6 @@ class StudyPointer{
   }
 
   next(name: string | null = null): StudyPointer {
-    console.log('here')
     if(this.pointer instanceof Position){
       let position: Position | null;
       if(!name){

@@ -3,11 +3,11 @@ import { ChessBoard } from 'src/app/chess-logic/chess-board';
 import { CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares, pieceImagePaths } from 'src/app/chess-logic/models';
 import { SelectedSquare } from './models';
 import { ChessBoardService } from './chess-board.service';
-import { EmptyError, Subscription, filter, fromEvent, tap } from 'rxjs';
+import { Subscription, filter, fromEvent, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
-import { Game } from 'src/app/utilities/data';
-import { Move, Study } from '../../chess-logic/models';
+import { Move, MoveData, Study } from '../../chess-logic/models';
 import {CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule} from '@angular/cdk/drag-drop';
+import { MoveDelegator } from '../../chess-logic/moveDelegator';
 
 @Component({
   selector: 'app-chess-board',
@@ -16,10 +16,14 @@ import {CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule} from '@angular/cd
 })
 export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isPreview: boolean = false;
-  @Input() game: Game| null = null;
+  @Input() moveData: MoveData | null = null;
+  studyId: string | null = null;
+  studyTitle: string | null = null;
   @Input() onUpdate: (move: Move | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
   @Input() saveAction: () => void = () => {};
   @ViewChild('chessBoard') chessBoardElement: any;
+  @Input() moveDelegation: ((data: MoveData) => void) | null = null;
+  @Input() studyPerspective: Color = Color.White;
   flipMode: boolean = false;
   lastFEN: string = '-';
 
@@ -81,25 +85,24 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     this.subscriptions$.add(keyEventSubscription$);
   }
 
-  public save(): void {
-    try{
-      let move = this.chessBoard.moveList[this.chessBoard.moveList.length - 1]?.length == 1 ? this.chessBoard.moveList[this.chessBoard.moveList.length - 1][0] : this.chessBoard.moveList[this.chessBoard.moveList.length - 1][1]
-      console.log(this.chessBoard.boardAsFEN,'-',move);
-    }catch(e){
-      console.log(e);
-    }
-    this.saveAction();
-  }
 
   public ngOnChanges(changes: SimpleChanges){
-    if(this.game){
-      this.chessBoard.loadFromFEN(this.game.fen);
+    if(this.moveData){
+      this.chessBoard.loadFromFEN(this.moveData?.move?.fen ?? '-');
       this.chessBoardView = this.chessBoard.chessBoardView;
-      this.flipMode = !this.game.fromWhitePerspective; // we only flip if player is Black. Its not racist, though.
-      if(this.lastFEN != '-' && this.lastFEN != this.game.fen){
+      this.flipMode = this.studyPerspective == Color.Black; // we only flip if player is Black. Its not racist, though.
+      if(this.lastFEN != '-' && this.lastFEN != this.moveData?.move?.fen){
         this.moveSound(new Set<MoveType>([this.pickSoundForNavigator()]));
       }
-      this.lastFEN = this.game.fen;
+      this.lastFEN = this.moveData.move?.fen ?? '-';
+    }
+
+    this.afterEveryMove();
+  }
+
+  public afterEveryMove(): void {
+    if(this.moveData){
+      MoveDelegator.delegate(this.moveData)
     }
   }
 
@@ -132,8 +135,12 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   pickSoundForNavigator(): MoveType {
+    if(this.moveData?.direction == 'back'){
+      return MoveType.BasicMove;
+    }
+
     let last = this.lastFEN.split(' ')[0];
-    let now = this.game?.fen?.split(' ')[0] ?? '';
+    let now = this.moveData?.move?.fen?.split(' ')[0] ?? '';
     if(((last.match(/P/g) || []).length > (now.match(/P/) || []).length && (last.match(/[NBRQ]/g) || []).length  < (now.match(/[NBRQ]/g) || []).length) 
       || ((last.match(/p/g) || []).length > (now.match(/p/) || []).length && (last.match(/[nbrq]/g) || []).length  < (now.match(/[nbrq]/g) || []).length)){
       return MoveType.Promotion;
@@ -212,6 +219,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private placingPiece(newX: number, newY: number): void {
+    let player = this.playerColor;
     if (!this.selectedSquare.piece) return;
     if (!this.isSquareSafeForSelectedPiece(newX, newY)) return;
 
@@ -229,10 +237,22 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     const { x: prevX, y: prevY } = this.selectedSquare;
-    this.updateBoard(prevX, prevY, newX, newY, this.promotedPiece);
+    let move = this.updateBoard(prevX, prevY, newX, newY, this.promotedPiece);
+
+    
+    this.moveData = {
+      studyId: this.studyId,
+      studyTitle: this.studyTitle,
+      source: 'board',
+      move: move,
+      player: player,
+      direction: 'place'
+    };
+    
+    this.afterEveryMove();
   }
 
-  protected updateBoard(prevX: number, prevY: number, newX: number, newY: number, promotedPiece: FENChar | null): void {
+  protected updateBoard(prevX: number, prevY: number, newX: number, newY: number, promotedPiece: FENChar | null): Move {
     let moveName = this.chessBoard.move(prevX, prevY, newX, newY, promotedPiece);
     this.chessBoardView = this.chessBoard.chessBoardView;
     this.markLastMoveAndCheckState(this.chessBoard.lastMove, this.chessBoard.checkState);
@@ -245,6 +265,8 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     move.name = moveName;
     move.fen = this.chessBoard.boardAsFEN
     this.onUpdate(move)
+
+    return move;
   }
 
   public promotePiece(piece: FENChar): void {

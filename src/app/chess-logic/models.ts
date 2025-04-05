@@ -163,3 +163,12 @@ export class Move {
         return move;
     }
 }
+
+export interface MoveData {
+    studyId: string | null;
+    studyTitle: string | null;
+    move: Move | null;
+    source: string | null;
+    direction: string | null;
+    player: Color | null;
+}
