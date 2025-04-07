@@ -29,7 +29,7 @@ export class StudyNavigator {
     return this.study.isDirty;
   }
 
-  getStudy(): Study {
+  getStudy = (): Study  => {
     let firstPosition = this.studyPointer.getRoot();
     this.study.position = firstPosition;
     return this.study;
@@ -76,7 +76,7 @@ export class StudyNavigator {
     return this.studyPointer.peek();
   }
 
-  getPreviousMoves(): MoveDetail[][] {
+  getPreviousMoves = (): MoveDetail[][] =>  {
     //splice to dump the initial position
     let moves = this.getPreviousMovesHelper(this.studyPointer).splice(1);
 
@@ -93,7 +93,7 @@ export class StudyNavigator {
     return moveNames;
   }
 
-  getPreviousMovesHelper(p: StudyPointer | null, moves: MoveDetail[] = []): MoveDetail[] {    
+  getPreviousMovesHelper = (p: StudyPointer | null, moves: MoveDetail[] = []): MoveDetail[] =>  {    
     if(!p){
       return moves;
     }
@@ -104,15 +104,15 @@ export class StudyNavigator {
     return moves;
   }
 
-  next(name: string | null = null):  Move | null {
+  next = (name: string | null = null):  Move | null => {
     let sp = this.studyPointer.next(name);
     if(sp.pointer){
       this.studyPointer = sp;
     }
-
+    
     return this.studyPointer.peek();
   }
-  previous():  Move | null {
+  previous = ():  Move | null =>  {
     let sp = this.studyPointer.previous();
     if(sp){
       this.studyPointer = sp;
@@ -126,17 +126,17 @@ export class StudyNavigator {
 
   }
 
-  addMove(move: Move){
+  addMove = (move: Move) => {
     if(!this.hasNext(move.name ?? '-')){
       this.studyPointer = this.studyPointer.addMove(move);
     }
   }
 
-  hasNext(name: string): boolean {
+  hasNext = (name: string): boolean => {
     return this.studyPointer.hasNext(name);
   }
 
-  getPointer(): StudyPointer {
+  getPointer = (): StudyPointer => {
     return this.studyPointer;
   }
 }
@@ -152,11 +152,11 @@ class StudyPointer{
     this.pointer = pointer;
   }
 
-  goto(name: string): StudyPointer | null{
+  goto = (name: string): StudyPointer | null => {
     return this.gotoHelper(name, this);
   }
 
-  gotoHelper(name: string, studyPointer: StudyPointer | null): StudyPointer | null {
+  gotoHelper = (name: string, studyPointer: StudyPointer | null): StudyPointer | null  => {
     if(studyPointer?.pointer instanceof Position){
       if(studyPointer.pointer.move?.name == name){
         return studyPointer;
@@ -168,7 +168,7 @@ class StudyPointer{
     return this;
   }
 
-  hasNext(name: string): boolean {
+  hasNext = (name: string): boolean  => {
     if(this.pointer instanceof Position){
       return this.pointer.positions.some(p => p.move?.name == name);
     }
@@ -180,7 +180,7 @@ class StudyPointer{
     return this.pointer?.isDirty ?? false;
   }
 
-  peek(): Move | null {
+  peek = (): Move | null  => {
     if(this.pointer instanceof Position){
       return this.pointer.move;
     }
@@ -188,7 +188,7 @@ class StudyPointer{
     return null;
   }
 
-  canBeKey(): boolean {
+  canBeKey = (): boolean  => {
     let nav: StudyPointer | null = this.parent;
     let canBeKeyPosition = true;
     while(nav != null){
@@ -199,7 +199,7 @@ class StudyPointer{
     return canBeKeyPosition;
   }
 
-  next(name: string | null = null): StudyPointer {
+  next = (name: string | null = null): StudyPointer =>  {
     if(this.pointer instanceof Position){
       let position: Position | null;
       if(!name){
@@ -216,7 +216,7 @@ class StudyPointer{
     return this;
   }
 
-  public previous(): StudyPointer | null {
+  public previous = (): StudyPointer | null =>  {
     if(this.pointer instanceof Position){
       return this.parent
     }
@@ -224,7 +224,7 @@ class StudyPointer{
     return this;
   }
 
-  public getVariations(): MoveDetail[] {
+  public getVariations = (): MoveDetail[]  => {
     if(this.pointer instanceof Position){
       return this.pointer.positions.map((c) => {
         return {name: c.move?.name ?? '-', isDirty: c.isDirty ?? false};
@@ -234,7 +234,7 @@ class StudyPointer{
     return [];
   }
 
-  getTitle(): string | null {
+  getTitle = (): string | null =>  {
     let title = '';
     let nav: StudyPointer | null = this;
     let p: Position | null = nav.pointer;
@@ -247,25 +247,25 @@ class StudyPointer{
     return title == '' ? null : title;
   }
 
-  setTitle(title: string): void {
+  setTitle = (title: string): void =>  {
     if(this.pointer){
       this.pointer.title = title;
       this.pointer.isDirty = true;
     }
   }
 
-  getDescription(): string {
+  getDescription = (): string  => {
     return this.pointer?.description ?? '';
   }
 
-  setDescription(desc: string): void {
+  setDescription = (desc: string): void =>  {
     if(this.pointer){
       this.pointer.description = desc;
       this.pointer.isDirty = true;
     }
   }
 
-  addMove(move: Move): StudyPointer { 
+  addMove = (move: Move): StudyPointer  => { 
     if(this.hasNext(move.name ?? '-')){
       return this;
     }else{
@@ -276,7 +276,7 @@ class StudyPointer{
     }
   }
 
-  deletePosition(name: string): void {
+  deletePosition = (name: string): void =>  {
     let index = -1;
     if(this.pointer){
       for(let i = 0; i < this.pointer.positions.length; i++){
@@ -294,7 +294,7 @@ class StudyPointer{
   }
 
 
-  addToPosition(move: Move): StudyPointer{
+  addToPosition = (move: Move): StudyPointer => {
     let p = <Position>this.pointer;
 
     let c = new Position();
@@ -310,7 +310,7 @@ class StudyPointer{
     return this;
   }
 
-  getRoot(): Position | null {
+  getRoot = (): Position | null  => {
     let nav: StudyPointer | null = this;
     let p: Position | null = nav.pointer;
     while(nav != null){

@@ -37,10 +37,11 @@ export class MoveDelegator {
                 return option;
             });
         let pick = Math.floor(Math.random() * floor);
-
         options.forEach(o => {
             if(pick >= o.low && pick <= o.high){
-                o.delgation.delegate(data);
+                setTimeout(() => {
+                    o.delgation.delegate(data);
+                  }, 500);
                 return;
             }
         })

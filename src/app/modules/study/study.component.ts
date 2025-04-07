@@ -20,10 +20,19 @@ export class StudyComponent implements OnInit {
     controller = new StudyController();
 
     constructor(private route: ActivatedRoute, private studyService: StudyService, private positionService: PositionService) {
-      MoveDelegator.addDisqualifier((data: MoveData): boolean => {
-        return data.source != 'board';
+      MoveDelegator.addDisqualifier((data: any): boolean => {
+        if(data.source){
+          return data.source != 'board';
+        }
+        if(data.arbiter){
+          return data.arbiter != 'init'
+        }
+        return false;
       });
-      MoveDelegator.addDisqualifier((data: MoveData): boolean => {
+      MoveDelegator.addDisqualifier((data: any): boolean => {
+        if(data.arbiter == 'init'){
+          return false;
+        }
         return data.player != this.study?.perspective
       });
       
@@ -47,6 +56,20 @@ export class StudyComponent implements OnInit {
                 };
               }
               this.loading = false;
+              if(!this.isWhitePerspective){
+                
+                setTimeout(() => {
+                  let pick = Math.floor(Math.random() * this.studyNav.getVariations().length)
+                  let  moveDelegation = new MoveDelegation(() => true, (data: MoveData) => {
+                    while(this.controller == null){}
+                    this.controller.next(this.studyNav.getVariations()[pick].name, true);
+                    MoveDelegator.clearDelegations('init');
+                  }, 1, 'init');
+
+                  MoveDelegator.addDelegation(moveDelegation);
+                  MoveDelegator.delegate({arbiter: 'init'});
+                }, 1000);
+              }
             });
           }
 
@@ -55,7 +78,6 @@ export class StudyComponent implements OnInit {
     }
 
     ngOnInit(): void {
-      
     }
 
     getPerspective = (): Color => {
@@ -88,8 +110,8 @@ export class StudyComponent implements OnInit {
     }
 
     updateBoard = (data: MoveData): void => {
-      console.log('ddfdfdf')
       if(data.move && this.moveData && data.move.fen && this.study){
+
         this.moveData = data
       }
     }
@@ -97,25 +119,31 @@ export class StudyComponent implements OnInit {
     updateStudy = (move: Move | null): void => {
       if(move) {
         if(this.studyNav.hasNext(move.name ?? '-')){
-          this.studyNav.next(move.name)
+          this.studyNav.next(move.name);
         }else{
           this.studyNav.addMove(move);
           this.studyNav.next(move.name);
         }
 
         MoveDelegator.clearDelegations('navigator');
-        this.studyNav.getVariations().forEach(m => {
-          let moveDelegation: MoveDelegation = new MoveDelegation(() => true, (data: MoveData) => {
-            this.controller.next(data.move?.name ?? null);
-            console.log(m.name)
-          }, 1, 'navigator');
-          MoveDelegator.addDelegation(moveDelegation);
-          
-        })
+
+        let variations = this.studyNav.getVariations();
+        if(variations.length > 0){
+          variations.forEach(m => {
+            let moveDelegation: MoveDelegation = new MoveDelegation(() => true, () => {
+              this.controller.next(m.name, true);
+  
+            }, 1, 'navigator');
+            MoveDelegator.addDelegation(moveDelegation);
+            
+          })
+        }else{
+          console.log('Fabi is thinking');
+        }
       }
     }
 }
 
 export class StudyController {
-  public next: ( name: string | null) => void = () => {};
+  public next: ( name: string | null, alwaysUpdate: boolean) => void = () => {};
 }

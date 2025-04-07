@@ -79,14 +79,13 @@ export class StudyNavigationComponent implements OnChanges {
     });
   }
 
-  next = (name: string | null = null): void => {
+  next = (name: string | null = null, alwaysUpdate: boolean = false): void => {
     let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
     let tempStudyPoint = this.studyNav.getPointer();
 
     let move = this.studyNav.next(name);
 
-    if(tempStudyPoint != this.studyNav.getPointer()){
-      console.log('dd')
+    if(tempStudyPoint != this.studyNav.getPointer() || alwaysUpdate){
       this.onUpdate({
         studyId: this.studyNav.getStudy().id,
         studyTitle: this.studyNav.getStudy().title,
