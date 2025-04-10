@@ -1,18 +1,21 @@
-import { Component, Input, SimpleChanges, EventEmitter, Output } from '@angular/core';
-import { Move, Position, Study } from '../../chess-logic/models';
+import { Component, Input, SimpleChanges, EventEmitter, Output, OnChanges } from '@angular/core';
+import { Color, Move, MoveData, Position, Study } from '../../chess-logic/models';
 import { SlicePipe } from '@angular/common';
 import { StudyNavigator } from '../study/classes/study-navigator';
 import { PositionService } from '../../services/position.service';
+import { FENConverter } from '../../chess-logic/FENConverter';
+import { StudyController } from '../study/study.component';
 
 @Component({
   selector: 'app-study-navigation',
   templateUrl: './study-navigation.component.html',
   styleUrls: ['./study-navigation.component.css']
 })
-export class StudyNavigationComponent {
+export class StudyNavigationComponent implements OnChanges {
 
   @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
-  @Input() onUpdate: (move: Move | null) => void = () => {console.log('please provide study navigation with update callback')};
+  @Input() controller: StudyController | null = null;
+  @Input() onUpdate: (move: MoveData ) => void = () => {console.log('please provide study navigation with update callback')};
   @Input() saveAction: () => void = () => {};
   moves: Move[] = [];
   showVariations: boolean = true;
@@ -20,8 +23,14 @@ export class StudyNavigationComponent {
   constructor(private positionService: PositionService){
 
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    if(this.controller){
+      this.controller.next = this.next;
+    }
+  }
 
   delete = (): void => {
+    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
     let position = this.studyNav.getPointer().pointer;
     if(position?.id){
       this.studyNav.deleteCurrentPosition();
@@ -30,7 +39,14 @@ export class StudyNavigationComponent {
           console.log(e);
         }
       });
-      this.onUpdate(this.studyNav.peek());
+      this.onUpdate({
+        studyId: this.studyNav.getStudy().id,
+        studyTitle: this.studyNav.getStudy().title,
+        move: this.studyNav.peek(),
+        source: 'navigator',
+        direction: 'delete',
+        player: player
+      });
     }
   }
 
@@ -51,17 +67,33 @@ export class StudyNavigationComponent {
   }
 
   previous(): void {
+    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
     let move = this.studyNav.previous();
-    this.onUpdate(move);
+    this.onUpdate({
+      studyId: this.studyNav.getStudy().id,
+      studyTitle: this.studyNav.getStudy().title,
+      move: move,
+      source: 'navigator',
+      direction: 'back',
+      player: player
+    });
   }
 
-  next(name: string | null = null): void {
+  next = (name: string | null = null, alwaysUpdate: boolean = false): void => {
+    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
     let tempStudyPoint = this.studyNav.getPointer();
 
     let move = this.studyNav.next(name);
 
-    if(tempStudyPoint != this.studyNav.getPointer()){
-      this.onUpdate(move);
+    if(tempStudyPoint != this.studyNav.getPointer() || alwaysUpdate){
+      this.onUpdate({
+        studyId: this.studyNav.getStudy().id,
+        studyTitle: this.studyNav.getStudy().title,
+        move: move,
+        source: 'navigator',
+        direction: 'next',
+        player: player
+      });
     }
   }
 
@@ -71,7 +103,15 @@ export class StudyNavigationComponent {
 
   goto(name: string): void {
     let move = this.studyNav.goto(name);
-    this.onUpdate(move);
+    let player = Color.White == FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '-') ? Color.Black : Color.White
+    this.onUpdate({
+      studyId: this.studyNav.getStudy().id,
+      studyTitle: this.studyNav.getStudy().title,
+      move: move,
+      source: 'navigator',
+      direction: 'goto',
+      player: player
+    });
   }
 
   getPreviousMoves(): MoveDetail[][] {

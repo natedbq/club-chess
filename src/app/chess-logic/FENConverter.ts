@@ -60,6 +60,10 @@ export class FENConverter {
         return FEN;
     }
 
+    public static getPlayer(fen: string): Color{
+        return fen.split(' ')[1] == 'w' ? Color.White : Color.Black;
+    }
+
     private castlingAvailability(board: (Piece | null)[][]): string {
         const castlingPossibilities = (color: Color): string => {
             let castlingAvailability: string = "";

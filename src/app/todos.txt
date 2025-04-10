@@ -46,3 +46,7 @@ TODO b/sql
 - log folder C:\Program Files\Microsoft SQL Server\160\Setup Bootstrap\Log\20250321_220003
 - setup ef core https://www.youtube.com/watch?v=SryQxUeChMc&list=PLdo4fOcmZ0oX7uTkjYwvCJDG2qhcSzwZ6
 
+TODO/move-data
+- there is a bug with the navigator. If you make a move, then go back and then go forward, moveData thinks its a player move when it should be a navigator move.. or not?
+
+

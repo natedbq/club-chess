@@ -8,12 +8,12 @@
         <table>
             <tr>
                 <td  *ngFor="let game of whiteGames()"> 
-                    <h3>{{game.title}} <button class="btn btn-icon btn-delete"><i class="bi bi-trash3 inline-block" (click)="delete(game)"></i></button></h3>
+                    <h3>{{game.studyTitle}} <button class="btn btn-icon btn-delete"><i class="bi bi-trash3 inline-block" (click)="delete(game)"></i></button></h3>
                 </td>
             </tr>
             <tr>
                 <td  *ngFor="let game of whiteGames()"> 
-                    <app-chess-board [isPreview]="true" [game]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>
+                    <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>
                 </td>
             </tr>
         </table>
@@ -23,12 +23,12 @@
         <table>
             <tr>
                 <td  *ngFor="let game of blackGames()"> 
-                    <h3 >{{game.title}}</h3>
+                    <h3 >{{game.studyTitle}}</h3>
                 </td>
             </tr>
             <tr>
                 <td  *ngFor="let game of blackGames()"> 
-                    <app-chess-board [isPreview]="true" [game]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>
+                    <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>
                 </td>
             </tr>
         </table>
