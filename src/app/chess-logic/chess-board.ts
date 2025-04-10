@@ -538,7 +538,7 @@ export class ChessBoard {
 
         if (this._playerColor === Color.White) this.fullNumberOfMoves++;
         this._boardAsFEN = this.FENConverter.convertBoardToFEN(this.chessBoard, this._playerColor, this._lastMove, this.fiftyMoveRuleCounter, this.fullNumberOfMoves, this._castleState);
-        this.updateThreeFoldRepetitionDictionary(this._boardAsFEN);
+        //this.updateThreeFoldRepetitionDictionary(this._boardAsFEN);
         this._safeSquares = this.findSafeSqures();
 
 

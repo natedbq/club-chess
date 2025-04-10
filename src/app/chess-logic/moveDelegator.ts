@@ -28,15 +28,21 @@ export class MoveDelegator {
 
                 let option = <Option>{
                     low: floor,
-                    high: floor + o.weight,
+                    high: floor + o.weight - 1,
                     delgation: o
                 }
 
-                floor = floor + o.weight + 1;
+                floor = floor + o.weight;
 
                 return option;
             });
         let pick = Math.floor(Math.random() * floor);
+
+        let c = 0;
+        for(let i = 0; i < 1000; i++){
+            c += (Math.floor(Math.random() * floor))
+        }
+        console.log(c)
         options.forEach(o => {
             if(pick >= o.low && pick <= o.high){
                 setTimeout(() => {
