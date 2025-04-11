@@ -1,56 +1,78 @@
+import { Queue } from "./models";
+
 export class MoveDelegator {
-    protected static delegations: MoveDelegation[] = [];
-    protected static disqualifiers: ((data: any) => boolean)[] = [];
 
-    public static addDelegation(d: MoveDelegation): void {
-        this.delegations.push(d);
-    }
+    private static run: boolean = false;
+    private static ready: boolean = false;
 
-    public static addDisqualifier(func: (data: any) => boolean): void {
-        this.disqualifiers.push(func);
-    }
+    private static queue: Queue<MoveDelegation[]> = new Queue();
 
-    public static clearDelegations(from: string = 'all'): void {
-        if(from == 'all'){
-            this.delegations = [];
+    public static addDelegations(d: MoveDelegation | MoveDelegation[]): void {
+        if(Array.isArray(d)){
+            this.queue.enqueue(d);
         }else{
-            this.delegations = this.delegations.filter(d => d.arbiter != from);
+            this.queue.enqueue([d]);
         }
     }
 
-    public static delegate(data: any): void {
-        if(this.disqualifiers.some(d => d(data))){
-            return;
+    
+    public static start = (): void => {
+        this.run = true;
+        this.consume();
+    }
+
+    public static stop = (): void => {
+        this.run = false;
+        this.ready = false;
+    }
+
+    private static consume = (): void => {
+        if(this.ready){
+            this.ready = this.delegate();
+        }else{
+            this.ready = true;
         }
-        let floor = 0;
-        let options = this.delegations.filter(d => d.weight > 0 && d.conditional(data))
-            .map((o) => {
-
-                let option = <Option>{
-                    low: floor,
-                    high: floor + o.weight - 1,
-                    delgation: o
-                }
-
-                floor = floor + o.weight;
-
-                return option;
-            });
-        let pick = Math.floor(Math.random() * floor);
-
-        let c = 0;
-        for(let i = 0; i < 1000; i++){
-            c += (Math.floor(Math.random() * floor))
+        if(this.run){
+            setTimeout(() => {
+                this.consume();
+            }, 500);
         }
-        console.log(c)
-        options.forEach(o => {
-            if(pick >= o.low && pick <= o.high){
-                setTimeout(() => {
-                    o.delgation.delegate(data);
-                  }, 500);
-                return;
+    }
+
+    private static delegate(): boolean {
+        let delegations = this.queue.dequeue();
+
+        if(!delegations){
+            return false;
+        }else{
+            let floor = 0;
+            let options = delegations.filter(d => d.weight > 0)
+                .map((o) => {
+    
+                    let option = <Option>{
+                        low: floor,
+                        high: floor + o.weight - 1,
+                        delgation: o
+                    }
+    
+                    floor = floor + o.weight;
+    
+                    return option;
+                });
+            let pick = Math.floor(Math.random() * floor);
+    
+            let c = 0;
+            for(let i = 0; i < 1000; i++){
+                c += (Math.floor(Math.random() * floor))
             }
-        })
+            
+            options.forEach(o => {
+                if(pick >= o.low && pick <= o.high){
+                    o.delgation.delegate();
+                }
+            })
+            return true;
+        }
     }
 }
 
@@ -61,15 +83,17 @@ interface Option {
 }
 
 export class MoveDelegation {
-    public conditional: ((data: any) => boolean) = () => false;
-    public delegate: (data: any) => void = () => {};
+    public delegate: () => void = () => {};
     public weight: number = 1;
     public arbiter: string = 'none'
 
-    constructor(conditional: ((data: any) => boolean), delegate: (data: any) => void, weight: number = 1, arbiter: string = 'none'){
-        this.conditional = conditional;
+    constructor(delegate: () => void, weight: number = 1, arbiter: string = 'none'){
         this.delegate = delegate;
         this.weight = weight;
         this.arbiter = arbiter
     }
+}
+
+export class DelegationSet {
+    public delegations: MoveDelegation[] = [];
 }

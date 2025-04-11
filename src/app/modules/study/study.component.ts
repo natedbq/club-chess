@@ -5,6 +5,7 @@ import { StudyService } from '../../services/study.service';
 import { StudyNavigator } from './classes/study-navigator';
 import { PositionService } from '../../services/position.service';
 import { MoveDelegation, MoveDelegator } from '../../chess-logic/moveDelegator';
+import { MoveDetail } from '../study-navigation/study-navigation.component';
 
 @Component({
   selector: 'app-study',
@@ -20,21 +21,6 @@ export class StudyComponent implements OnInit {
     controller = new StudyController();
 
     constructor(private route: ActivatedRoute, private studyService: StudyService, private positionService: PositionService) {
-      MoveDelegator.addDisqualifier((data: any): boolean => {
-        if(data.source){
-          return data.source != 'board';
-        }
-        if(data.arbiter){
-          return data.arbiter != 'init'
-        }
-        return false;
-      });
-      MoveDelegator.addDisqualifier((data: any): boolean => {
-        if(data.arbiter == 'init'){
-          return false;
-        }
-        return data.player != this.study?.perspective
-      });
       
       let studyId = this.route.snapshot.paramMap.get('id');
       this.loading = true;
@@ -60,14 +46,32 @@ export class StudyComponent implements OnInit {
                 
                 setTimeout(() => {
                   let pick = Math.floor(Math.random() * this.studyNav.getVariations().length)
-                  let  moveDelegation = new MoveDelegation(() => true, (data: MoveData) => {
+                  let  moveDelegation = new MoveDelegation(() => {
                     while(this.controller == null){}
                     this.controller.next(this.studyNav.getVariations()[pick].name, true);
-                    MoveDelegator.clearDelegations('init');
                   }, 1, 'init');
 
-                  MoveDelegator.addDelegation(moveDelegation);
-                  MoveDelegator.delegate({arbiter: 'init'});
+                  MoveDelegator.addDelegations(moveDelegation);
+
+                  // let moves = 5;
+                  // let someFunc = () => {
+                  //   this.controller.next(this.studyNav.getVariations()[0].name, true);
+                  //   if(moves-- > 0){
+
+                  //     let moveDel = new MoveDelegation(() => {
+                  //       someFunc();
+                  //     });
+                  //     MoveDelegator.addDelegations(moveDel);
+                  //   }
+                  // }
+                  // let moveDel = new MoveDelegation(() => {
+                  //   someFunc();
+                    
+                  // });
+                  //MoveDelegator.addDelegations(moveDel);
+
+                  
+                  MoveDelegator.start();
                 }, 1000);
               }
             });
@@ -125,18 +129,18 @@ export class StudyComponent implements OnInit {
           this.studyNav.next(move.name);
         }
 
-        MoveDelegator.clearDelegations('navigator');
 
         let variations = this.studyNav.getVariations();
         if(variations.length > 0){
+          let delegations: MoveDelegation[] = [];
           variations.forEach(m => {
-            let moveDelegation: MoveDelegation = new MoveDelegation(() => true, () => {
+            let moveDelegation: MoveDelegation = new MoveDelegation(() => {
               this.controller.next(m.name, true);
   
             }, 1, 'navigator');
-            MoveDelegator.addDelegation(moveDelegation);
-            
-          })
+            delegations.push(moveDelegation);
+          });
+          MoveDelegator.addDelegations(delegations);
         }else{
           console.log('Fabi is thinking');
         }
@@ -146,4 +150,5 @@ export class StudyComponent implements OnInit {
 
 export class StudyController {
   public next: ( name: string | null, alwaysUpdate: boolean) => void = () => {};
+  public getVariations: () => MoveDetail[] = () => [];
 }
