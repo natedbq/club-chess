@@ -97,14 +97,8 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       this.lastFEN = this.moveData.move?.fen ?? '-';
     }
 
-    this.afterEveryMove();
   }
 
-  public afterEveryMove(): void {
-    if(this.moveData){
-      MoveDelegator.delegate(this.moveData)
-    }
-  }
 
   onDragStart(x:number, y:number, element: HTMLElement): void {
     if(this.flipMode){
@@ -248,8 +242,6 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       player: player,
       direction: 'place'
     };
-    
-    this.afterEveryMove();
   }
 
   protected updateBoard(prevX: number, prevY: number, newX: number, newY: number, promotedPiece: FENChar | null): Move {
