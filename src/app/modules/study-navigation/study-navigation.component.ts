@@ -26,6 +26,10 @@ export class StudyNavigationComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if(this.controller){
       this.controller.next = this.next;
+      this.controller.getVariations = this.getVariations;
+      this.controller.first = this.first;
+      this.controller.previous = this.previous;
+      this.controller.refresh = this.refresh;
     }
   }
 
@@ -45,13 +49,14 @@ export class StudyNavigationComponent implements OnChanges {
         move: this.studyNav.peek(),
         source: 'navigator',
         direction: 'delete',
-        player: player
+        player: player,
+        extra: {}
       });
     }
   }
 
   getMoveDetail = (): MoveDetail => {
-    return {name:this.studyNav.peek()?.name ?? '-', isDirty: this.studyNav.peekDirty() };
+    return {name:this.studyNav.peek()?.name ?? '-', isDirty: this.studyNav.peekDirty(), position: this.studyNav.getPointer().pointer };
   }
 
   show(): void {
@@ -62,11 +67,41 @@ export class StudyNavigationComponent implements OnChanges {
     this.showVariations = false;
   }
 
-  first(): void {
+  refresh = (): void => {
+    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
+;
 
+      this.onUpdate({
+        studyId: this.studyNav.getStudy().id,
+        studyTitle: this.studyNav.getStudy().title,
+        move: this.studyNav.peek(),
+        source: 'navigator',
+        direction: 'next',
+        player: player,
+        extra: {}
+      });
   }
 
-  previous(): void {
+  first = (): void => {
+    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
+    let tempStudyPoint = this.studyNav.getPointer();
+    
+    let move = this.studyNav.first();
+
+    if(tempStudyPoint != this.studyNav.getPointer()){
+      this.onUpdate({
+        studyId: this.studyNav.getStudy().id,
+        studyTitle: this.studyNav.getStudy().title,
+        move: move,
+        source: 'navigator',
+        direction: 'next',
+        player: player,
+        extra: {}
+      });
+    }
+  }
+
+  previous = (): void => {
     let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
     let move = this.studyNav.previous();
     this.onUpdate({
@@ -75,7 +110,8 @@ export class StudyNavigationComponent implements OnChanges {
       move: move,
       source: 'navigator',
       direction: 'back',
-      player: player
+      player: player,
+      extra: {}
     });
   }
 
@@ -92,7 +128,8 @@ export class StudyNavigationComponent implements OnChanges {
         move: move,
         source: 'navigator',
         direction: 'next',
-        player: player
+        player: player,
+        extra: {}
       });
     }
   }
@@ -110,7 +147,8 @@ export class StudyNavigationComponent implements OnChanges {
       move: move,
       source: 'navigator',
       direction: 'goto',
-      player: player
+      player: player,
+      extra: {}
     });
   }
 
@@ -135,4 +173,5 @@ export class StudyNavigationComponent implements OnChanges {
 export interface MoveDetail {
   name: string;
   isDirty: boolean;
+  position: Position | null | undefined;
 }

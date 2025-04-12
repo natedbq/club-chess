@@ -37,7 +37,7 @@ export class ComputerModeComponent extends ChessBoardComponent implements OnInit
         if (player !== this.stockfishService.computerConfiguration$.value.color) return;
 
         const { prevX, prevY, newX, newY, promotedPiece } = await firstValueFrom(this.stockfishService.getBestMove(FEN));
-        this.updateBoard(prevX, prevY, newX, newY, promotedPiece);
+        this.updateBoard(prevX, prevY, newX, newY, promotedPiece, player);
       }
     });
 

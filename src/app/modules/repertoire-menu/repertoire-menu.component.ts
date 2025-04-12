@@ -5,6 +5,7 @@ import { Color, Move, MoveData } from '../../chess-logic/models';
 import { NewStudyDialogComponent } from '../new-study-dialog/new-study-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog-component';
+import { FloatingImageService } from '../../services/floating-image/floating-image.service';
 
 @Component({
   selector: 'app-repertoire-menu',
@@ -32,7 +33,8 @@ export class RepertoireMenuComponent {
             move: move,
             source: 'repertoire-menu',
             direction: 'preview',
-            player: study.perspective
+            player: study.perspective,
+            extra: {}
           })
         } )
     });

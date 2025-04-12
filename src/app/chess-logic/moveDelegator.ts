@@ -26,6 +26,10 @@ export class MoveDelegator {
         this.ready = false;
     }
 
+    public static clear = (): void => {
+        this.queue = new Queue();
+    }
+
     private static consume = (): void => {
         if(this.ready){
             this.ready = this.delegate();
@@ -61,10 +65,19 @@ export class MoveDelegator {
                 });
             let pick = Math.floor(Math.random() * floor);
     
-            let c = 0;
+            let c = options.map(o => {
+                return 0;
+            });
+
             for(let i = 0; i < 1000; i++){
-                c += (Math.floor(Math.random() * floor))
+                let choose = Math.floor(Math.random() * floor);
+                options.forEach((o,i) => {
+                    if(choose >= o.low && choose <= o.high){
+                        c[i]++;
+                    }
+                })
             }
+            //console.log(JSON.stringify(c));
             
             options.forEach(o => {
                 if(pick >= o.low && pick <= o.high){

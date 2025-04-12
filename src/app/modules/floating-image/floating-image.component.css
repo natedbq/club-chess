@@ -1,0 +1,44 @@
+.floating-image {
+    position: fixed;
+    z-index: 9999;
+    transition: opacity .1s, top 0.3s ease, left 0.3s ease;
+  }
+  .floating-image img {
+    width: 100px;
+    height: auto;
+  }
+  
+.animated-grow {
+    animation: bounceGrow .5s ease-out forwards;
+  }
+  
+  @keyframes bounceGrow {
+    0% {
+      transform: scale(0) translate(0, 0);
+      opacity: 0;
+    }
+    30% {
+      transform: scale(1.1) translate(48px, -48px);
+      opacity: 1;
+    }
+    60% {
+      transform: scale(0.85) translate(38px, -38px);
+    }
+    80% {
+        transform: scale(1.05) translate(44px, -44px);
+    }
+    100% {
+      transform: scale(1) translate(40px, -40px);
+    }
+  }
+
+  .floating-image.hidden {
+    opacity: 0;
+  }
+
+  /*
+  would be cool to have different animations on show and hide.
+  Bounce on show
+  Chip off on hide, like bounce up and fall as it shrinks and fades
+  make a little coin sound too so you know you scored points
+  */

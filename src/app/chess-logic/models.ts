@@ -126,6 +126,7 @@ export class Position {
     positions: Position[] = [];
     parentId: string | null = null;
     isDirty: boolean = true;
+    weight: number = 1;
 
     public static toPosition(data: any): Position {
         let position = new Position();
@@ -138,6 +139,7 @@ export class Position {
             position.move = Move.toMove(data.move);
         if(data.positions){
             position.positions = data.positions.map((c: Position) => this.toPosition(c));
+
         }else{
             position.positions = [];
         }
@@ -194,4 +196,5 @@ export interface MoveData {
     source: string | null;
     direction: string | null;
     player: Color | null;
+    extra: any;
 }
