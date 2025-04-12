@@ -22,6 +22,7 @@ import { NewStudyDialogComponent } from './modules/new-study-dialog/new-study-di
 import { ConfirmDialogComponent } from './modules/confirm-dialog/confirm-dialog-component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { FloatingImageComponent } from './modules/floating-image/floating-image.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     StudyComponent,
     StudyNavigationComponent,
     StudyTitleComponent,
-    StudyDescriptionComponent
+    StudyDescriptionComponent,
+    FloatingImageComponent
   ],
   imports: [
     BrowserModule,

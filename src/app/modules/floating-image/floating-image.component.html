@@ -1,0 +1,9 @@
+<div
+*ngIf="visible || fadingOut"
+  class="floating-image"
+  [ngClass]="{ hidden: !visible }"
+  [ngStyle]="{ top: top + 'px', left: left + 'px' }"
+  (transitionend)="onFadeOutEnd()"
+>
+  <img [src]="src" alt="Floating Image" class="animated-grow" />
+</div>

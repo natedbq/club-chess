@@ -68,6 +68,58 @@ export class StudyNavigator {
     return this.studyPointer.getVariations();
   }
 
+  isVariation = (): boolean => {
+    let parent = this.studyPointer.parent;
+    if(parent){
+      return parent.getVariations().length > 1;
+    }
+    return false;
+  }
+
+  getTotalExcessWeightInTree = (name: string | null): number => {
+    let pointer = this.studyPointer;
+    if(name){
+      pointer = this.studyPointer.next(name);
+    }
+    return this.getTotalExcessWeightInTreeHelper(this.studyPointer, pointer.pointer?.weight ?? 1);
+  }
+
+  private getTotalExcessWeightInTreeHelper = (pointer: StudyPointer | null, weight: number): number => {
+    if(!pointer?.pointer){
+      return 0;
+    }
+
+    pointer.getVariations().forEach(v => {
+      weight += this.getTotalExcessWeightInTreeHelper(pointer.next(v.name), (v.position?.weight ?? 1) - 1 )
+    });
+
+
+
+    return weight;
+  }
+
+  getHighestWeightInTree = (name: string | null): number => {
+    let pointer = this.studyPointer;
+    if(name){
+      pointer = this.studyPointer.next(name);
+    }
+    return this.getHighestWeightInTreeHelper(this.studyPointer);
+  }
+
+  private getHighestWeightInTreeHelper = (pointer: StudyPointer | null): number => {
+    if(!pointer?.pointer){
+      return 0;
+    }
+
+    let weight = pointer.pointer.weight;
+
+    pointer.getVariations().forEach(v => {
+      weight = Math.max(weight, this.getHighestWeightInTreeHelper(pointer.next(v.name)));
+    });
+
+    return weight;
+  }
+
   goto = (name: string): Move | null => {
     let sp = this.studyPointer.goto(name);
     if(sp && sp.pointer){
@@ -98,7 +150,7 @@ export class StudyNavigator {
       return moves;
     }
     if(p.pointer instanceof Position && p.pointer.move){
-      return this.getPreviousMovesHelper(p.parent, moves).concat([{name:p.pointer.move.name ?? '-', isDirty: p.pointer.isDirty}]);
+      return this.getPreviousMovesHelper(p.parent, moves).concat([{name:p.pointer.move.name ?? '-', isDirty: p.pointer.isDirty, position: p.pointer}]);
     }
 
     return moves;
@@ -119,8 +171,12 @@ export class StudyNavigator {
     }
     return this.studyPointer.peek();
   }
-  first(){
-
+  first = (): Move | null => {
+    let sp = this.studyPointer.first();
+    if(sp){
+      this.studyPointer = sp;
+    }
+    return this.studyPointer.peek();
   }
   last(){
 
@@ -224,10 +280,22 @@ class StudyPointer{
     return this;
   }
 
+  public first = (): StudyPointer | null => {
+    let nav: StudyPointer | null = this;
+    while(nav != null){
+      if(nav.parent == null){
+        break;
+      }
+      nav = nav.parent
+    }
+
+    return nav;
+  }
+
   public getVariations = (): MoveDetail[]  => {
     if(this.pointer instanceof Position){
       return this.pointer.positions.map((c) => {
-        return {name: c.move?.name ?? '-', isDirty: c.isDirty ?? false};
+        return {name: c.move?.name ?? '-', isDirty: c.isDirty ?? false, position: c};
       })
     }
 

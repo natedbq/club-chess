@@ -19,7 +19,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() moveData: MoveData | null = null;
   studyId: string | null = null;
   studyTitle: string | null = null;
-  @Input() onUpdate: (move: Move | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
+  @Input() onUpdate: (move: MoveData | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
   @Input() saveAction: () => void = () => {};
   @ViewChild('chessBoard') chessBoardElement: any;
   @Input() moveDelegation: ((data: MoveData) => void) | null = null;
@@ -231,7 +231,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     const { x: prevX, y: prevY } = this.selectedSquare;
-    let move = this.updateBoard(prevX, prevY, newX, newY, this.promotedPiece);
+    let move = this.updateBoard(prevX, prevY, newX, newY, this.promotedPiece, player);
 
     
     this.moveData = {
@@ -240,11 +240,12 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       source: 'board',
       move: move,
       player: player,
-      direction: 'place'
+      direction: 'place',
+      extra: {}
     };
   }
 
-  protected updateBoard(prevX: number, prevY: number, newX: number, newY: number, promotedPiece: FENChar | null): Move {
+  protected updateBoard(prevX: number, prevY: number, newX: number, newY: number, promotedPiece: FENChar | null, player: Color): Move {
     let moveName = this.chessBoard.move(prevX, prevY, newX, newY, promotedPiece);
     this.chessBoardView = this.chessBoard.chessBoardView;
     this.markLastMoveAndCheckState(this.chessBoard.lastMove, this.chessBoard.checkState);
@@ -256,7 +257,28 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     let move = new Move();
     move.name = moveName;
     move.fen = this.chessBoard.boardAsFEN
-    this.onUpdate(move)
+    let boardRect = this.chessBoardElement.nativeElement.getBoundingClientRect();
+
+
+    let xCoord = 0;
+    let yCoord = 0;
+    let squareSize = ((boardRect.right - boardRect.left) / 8) ;
+    if(this.flipMode){
+      xCoord = boardRect.top + (squareSize * (7-newY)) - squareSize / 2;
+      yCoord = boardRect.left + (squareSize * (newX)) + squareSize / 2;
+    }else{
+      xCoord = boardRect.top + (squareSize * (newY)) - squareSize / 2;
+      yCoord = boardRect.left + (squareSize * (7-newX)) + squareSize / 2;
+    }
+    this.onUpdate({
+      studyId: this.studyId,
+      studyTitle: this.studyTitle,
+      source: 'board',
+      player: player,
+      move: move,
+      direction: 'place',
+      extra: {x: xCoord, y: yCoord, squareSize: squareSize}
+    })
 
     return move;
   }
@@ -266,7 +288,8 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     this.promotedPiece = piece;
     const { x: newX, y: newY } = this.promotionCoords;
     const { x: prevX, y: prevY } = this.selectedSquare;
-    this.updateBoard(prevX, prevY, newX, newY, this.promotedPiece);
+    alert('is something weird? check this.playerColor')
+    this.updateBoard(prevX, prevY, newX, newY, this.promotedPiece, this.playerColor);
   }
 
   public closePawnPromotionDialog(): void {

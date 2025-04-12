@@ -1,5 +1,9 @@
 
 <table>
+    <div>
+        <button class="btn btn-icon btn-commit" ><i class="bi bi-play inline-block" (click)="activateStudy()"></i></button>
+        <button class="btn btn-icon btn-delete" ><i class="bi bi-pause inline-block" (click)="pauseStudy()"></i></button>
+    </div>
     <tr>
         <td>
             <div *ngIf="loading">loading...</div>
