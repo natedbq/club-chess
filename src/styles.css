@@ -73,6 +73,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border: 2px transparent solid;
 }
 
+.btn-icon.active {
+    border: 2px white solid;
+}
+
 .btn-icon:hover{
     border: 2px white solid;
     border-color: white;
@@ -96,3 +100,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     color: var(--green);
 }
 
+.red {
+    color: var(--red);
+}

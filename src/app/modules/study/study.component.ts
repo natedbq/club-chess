@@ -98,14 +98,27 @@ export class StudyComponent implements OnInit {
     }
 
     activateStudy = (): void => {
-      console.log('start')
-      this.doStudy = true;
-      this.oneMove();
-      MoveDelegator.start();
+      
+      if(this.doStudy){
+        this.wrongLine();
+        setTimeout(() => {
+          this.oneMove();
+          this.oneMove();
+        }, 2000);
+      }else{
+        this.doStudy = true;
+        this.controller.first();
+        MoveDelegator.start();
+        if(this.isWhitePerspective){
+          this.oneMove();
+          this.oneMove();
+        }else{
+          this.oneMove();
+        }
+      }
     }
 
     pauseStudy = (): void => {
-      console.log('stop!')
       this.doStudy = false;
       MoveDelegator.stop();
       MoveDelegator.clear();
@@ -162,12 +175,19 @@ export class StudyComponent implements OnInit {
     getXY(data: any){
       let x = 400;
       let y = 400;
-      if(data.y){
+      if(data?.y){
         y = data.y+data.squareSize/2;
         x = data.x-(data.squareSize / 2);
       }
       return {x:x,y:y}
     }
+    focus = (): void => {
+      let pointer = this.studyNav.getPointer();
+      if(pointer.pointer){
+        pointer.pointer.weight += 5;
+      }
+    }
+
     completeLine(data: MoveData){
       if(!this.doStudy){
         return;
@@ -178,24 +198,29 @@ export class StudyComponent implements OnInit {
         this.floatingImageService.hideImage();
         if(this.doStudy){
           this.controller.first();
-          this.oneMove();
+          if(this.isWhitePerspective){
+            this.oneMove();
+            this.oneMove();
+          }else{
+            this.oneMove();
+          }
         }
       }, 2000);
     }
 
-    wrongLine(data: MoveData){
+    wrongLine(data: MoveData|null = null){
       if(!this.doStudy){
         return;
       }
 
-      
+      this.isRetry = true;
       let pointer = this.studyNav.getPointer();
       let position = pointer.pointer;
-      if(position && this.studyNav.isVariation()){
+      if(position){
         position.weight++;
       }
 
-      const {x,y} = this.getXY(data.extra);
+      const {x,y} = this.getXY(data?.extra);
       this.floatingImageService.showImage('wrong.png', y, x);
       setTimeout(() => {
         this.floatingImageService.hideImage();
@@ -203,12 +228,23 @@ export class StudyComponent implements OnInit {
       }, 2000);
     }
     
+    isRetry = false;
     markCorrect = (): void => {
       let pointer = this.studyNav.getPointer();
       let position = pointer.pointer;
-      if(position && this.studyNav.isVariation()){
-        //position.weight--;
+      if(position){
+        if(!this.isRetry){
+          position.weight = Math.max(0, position.weight - 1)
+        }
       }
+      this.isRetry = false;
+    }
+
+    print = (): void => {
+      this.studyNav.printTree();
+      this.studyNav.getVariations().forEach(v => {
+        this.studyNav.getTotalExcessWeightInTree(v.name)
+      })
     }
 
     updateStudy = (data: MoveData | null): void => {
@@ -232,12 +268,12 @@ export class StudyComponent implements OnInit {
           if(variations.length > 0){
             let delegations: MoveDelegation[] = [];
             variations.forEach(m => {
+              let branchWeight = Math.max(1,this.studyNav.getTotalExcessWeightInTree(m.name));
               let moveDelegation: MoveDelegation = new MoveDelegation(() => {
                 if(this.doStudy)
                 this.controller.next(m.name, true);
-                console.log(m.name, this.studyNav.getTotalExcessWeightInTree(m.name));
     
-              }, this.studyNav.getTotalExcessWeightInTree(m.name), 'navigator');
+              }, branchWeight, 'navigator');
               delegations.push(moveDelegation);
             });
             MoveDelegator.addDelegations(delegations);

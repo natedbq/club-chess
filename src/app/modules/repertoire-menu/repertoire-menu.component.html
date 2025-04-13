@@ -8,7 +8,7 @@
         <table>
             <tr>
                 <td  *ngFor="let game of whiteGames()"> 
-                    <h3>{{game.studyTitle}} <button class="btn btn-icon btn-delete"><i class="bi bi-trash3 inline-block" (click)="delete(game)"></i></button></h3>
+                    <h3>{{game.studyTitle}} <button class="btn btn-icon btn-delete" (click)="delete(game)"><i class="bi bi-trash3 inline-block" ></i></button></h3>
                 </td>
             </tr>
             <tr>

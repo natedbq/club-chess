@@ -33,6 +33,15 @@ export class StudyNavigationComponent implements OnChanges {
     }
   }
 
+  determineFocus = (): number[] => {
+    let x: number[] = [];
+    let weight = this.studyNav.getTotalExcessWeightUpTree();
+    for(let i = 0; i < weight; i+=5){
+      x.push(0);
+    }
+    return x;
+  }
+
   delete = (): void => {
     let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
     let position = this.studyNav.getPointer().pointer;
