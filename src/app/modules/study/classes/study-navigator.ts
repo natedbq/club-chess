@@ -76,12 +76,28 @@ export class StudyNavigator {
     return false;
   }
 
-  getTotalExcessWeightInTree = (name: string | null): number => {
+  getTotalExcessWeightUpTree = (): number => {
+    let pointer: StudyPointer | null = this.getPointer();
+    let weight = 0;
+    while(pointer){
+      if(pointer.pointer){
+        weight += Math.max(0, pointer.pointer?.weight - 1);
+      }
+      pointer = pointer.parent;
+    }
+
+    return weight;
+  }
+
+  getTotalExcessWeightInTree = (name: string | null = null): number => {
     let pointer = this.studyPointer;
     if(name){
-      pointer = this.studyPointer.next(name);
+      pointer = pointer.next(name);
     }
-    return this.getTotalExcessWeightInTreeHelper(this.studyPointer, pointer.pointer?.weight ?? 1);
+    let weight = this.getTotalExcessWeightInTreeHelper(pointer, pointer.pointer?.weight ?? 1);
+
+    return weight;
+
   }
 
   private getTotalExcessWeightInTreeHelper = (pointer: StudyPointer | null, weight: number): number => {
@@ -89,21 +105,38 @@ export class StudyNavigator {
       return 0;
     }
 
+
     pointer.getVariations().forEach(v => {
-      weight += this.getTotalExcessWeightInTreeHelper(pointer.next(v.name), (v.position?.weight ?? 1) - 1 )
+      weight += Math.max(0, this.getTotalExcessWeightInTreeHelper(pointer.next(v.name), (v.position?.weight ?? 1) - 1))
     });
-
-
 
     return weight;
   }
 
-  getHighestWeightInTree = (name: string | null): number => {
+  public printTree() {
+    this.printTreeHelper(this.getPointer(), 0);
+  }
+
+  private printTreeHelper(p: StudyPointer, depth: number){
+    let s = '';
+    for(let i = 0; i < depth; i++){
+      s += '| ';
+    }
+    s += '| ' + p.pointer?.move?.name + ' '+ p.pointer?.weight;
+     
+    p.getVariations().forEach(v => {
+      this.printTreeHelper(p.next(v.name), depth+1);
+    })
+
+    console.log(s);
+  }
+
+  getHighestWeightInTree = (name: string | null = null): number => {
     let pointer = this.studyPointer;
     if(name){
-      pointer = this.studyPointer.next(name);
+      pointer = pointer.next(name);
     }
-    return this.getHighestWeightInTreeHelper(this.studyPointer);
+    return this.getHighestWeightInTreeHelper(pointer);
   }
 
   private getHighestWeightInTreeHelper = (pointer: StudyPointer | null): number => {
