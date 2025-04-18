@@ -6,4 +6,5 @@
   (transitionend)="onFadeOutEnd()"
 >
   <img [src]="src" alt="Floating Image" class="animated-grow" />
+  <div class="evaluation animated-grow" *ngIf="evaluation != null && showEval" [ngClass]="{white: favorWhite, black: !favorWhite}" >{{evaluation}}</div>
 </div>

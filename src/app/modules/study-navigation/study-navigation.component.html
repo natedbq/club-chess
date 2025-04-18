@@ -2,6 +2,7 @@
 <div class="navigator">
     <h3 class="inline-block">Moves</h3>
     <div class="inline-block padding"><i class="bi bi-exclamation-lg red" *ngFor="let i of determineFocus()"></i></div>
+    <button class="btn btn-icon btn-commit" (click)="setFEN()"><i class="bi bi-key inline-block" ></i></button>
     <div>
         <h3 class="inline-block padding-right" [ngClass]="{dirty: getMoveDetail().isDirty}">{{getMoveDetail().name}}</h3>
         <button class="btn btn-icon btn-commit" *ngIf="getMoveDetail().isDirty" (click)="saveAction()"><i class="bi bi-floppy inline-block" ></i></button>
