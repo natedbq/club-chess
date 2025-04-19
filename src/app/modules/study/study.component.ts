@@ -23,6 +23,8 @@ export class StudyComponent implements OnInit {
     controller = new StudyController();
     doStudy = false;
     pauseTime = 2500;
+    mistakeCounter = 0;
+    isRetry = false;
 
     constructor(private route: ActivatedRoute, 
       private studyService: StudyService, 
@@ -236,7 +238,6 @@ export class StudyComponent implements OnInit {
     }
 
 
-    mistakeCounter = 0;
     wrongLine(data: MoveData|null = null){
       if(!this.doStudy){
         return;
@@ -258,7 +259,6 @@ export class StudyComponent implements OnInit {
       }, this.pauseTime);
     }
     
-    isRetry = false;
     markCorrect = (): void => {
       let pointer = this.studyNav.getPointer();
       let position = pointer.pointer;
