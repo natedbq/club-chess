@@ -49,7 +49,7 @@ export class StudyNavigator {
 
   getTitle = (): string | null => {
     let title = this.studyPointer.getTitle();
-    return title;
+    return title ?? this.study.title;
   }
 
   setTitle = (title: string): void => {
@@ -74,6 +74,31 @@ export class StudyNavigator {
       return parent.getVariations().length > 1;
     }
     return false;
+  }
+
+  addWeightToTree = (w: number): void => {
+    let pointer = this.getPointer();
+    if(pointer.pointer){
+      pointer.pointer.weight += w;
+    }
+    this.addWeightToTreeHelper(pointer, w);
+  }
+
+  private addWeightToTreeHelper = (pointer: StudyPointer | null, w: number): void => {
+    if(pointer){
+      let variations = pointer?.getVariations();
+      if(variations.length > 1){
+        variations.forEach(v => {
+          if(v.position?.weight){
+            v.position.weight += w;
+          }
+        })
+      }
+
+      variations.forEach(v => {
+        this.addWeightToTreeHelper(pointer.next(v.name), w);
+      })
+    }
   }
 
   getTotalExcessWeightUpTree = (): number => {

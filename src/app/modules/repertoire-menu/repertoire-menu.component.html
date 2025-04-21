@@ -28,7 +28,7 @@
             </tr>
             <tr>
                 <td  *ngFor="let game of blackGames()"> 
-                    <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>
+                    <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)" [studyPerspective]="1"> </app-chess-board>
                 </td>
             </tr>
         </table>

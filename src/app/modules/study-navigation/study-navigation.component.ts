@@ -42,6 +42,17 @@ export class StudyNavigationComponent implements OnChanges {
     return x;
   }
 
+  setFEN = (): void => {
+    let summaryFEN = this.studyNav.getPointer().pointer?.move?.fen;
+    if(summaryFEN){
+      let study = this.studyNav.getStudy();
+      if(study){
+        study.summaryFEN = summaryFEN;
+        this.saveAction();
+      }
+    }
+  }
+
   delete = (): void => {
     let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
     let position = this.studyNav.getPointer().pointer;

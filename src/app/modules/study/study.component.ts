@@ -7,6 +7,7 @@ import { PositionService } from '../../services/position.service';
 import { MoveDelegation, MoveDelegator } from '../../chess-logic/moveDelegator';
 import { MoveDetail } from '../study-navigation/study-navigation.component';
 import { FloatingImageService } from '../../services/floating-image/floating-image.service';
+import { LichessService } from '../../services/lichess.service';
 
 @Component({
   selector: 'app-study',
@@ -21,12 +22,17 @@ export class StudyComponent implements OnInit {
     loading = false;
     controller = new StudyController();
     doStudy = false;
+    pauseTime = 2500;
+    mistakeCounter = 0;
+    isRetry = false;
 
     constructor(private route: ActivatedRoute, 
       private studyService: StudyService, 
       private positionService: PositionService, 
       private floatingImageService: FloatingImageService,
-      private router: Router) {
+      private router: Router,
+      private lichessService: LichessService
+    ) {
         this.router.events.subscribe(event => {
           if (event instanceof NavigationStart) {
             MoveDelegator.stop();
@@ -104,7 +110,7 @@ export class StudyComponent implements OnInit {
         setTimeout(() => {
           this.oneMove();
           this.oneMove();
-        }, 2000);
+        }, this.pauseTime);
       }else{
         this.doStudy = true;
         this.controller.first();
@@ -182,10 +188,7 @@ export class StudyComponent implements OnInit {
       return {x:x,y:y}
     }
     focus = (): void => {
-      let pointer = this.studyNav.getPointer();
-      if(pointer.pointer){
-        pointer.pointer.weight += 5;
-      }
+      this.studyNav.addWeightToTree(3);
     }
 
     completeLine(data: MoveData){
@@ -193,20 +196,47 @@ export class StudyComponent implements OnInit {
         return;
       }
       const {x,y} = this.getXY(data.extra);
-      this.floatingImageService.showImage('crown-gold.png',  y, x);
-      setTimeout(() => {
-        this.floatingImageService.hideImage();
-        if(this.doStudy){
-          this.controller.first();
-          if(this.isWhitePerspective){
-            this.oneMove();
-            this.oneMove();
-          }else{
-            this.oneMove();
+
+      
+      let pointer = this.studyNav.getPointer().pointer;
+      if(pointer){
+
+        this.lichessService.evaluate(pointer.move?.fen ?? '-').subscribe({ 
+          next: (evaluation) => {
+            this.floatingImageService.showImage('crown-gold.png',  y, x, evaluation / 100);
+            setTimeout(() => {
+              this.floatingImageService.hideImage();
+              if(this.doStudy){
+                this.controller.first();
+                if(this.isWhitePerspective){
+                  this.oneMove();
+                  this.oneMove();
+                }else{
+                  this.oneMove();
+                }
+              }
+            }, this.pauseTime);
+          },
+          error: (e) => {
+            this.floatingImageService.showImage('crown-gold.png',  y, x);
+            setTimeout(() => {
+              this.floatingImageService.hideImage();
+              if(this.doStudy){
+                this.controller.first();
+                if(this.isWhitePerspective){
+                  this.oneMove();
+                  this.oneMove();
+                }else{
+                  this.oneMove();
+                }
+              }
+            }, this.pauseTime);
           }
-        }
-      }, 2000);
+        })
+      }
+      
     }
+
 
     wrongLine(data: MoveData|null = null){
       if(!this.doStudy){
@@ -216,8 +246,9 @@ export class StudyComponent implements OnInit {
       this.isRetry = true;
       let pointer = this.studyNav.getPointer();
       let position = pointer.pointer;
-      if(position){
+      if(position && this.mistakeCounter < 3){
         position.weight++;
+        this.mistakeCounter++;
       }
 
       const {x,y} = this.getXY(data?.extra);
@@ -225,13 +256,13 @@ export class StudyComponent implements OnInit {
       setTimeout(() => {
         this.floatingImageService.hideImage();
         this.controller.refresh();
-      }, 2000);
+      }, this.pauseTime);
     }
     
-    isRetry = false;
     markCorrect = (): void => {
       let pointer = this.studyNav.getPointer();
       let position = pointer.pointer;
+      this.mistakeCounter = 0;
       if(position){
         if(!this.isRetry){
           position.weight = Math.max(0, position.weight - 1)
