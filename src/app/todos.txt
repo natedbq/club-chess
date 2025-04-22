@@ -50,3 +50,7 @@ TODO/move-data
 - there is a bug with the navigator. If you make a move, then go back and then go forward, moveData thinks its a player move when it should be a navigator move.. or not?
 
 
+BUGS
+- game does not like when you push a pawn 2 spaces and then push it again on your next move. It always thinks it is a captures move
+
+
