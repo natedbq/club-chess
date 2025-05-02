@@ -197,4 +197,5 @@ export interface MoveData {
     direction: string | null;
     player: Color | null;
     extra: any;
+    position: Position;
 }

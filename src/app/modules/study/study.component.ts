@@ -8,6 +8,7 @@ import { MoveDelegation, MoveDelegator } from '../../chess-logic/moveDelegator';
 import { MoveDetail } from '../study-navigation/study-navigation.component';
 import { FloatingImageService } from '../../services/floating-image/floating-image.service';
 import { LichessService } from '../../services/lichess.service';
+import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 
 @Component({
   selector: 'app-study',
@@ -16,6 +17,7 @@ import { LichessService } from '../../services/lichess.service';
 })
 export class StudyComponent implements OnInit {
     study: Study | null = null;
+    studyId: string;
     studyNav: StudyNavigator = new StudyNavigator(new Study());
     moveData: MoveData | null = null;
     isWhitePerspective: boolean = true;
@@ -31,7 +33,8 @@ export class StudyComponent implements OnInit {
       private positionService: PositionService, 
       private floatingImageService: FloatingImageService,
       private router: Router,
-      private lichessService: LichessService
+      private lichessService: LichessService,
+      private studyNavigationService: StudyNavigationService
     ) {
         this.router.events.subscribe(event => {
           if (event instanceof NavigationStart) {
@@ -40,10 +43,15 @@ export class StudyComponent implements OnInit {
           }
         });
       
-      let studyId = this.route.snapshot.paramMap.get('id');
+      this.studyId = this.route.snapshot.paramMap.get('id') ?? '';
+
+      if(this.studyId != ''){
+        this.studyNavigationService.load(this.studyId);
+      }
+
       this.loading = true;
-      if(studyId){
-        this.studyService.getStudy(studyId).subscribe(s => {
+      if(this.studyId){
+        this.studyService.getStudy(this.studyId).subscribe(s => {
           this.study = s;
 
           if(this.study.positionId){

@@ -1,29 +1,109 @@
 import { Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-import { Study, Move, Position } from '../../chess-logic/models';
+import { BehaviorSubject, forkJoin, lastValueFrom, Observable, of, Subscription } from 'rxjs';
+import { Study, Move, Position, MoveData } from '../../chess-logic/models';
 import { MoveDetail } from './study-navigation.component';
+import { FENConverter } from '../../chess-logic/FENConverter';
+import { StudyService } from '../../services/study.service';
+import { PositionService } from '../../services/position.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyNavigationService {
-    private _studyPointer = new BehaviorSubject<StudyPointer|null>(null);
     private _study = new BehaviorSubject<Study|null>(null);
-    private _moveDetail = new BehaviorSubject<MoveDetail | null>(null);
+    private _moveDetail = new BehaviorSubject<MoveData | null>(null);
 
     private studyPointer: StudyPointer | null;
     private study: Study | null;
+    private moveDetail: MoveData | null = null;
 
-    studyPointer$ = this._studyPointer.asObservable();
     study$ = this._study.asObservable();
     moveDetail$ = this._moveDetail.asObservable();
 
-    constructor(private router: Router) {
+    constructor(private router: Router, private studyService: StudyService, private positionService: PositionService) {
+      this.studyPointer = new StudyPointer(null);
+      this.study = null;
         this.router.events.subscribe(event => {
         if (event instanceof NavigationStart) {
         }
         });
+    }
+
+    load = (id: string) => {
+        return this.studyService.getStudy(id).subscribe(s => {
+            this.study = s;
+  
+            if(this.study.positionId){
+                return this.positionService.getByParentId(this.study.positionId, 5).subscribe(children => {
+                    if(this.study?.position?.positions){
+                        this.study.position.positions = children;
+                    }
+
+                    this.studyPointer = new StudyPointer(null, this.study?.position);
+                    this._study.next(this.study);
+                    this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'load');
+                    
+                    return s;
+                });
+            }
+            return of();
+        });
+    }
+
+    saveStudy = (): Observable<Object[]> => {
+      let saveTasks: Observable<Object>[] = [];
+
+      let position = this.study?.position;
+
+      if(this.study){
+        let p = this.studyService.saveStudy(this.study);
+        p.subscribe({
+          
+          complete: () => console.log('Study saved'),
+          error : (e) => console.error('Error saving study:', e)
+        }
+        );
+        saveTasks.push(p);
+      }
+
+      if(position){
+        let p = this.positionService.save(position);
+        p.subscribe({
+          
+          complete: () => console.log('Positions saved'),
+          error : (e) => console.error('Error saving position:', e)
+        }
+        );
+        saveTasks.push(p);
+      }
+
+      return forkJoin(saveTasks);
+    }
+
+    setSummaryFEN() {
+      if(this.moveDetail?.position.move && this.study){
+        this.study.summaryFEN = this.moveDetail.position.move.fen;
+        return this.saveStudy();
+      }
+      return of();
+    }
+
+    makeMove = (position: Position | null, source: string, direction: string, extra: any = null): void => {
+      if(position){
+        let movedata: MoveData = {
+            studyId: this.study?.id ?? null,
+            studyTitle: this.study?.title ?? null,
+            move: position.move,
+            source: source,
+            direction: direction,
+            player: FENConverter.getPlayer(position.move?.fen ?? '- w'),
+            extra: extra,
+            position: position
+        };
+        this.moveDetail = movedata;
+        this._moveDetail.next(movedata);
+      }
     }
 
     deleteCurrentPosition = (): void => {
@@ -38,6 +118,8 @@ export class StudyNavigationService {
             this.studyPointer.deletePosition(moveToDelete);
           }
         }
+
+        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'delete');
       }
     
       isStudyDirty = (): boolean => {
@@ -67,6 +149,8 @@ export class StudyNavigationService {
       setTitle = (title: string): void => {
         if(this.studyPointer)
             this.studyPointer.setTitle(title);
+        
+        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'setTitle');
       }
     
       getDescription = (): string => {
@@ -76,6 +160,7 @@ export class StudyNavigationService {
       setDescription = (desc: string) => {
         if(this.studyPointer)
             this.studyPointer.setDescription(desc);
+        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'setDescription');
       }
     
       getVariations = (): MoveDetail[] => {
@@ -96,6 +181,7 @@ export class StudyNavigationService {
           pointer.pointer.weight += w;
         }
         this.addWeightToTreeHelper(pointer, w);
+        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'addWieghtToTree');
       }
     
       private addWeightToTreeHelper = (pointer: StudyPointer | null, w: number): void => {
@@ -201,6 +287,8 @@ export class StudyNavigationService {
         if(sp?.pointer){
           this.studyPointer = sp;
         }
+
+        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'goto');
         return this.studyPointer?.peek() ?? null;
       }
     
@@ -238,6 +326,7 @@ export class StudyNavigationService {
           this.studyPointer = sp;
         }
         
+        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'next');
         return this.studyPointer?.peek() ?? null;
       }
       previous = ():  Move | null =>  {
@@ -245,6 +334,7 @@ export class StudyNavigationService {
         if(sp){
           this.studyPointer = sp;
         }
+        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'previous');
         return this.studyPointer?.peek() ?? null;
       }
       first = (): Move | null => {
@@ -252,6 +342,7 @@ export class StudyNavigationService {
         if(sp){
           this.studyPointer = sp;
         }
+        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'first');
         return this.studyPointer?.peek() ?? null;
       }
       last(){
@@ -261,6 +352,7 @@ export class StudyNavigationService {
       addMove = (move: Move) => {
         if(!this.hasNext(move.name ?? '-') && this.studyPointer){
           this.studyPointer = this.studyPointer?.addMove(move);
+          this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'addMove');
         }
       }
     
@@ -464,3 +556,4 @@ class StudyPointer{
       return p;
     }
   }
+

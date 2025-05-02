@@ -5,7 +5,7 @@ import { SelectedSquare } from './models';
 import { ChessBoardService } from './chess-board.service';
 import { Subscription, filter, fromEvent, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
-import { Move, MoveData, Study } from '../../chess-logic/models';
+import { Move, MoveData, Position, Study } from '../../chess-logic/models';
 import {CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule} from '@angular/cdk/drag-drop';
 import { MoveDelegator } from '../../chess-logic/moveDelegator';
 
@@ -241,7 +241,8 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       move: move,
       player: player,
       direction: 'place',
-      extra: {}
+      extra: {},
+      position: new Position()
     };
   }
 
@@ -277,7 +278,8 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       player: player,
       move: move,
       direction: 'place',
-      extra: {x: xCoord, y: yCoord, squareSize: squareSize}
+      extra: {x: xCoord, y: yCoord, squareSize: squareSize},
+      position: new Position()
     })
 
     return move;
