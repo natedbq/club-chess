@@ -179,8 +179,6 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       let to_column = "abcdefgh".indexOf(this.moveData?.move?.to![0] ?? '-');
       let to_rank = (parseInt(this.moveData?.move?.to![1] ?? "0")) - 1;
 
-      console.log(JSON.stringify(this.moveData?.move))
-
       return x === from_rank && y === from_colum || x === to_rank && y === to_column;
     }
     return false;

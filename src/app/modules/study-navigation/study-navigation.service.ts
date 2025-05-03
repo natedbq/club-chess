@@ -55,7 +55,6 @@ export class StudyNavigationService {
       let saveTasks: Observable<Object>[] = [];
 
       let position = this.study?.position;
-      console.log('wtf')
 
       if(this.study){
         let p = this.studyService.saveStudy(this.study);
@@ -146,11 +145,12 @@ export class StudyNavigationService {
           return;
         }
     
+        let position = this.studyPointer?.pointer;
         if(this.studyPointer?.parent){
-          let moveToDelete = this.peek()?.name;
           this.studyPointer = this.studyPointer.parent;
-          if(moveToDelete){
-            this.studyPointer.deletePosition(moveToDelete);
+          if(position?.id){
+            this.studyPointer.deletePosition(position.move?.name ?? '-');
+            this.positionService.delete(position.id).subscribe(r => console.log(position?.id, 'deleted'))
           }
         }
 
