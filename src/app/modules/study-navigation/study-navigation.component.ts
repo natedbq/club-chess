@@ -59,7 +59,7 @@ export class StudyNavigationComponent implements OnChanges {
   }
 
   getMoveDetail = (): MoveDetail => {
-    return {name:this.moveData?.move?.name ?? '-', isDirty: this.moveData?.position.isDirty ?? false, position: this.moveData?.position };
+    return {name:this.moveData?.move?.name ?? '-', isDirty: this.moveData?.position?.isDirty ?? false, position: this.moveData?.position };
   }
 
   show(): void {

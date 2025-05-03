@@ -82,7 +82,7 @@ export class StudyNavigationService {
     }
 
     setSummaryFEN() {
-      if(this.moveDetail?.position.move && this.study){
+      if(this.moveDetail?.position?.move && this.study){
         this.study.summaryFEN = this.moveDetail.position.move.fen;
         return this.saveStudy();
       }
@@ -100,10 +100,29 @@ export class StudyNavigationService {
             player: FENConverter.getPlayer(position.move?.fen ?? '- w'),
             extra: extra,
             position: position
-        };
+        }; 
         this.moveDetail = movedata;
         this._moveDetail.next(movedata);
       }
+    }
+
+    emitNextMove = (moveData: MoveData) => {
+      let extra = moveData.extra ?? {};
+
+      if(this.studyPointer && moveData.move){
+        if(this.studyPointer.hasNext(moveData.move?.name ?? '-')){
+          extra.isNew = false;
+          this.next(moveData.move.name);
+        }else{
+          extra.isNew = true;
+          this.addMove(moveData.move);
+          this.next(moveData.move.name);
+          return;
+        }
+      }
+
+      this.moveDetail = moveData;
+      this._moveDetail.next(moveData);
     }
 
     deleteCurrentPosition = (): void => {

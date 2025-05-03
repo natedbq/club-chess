@@ -8,6 +8,7 @@ import { FENConverter } from 'src/app/chess-logic/FENConverter';
 import { Move, MoveData, Position, Study } from '../../chess-logic/models';
 import {CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule} from '@angular/cdk/drag-drop';
 import { MoveDelegator } from '../../chess-logic/moveDelegator';
+import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -57,7 +58,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscriptions$ = new Subscription();
 
-  constructor(protected chessBoardService: ChessBoardService) { }
+  constructor(protected chessBoardService: ChessBoardService, private navService: StudyNavigationService) { }
 
   public ngOnInit(): void {
     const keyEventSubscription$: Subscription = fromEvent<KeyboardEvent>(document, "keyup")
@@ -241,8 +242,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       move: move,
       player: player,
       direction: 'place',
-      extra: {},
-      position: new Position()
+      extra: {}
     };
   }
 
@@ -271,16 +271,17 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       xCoord = boardRect.top + (squareSize * (newY)) - squareSize / 2;
       yCoord = boardRect.left + (squareSize * (7-newX)) + squareSize / 2;
     }
-    this.onUpdate({
+    let data = {
       studyId: this.studyId,
       studyTitle: this.studyTitle,
       source: 'board',
       player: player,
       move: move,
       direction: 'place',
-      extra: {x: xCoord, y: yCoord, squareSize: squareSize},
-      position: new Position()
-    })
+      extra: {x: xCoord, y: yCoord, squareSize: squareSize}
+    };
+
+    this.navService.emitNextMove(data);
 
     return move;
   }
