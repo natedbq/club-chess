@@ -55,6 +55,7 @@ export class StudyNavigationService {
       let saveTasks: Observable<Object>[] = [];
 
       let position = this.study?.position;
+      console.log('wtf')
 
       if(this.study){
         let p = this.studyService.saveStudy(this.study);
@@ -68,6 +69,7 @@ export class StudyNavigationService {
       }
 
       if(position){
+        console.log('do')
         let p = this.positionService.save(position);
         p.subscribe({
           
@@ -108,17 +110,31 @@ export class StudyNavigationService {
 
     emitNextMove = (moveData: MoveData) => {
       let extra = moveData.extra ?? {};
+      if(moveData.move){
+        extra.from = moveData.move.from;
+        extra.to = moveData.move.to;
+      }
 
       if(this.studyPointer && moveData.move){
         if(this.studyPointer.hasNext(moveData.move?.name ?? '-')){
           extra.isNew = false;
-          this.next(moveData.move.name);
+          this.next(moveData.move.name, true);
         }else{
           extra.isNew = true;
           this.addMove(moveData.move);
-          this.next(moveData.move.name);
-          return;
+          this.next(moveData.move.name, true);
         }
+      }
+
+      if(this.studyPointer?.pointer?.move && !this.studyPointer.pointer.move.from){
+        this.studyPointer.pointer.move.from = moveData.move?.from ?? null;
+        this.studyPointer.pointer.move.to = moveData.move?.to ?? null;
+        this.studyPointer.pointer.isDirty = true;
+
+      }
+
+      if(!moveData.position){
+        moveData.position = this.studyPointer?.pointer ?? undefined;
       }
 
       this.moveDetail = moveData;
@@ -339,13 +355,15 @@ export class StudyNavigationService {
         return moves;
       }
     
-      next = (name: string | null = null):  Move | null => {
+      next = (name: string | null = null, silence: boolean = false):  Move | null => {
         let sp = this.studyPointer?.next(name);
         if(sp?.pointer){
           this.studyPointer = sp;
         }
         
-        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'next');
+        if(!silence){
+          this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'next');
+        }
         return this.studyPointer?.peek() ?? null;
       }
       previous = ():  Move | null =>  {
@@ -371,7 +389,6 @@ export class StudyNavigationService {
       addMove = (move: Move) => {
         if(!this.hasNext(move.name ?? '-') && this.studyPointer){
           this.studyPointer = this.studyPointer?.addMove(move);
-          this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'addMove');
         }
       }
     
@@ -387,7 +404,6 @@ export class StudyNavigationService {
 class StudyPointer{
     parent: StudyPointer | null = null;
     pointer: Position | null = null;
-  
     
     constructor(p: StudyPointer | null, pointer: Position | null = null){
       this.parent = p;

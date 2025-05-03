@@ -18,7 +18,6 @@ export class StudyNavigationComponent implements OnChanges {
   moveData: MoveData| null = null;
   @Input() controller: StudyController | null = null;
   @Input() onUpdate: (move: MoveData ) => void = () => {console.log('please provide study navigation with update callback')};
-  @Input() saveAction: () => void = () => {};
   moves: Move[] = [];
   showVariations: boolean = true;
 
@@ -38,6 +37,10 @@ export class StudyNavigationComponent implements OnChanges {
       this.controller.previous = this.previous;
       this.controller.refresh = this.refresh;
     }
+  }
+
+  public save() {
+    this.navService.saveStudy();
   }
 
   determineFocus = (): number[] => {

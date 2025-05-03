@@ -20,7 +20,6 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() moveData: MoveData | null = null;
   studyId: string | null = null;
   studyTitle: string | null = null;
-  @Input() onUpdate: (move: MoveData | null) => void = () => {console.log('If you would like to edit studies, please provide chess-board with update callback')};
   @Input() saveAction: () => void = () => {};
   @ViewChild('chessBoard') chessBoardElement: any;
   @Input() moveDelegation: ((data: MoveData) => void) | null = null;
@@ -58,7 +57,11 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscriptions$ = new Subscription();
 
-  constructor(protected chessBoardService: ChessBoardService, private navService: StudyNavigationService) { }
+  constructor(protected chessBoardService: ChessBoardService, private navService: StudyNavigationService) {
+    this.navService.moveDetail$.subscribe(m => {
+      this.moveData = m;
+    })
+   }
 
   public ngOnInit(): void {
     const keyEventSubscription$: Subscription = fromEvent<KeyboardEvent>(document, "keyup")
@@ -170,9 +173,17 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public isSquareLastMove(x: number, y: number): boolean {
-    if (!this.lastMove) return false;
-    const { prevX, prevY, currX, currY } = this.lastMove;
-    return x === prevX && y === prevY || x === currX && y === currY;
+    if(((this.moveData?.move?.from?.length ?? 0) > 0) && (this.moveData?.move?.to?.length ?? 0 > 0)){
+      let from_colum = "abcdefgh".indexOf(this.moveData?.move?.from![0] ?? '-');
+      let from_rank = (parseInt(this.moveData?.move?.from![1] ?? "0")) - 1;
+      let to_column = "abcdefgh".indexOf(this.moveData?.move?.to![0] ?? '-');
+      let to_rank = (parseInt(this.moveData?.move?.to![1] ?? "0")) - 1;
+
+      console.log(JSON.stringify(this.moveData?.move))
+
+      return x === from_rank && y === from_colum || x === to_rank && y === to_column;
+    }
+    return false;
   }
 
   public isSquareChecked(x: number, y: number): boolean {
@@ -247,6 +258,11 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   protected updateBoard(prevX: number, prevY: number, newX: number, newY: number, promotedPiece: FENChar | null, player: Color): Move {
+    let from_column = "abcdefgh".charAt(prevY);
+    let from_rank = (prevX + 1).toString();
+    let to_column = "abcdefgh".charAt(newY);
+    let to_rank = (newX + 1).toString();
+
     let moveName = this.chessBoard.move(prevX, prevY, newX, newY, promotedPiece);
     this.chessBoardView = this.chessBoard.chessBoardView;
     this.markLastMoveAndCheckState(this.chessBoard.lastMove, this.chessBoard.checkState);
@@ -258,6 +274,8 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     let move = new Move();
     move.name = moveName;
     move.fen = this.chessBoard.boardAsFEN
+    move.from = from_column + from_rank;
+    move.to = to_column + to_rank;
     let boardRect = this.chessBoardElement.nativeElement.getBoundingClientRect();
 
 

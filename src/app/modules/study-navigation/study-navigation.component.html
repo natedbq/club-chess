@@ -5,7 +5,7 @@
     <button class="btn btn-icon btn-commit" (click)="setFEN()"><i class="bi bi-key inline-block" ></i></button>
     <div>
         <h3 class="inline-block padding-right" [ngClass]="{dirty: getMoveDetail().isDirty}">{{getMoveDetail().name}}</h3>
-        <button class="btn btn-icon btn-commit" *ngIf="getMoveDetail().isDirty" (click)="saveAction()"><i class="bi bi-floppy inline-block" ></i></button>
+        <button class="btn btn-icon btn-commit" *ngIf="getMoveDetail().isDirty" (click)="save()"><i class="bi bi-floppy inline-block" ></i></button>
         <button class="btn btn-icon btn-delete" (click)="delete()"><i class="bi bi-trash3 inline-block" ></i></button>
     </div>
     <div class="variation-list" [ngClass]="{ 'disabled': getVariations().length == 0 || !showVariations}">
