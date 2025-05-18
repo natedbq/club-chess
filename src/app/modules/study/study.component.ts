@@ -42,6 +42,12 @@ export class StudyComponent implements OnInit {
             MoveDelegator.clear();
           }
         });
+
+      this.studyNavigationService.moveDetail$.subscribe(m => {
+        if(m?.source == 'board'){
+          this.updateStudy(m);
+        }
+      });
       
       this.studyId = this.route.snapshot.paramMap.get('id') ?? '';
 
@@ -287,6 +293,9 @@ export class StudyComponent implements OnInit {
     }
 
     updateStudy = (data: MoveData | null): void => {
+      console.log('update it');
+    }
+    updateStudyOld = (data: MoveData | null): void => {
       if(data?.move) {
         if(this.studyNav.hasNext(data.move.name ?? '-')){
           this.markCorrect();
