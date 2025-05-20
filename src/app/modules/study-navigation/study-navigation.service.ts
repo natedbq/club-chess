@@ -13,6 +13,7 @@ import { PositionService } from '../../services/position.service';
 export class StudyNavigationService {
     private _study = new BehaviorSubject<Study|null>(null);
     private _moveDetail = new BehaviorSubject<MoveData | null>(null);
+    private _proposedMove = new BehaviorSubject<MoveData | null>(null);
 
     private studyPointer: StudyPointer | null;
     private study: Study | null;
@@ -20,6 +21,7 @@ export class StudyNavigationService {
 
     study$ = this._study.asObservable();
     moveDetail$ = this._moveDetail.asObservable();
+    proposedMove$ = this._proposedMove.asObservable();
 
     constructor(private router: Router, private studyService: StudyService, private positionService: PositionService) {
       this.studyPointer = new StudyPointer(null);
@@ -68,7 +70,6 @@ export class StudyNavigationService {
       }
 
       if(position){
-        console.log('do')
         let p = this.positionService.save(position);
         p.subscribe({
           
@@ -108,36 +109,41 @@ export class StudyNavigationService {
     }
 
     emitNextMove = (moveData: MoveData) => {
-      let extra = moveData.extra ?? {};
-      if(moveData.move){
-        extra.from = moveData.move.from;
-        extra.to = moveData.move.to;
-      }
+      this._proposedMove.next(moveData);
+      // let extra = moveData.extra ?? {};
+      // if(moveData.move){
+      //   extra.from = moveData.move.from;
+      //   extra.to = moveData.move.to;
+      // }
 
-      if(this.studyPointer && moveData.move){
-        if(this.studyPointer.hasNext(moveData.move?.name ?? '-')){
-          extra.isNew = false;
-          this.next(moveData.move.name, true);
-        }else{
-          extra.isNew = true;
-          this.addMove(moveData.move);
-          this.next(moveData.move.name, true);
-        }
-      }
+      // if(this.studyPointer && moveData.move){
+      //   if(this.studyPointer.hasNext(moveData.move?.name ?? '-')){
+      //     extra.isNew = false;
+      //     this.next(moveData.move.name, true);
+      //   }else{
+      //     extra.isNew = true;
+      //     this.addMove(moveData.move);
+      //     this.next(moveData.move.name, true);
+      //   }
+      // }
 
-      if(this.studyPointer?.pointer?.move && !this.studyPointer.pointer.move.from){
-        this.studyPointer.pointer.move.from = moveData.move?.from ?? null;
-        this.studyPointer.pointer.move.to = moveData.move?.to ?? null;
-        this.studyPointer.pointer.isDirty = true;
+      // if(this.studyPointer?.pointer?.move && !this.studyPointer.pointer.move.from){
+      //   this.studyPointer.pointer.move.from = moveData.move?.from ?? null;
+      //   this.studyPointer.pointer.move.to = moveData.move?.to ?? null;
+      //   this.studyPointer.pointer.isDirty = true;
 
-      }
+      // }
 
-      if(!moveData.position){
-        moveData.position = this.studyPointer?.pointer ?? undefined;
-      }
+      // if(!moveData.position){
+      //   moveData.position = this.studyPointer?.pointer ?? undefined;
+      // }
 
-      this.moveDetail = moveData;
-      this._moveDetail.next(moveData);
+      // this.moveDetail = moveData;
+      // this._moveDetail.next(moveData);
+    }
+
+    refresh = () => {
+      this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'refresh');
     }
 
     deleteCurrentPosition = (): void => {
@@ -392,6 +398,14 @@ export class StudyNavigationService {
         }
       }
     
+      inLine = (name: string): boolean => {
+        let positions = this.getPointer()?.parent?.pointer?.positions;
+        if(positions){
+          return positions.some(p => p.move?.name == name && !p.isDirty);
+        }
+        return false;
+      }
+
       hasNext = (name: string): boolean => {
         return this.studyPointer?.hasNext(name) ?? false;
       }

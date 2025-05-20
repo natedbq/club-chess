@@ -4,7 +4,6 @@ import { SlicePipe } from '@angular/common';
 import { StudyNavigator } from '../study/classes/study-navigator';
 import { PositionService } from '../../services/position.service';
 import { FENConverter } from '../../chess-logic/FENConverter';
-import { StudyController } from '../study/study.component';
 import { StudyNavigationService } from './study-navigation.service';
 
 @Component({
@@ -12,11 +11,10 @@ import { StudyNavigationService } from './study-navigation.service';
   templateUrl: './study-navigation.component.html',
   styleUrls: ['./study-navigation.component.css']
 })
-export class StudyNavigationComponent implements OnChanges {
+export class StudyNavigationComponent {
 
   //studyNav: StudyNavigator = new StudyNavigator(new Study());
   moveData: MoveData| null = null;
-  @Input() controller: StudyController | null = null;
   @Input() onUpdate: (move: MoveData ) => void = () => {console.log('please provide study navigation with update callback')};
   moves: Move[] = [];
   showVariations: boolean = true;
@@ -29,16 +27,6 @@ export class StudyNavigationComponent implements OnChanges {
       return this.moveData = s;
     });
   }
-  ngOnChanges(changes: SimpleChanges): void {
-    if(this.controller){
-      this.controller.next = this.next;
-      this.controller.getVariations = this.getVariations;
-      this.controller.first = this.first;
-      this.controller.previous = this.previous;
-      this.controller.refresh = this.refresh;
-    }
-  }
-
   public save() {
     this.navService.saveStudy();
   }
