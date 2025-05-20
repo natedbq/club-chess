@@ -1,6 +1,7 @@
 import { Component, Input, ViewChild ,AfterViewInit, OnChanges, SimpleChanges  } from '@angular/core';
 import { StudyNavigator } from '../study/classes/study-navigator';
 import { Study } from '../../chess-logic/models';
+import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 
 @Component({
   selector: 'app-study-title',
@@ -8,15 +9,19 @@ import { Study } from '../../chess-logic/models';
   styleUrls: ['./study-title.component.css']
 })
 export class StudyTitleComponent implements OnChanges {
-  @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
   @Input() editable: boolean = true;
   @ViewChild('titleInput') titleInput: any;
 
   editingTitle: boolean = false;
   workingTitle: string = '';
 
+constructor(private studyNavService: StudyNavigationService)
+{
+
+}
+
   isStudyDirty = (): boolean => {
-    return this.studyNav.isStudyDirty();
+    return this.studyNavService.isStudyDirty();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -24,16 +29,16 @@ export class StudyTitleComponent implements OnChanges {
   }
 
   getTitle = (): string => {
-    let title = this.studyNav.getTitle();
+    let title = this.studyNavService.getTitle();
     return title ? title : 'Untitled';
   }
 
   clearTitle = (): void => {
-    this.studyNav.setTitle('');
+    this.studyNavService.setTitle('');
   }
 
   hasTitle(): boolean {
-    return this.studyNav.getTitle() != null;
+    return this.studyNavService.getTitle() != null;
   }
 
   editTitle = (): void => {
@@ -48,8 +53,8 @@ export class StudyTitleComponent implements OnChanges {
 
   commitTitle = (): void => {
     this.editingTitle = false;
-    if(this.workingTitle != this.studyNav.getTitle()){
-      this.studyNav.setTitle(this.workingTitle);
+    if(this.workingTitle != this.studyNavService.getTitle()){
+      this.studyNavService.setTitle(this.workingTitle);
     }
   }
 

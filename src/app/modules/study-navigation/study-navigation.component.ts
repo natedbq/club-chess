@@ -4,79 +4,53 @@ import { SlicePipe } from '@angular/common';
 import { StudyNavigator } from '../study/classes/study-navigator';
 import { PositionService } from '../../services/position.service';
 import { FENConverter } from '../../chess-logic/FENConverter';
-import { StudyController } from '../study/study.component';
+import { StudyNavigationService } from './study-navigation.service';
 
 @Component({
   selector: 'app-study-navigation',
   templateUrl: './study-navigation.component.html',
   styleUrls: ['./study-navigation.component.css']
 })
-export class StudyNavigationComponent implements OnChanges {
+export class StudyNavigationComponent {
 
-  @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
-  @Input() controller: StudyController | null = null;
+  //studyNav: StudyNavigator = new StudyNavigator(new Study());
+  moveData: MoveData| null = null;
   @Input() onUpdate: (move: MoveData ) => void = () => {console.log('please provide study navigation with update callback')};
-  @Input() saveAction: () => void = () => {};
   moves: Move[] = [];
   showVariations: boolean = true;
 
-  constructor(private positionService: PositionService){
+  constructor(private positionService: PositionService, private navService: StudyNavigationService){
 
+    this.navService.moveDetail$.subscribe((s) => {
+      if(s)
+        this.onUpdate(s)
+      return this.moveData = s;
+    });
   }
-  ngOnChanges(changes: SimpleChanges): void {
-    if(this.controller){
-      this.controller.next = this.next;
-      this.controller.getVariations = this.getVariations;
-      this.controller.first = this.first;
-      this.controller.previous = this.previous;
-      this.controller.refresh = this.refresh;
-    }
+  public save() {
+    this.navService.saveStudy();
   }
 
   determineFocus = (): number[] => {
     let x: number[] = [];
-    let weight = this.studyNav.getTotalExcessWeightUpTree();
+    let weight = this.navService.getTotalExcessWeightUpTree();
     for(let i = 0; i < weight; i+=5){
       x.push(0);
     }
+
     return x;
   }
 
   setFEN = (): void => {
-    let summaryFEN = this.studyNav.getPointer().pointer?.move?.fen;
-    if(summaryFEN){
-      let study = this.studyNav.getStudy();
-      if(study){
-        study.summaryFEN = summaryFEN;
-        this.saveAction();
-      }
-    }
+    this.navService.setSummaryFEN();
   }
 
   delete = (): void => {
-    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
-    let position = this.studyNav.getPointer().pointer;
-    if(position?.id){
-      this.studyNav.deleteCurrentPosition();
-      this.positionService.delete(position.id).subscribe({
-        error: (e) => {
-          console.log(e);
-        }
-      });
-      this.onUpdate({
-        studyId: this.studyNav.getStudy().id,
-        studyTitle: this.studyNav.getStudy().title,
-        move: this.studyNav.peek(),
-        source: 'navigator',
-        direction: 'delete',
-        player: player,
-        extra: {}
-      });
-    }
+    this.navService.deleteCurrentPosition();
   }
 
   getMoveDetail = (): MoveDetail => {
-    return {name:this.studyNav.peek()?.name ?? '-', isDirty: this.studyNav.peekDirty(), position: this.studyNav.getPointer().pointer };
+    return {name:this.moveData?.move?.name ?? '-', isDirty: this.moveData?.position?.isDirty ?? false, position: this.moveData?.position };
   }
 
   show(): void {
@@ -87,71 +61,32 @@ export class StudyNavigationComponent implements OnChanges {
     this.showVariations = false;
   }
 
+  //TODO: delete this
   refresh = (): void => {
-    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
+    let player = FENConverter.getPlayer(this.moveData?.move?.fen ?? '- w')
 ;
 
-      this.onUpdate({
-        studyId: this.studyNav.getStudy().id,
-        studyTitle: this.studyNav.getStudy().title,
-        move: this.studyNav.peek(),
-        source: 'navigator',
-        direction: 'next',
-        player: player,
-        extra: {}
-      });
+      // this.onUpdate({
+      //   studyId: this.studyNav.getStudy().id,
+      //   studyTitle: this.studyNav.getStudy().title,
+      //   move: this.studyNav.peek(),
+      //   source: 'navigator',
+      //   direction: 'next',
+      //   player: player,
+      //   extra: {}
+      // });
   }
 
   first = (): void => {
-    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
-    let tempStudyPoint = this.studyNav.getPointer();
-    
-    let move = this.studyNav.first();
-
-    if(tempStudyPoint != this.studyNav.getPointer()){
-      this.onUpdate({
-        studyId: this.studyNav.getStudy().id,
-        studyTitle: this.studyNav.getStudy().title,
-        move: move,
-        source: 'navigator',
-        direction: 'next',
-        player: player,
-        extra: {}
-      });
-    }
+    this.navService.first();
   }
 
   previous = (): void => {
-    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
-    let move = this.studyNav.previous();
-    this.onUpdate({
-      studyId: this.studyNav.getStudy().id,
-      studyTitle: this.studyNav.getStudy().title,
-      move: move,
-      source: 'navigator',
-      direction: 'back',
-      player: player,
-      extra: {}
-    });
+    this.navService.previous();
   }
 
   next = (name: string | null = null, alwaysUpdate: boolean = false): void => {
-    let player = FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '- w')
-    let tempStudyPoint = this.studyNav.getPointer();
-
-    let move = this.studyNav.next(name);
-
-    if(tempStudyPoint != this.studyNav.getPointer() || alwaysUpdate){
-      this.onUpdate({
-        studyId: this.studyNav.getStudy().id,
-        studyTitle: this.studyNav.getStudy().title,
-        move: move,
-        source: 'navigator',
-        direction: 'next',
-        player: player,
-        extra: {}
-      });
-    }
+    this.navService.next(name);
   }
 
   last(): void {
@@ -159,29 +94,19 @@ export class StudyNavigationComponent implements OnChanges {
   }
 
   goto(name: string): void {
-    let move = this.studyNav.goto(name);
-    let player = Color.White == FENConverter.getPlayer(this.studyNav.peek()?.fen ?? '-') ? Color.Black : Color.White
-    this.onUpdate({
-      studyId: this.studyNav.getStudy().id,
-      studyTitle: this.studyNav.getStudy().title,
-      move: move,
-      source: 'navigator',
-      direction: 'goto',
-      player: player,
-      extra: {}
-    });
+    this.navService.goto(name);
   }
 
   getPreviousMoves(): MoveDetail[][] {
-    return this.studyNav.getPreviousMoves();
+    return this.navService.getPreviousMoves();
   }
 
   getTitle(): string | null {
-    return this.studyNav.getTitle();
+    return this.navService.getTitle();
   }
 
   getVariations(): MoveDetail[] {
-    let variations = this.studyNav.getVariations();
+    let variations = this.navService.getVariations();
     if(variations.length >= 2){
       return variations;
     }

@@ -173,6 +173,8 @@ export class Queue<T> {
 export class Move {
     fen: string | null = null;
     name: string | null = null;
+    from: string  | null = null;
+    to: string | null = null;
 
     public copy(): Move {
         let m = new Move();
@@ -185,6 +187,8 @@ export class Move {
         let move = new Move();
         move.fen = data.fen;
         move.name = data.name;
+        move.from = data.from;
+        move.to = data.to;
         return move;
     }
 }
@@ -197,4 +201,5 @@ export interface MoveData {
     direction: string | null;
     player: Color | null;
     extra: any;
+    position?: Position;
 }
