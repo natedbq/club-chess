@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { Study } from '../../chess-logic/models';
 import { StudyNavigator } from '../study/classes/study-navigator';
+import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 
 @Component({
   selector: 'app-study-description',
@@ -8,15 +9,18 @@ import { StudyNavigator } from '../study/classes/study-navigator';
   styleUrls: ['./study-description.component.css']
 })
 export class StudyDescriptionComponent implements OnChanges{
-  @Input() studyNav: StudyNavigator = new StudyNavigator(new Study());
   @Input() editable: boolean = true;
   @ViewChild('descInput') descInput: any;
 
   editingDescription: boolean = false;
   workingDescription: string = '';
 
+  constructor(private studyNavService: StudyNavigationService){
+
+  }
+
   getDescription = (): string => {
-    let desc = this.studyNav.getDescription();
+    let desc = this.studyNavService.getDescription();
     if(desc == ''){
       desc = '...';
     }
@@ -40,7 +44,7 @@ export class StudyDescriptionComponent implements OnChanges{
 
   commitDescription = (): void => {
     this.editingDescription = false;
-    this.studyNav.setDescription(this.workingDescription);
+    this.studyNavService.setDescription(this.workingDescription);
   }
 
 }

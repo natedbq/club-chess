@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { Color, Move, MoveData, Position, Study } from '../../chess-logic/models';
+import { Color, MoveData, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { StudyNavigator } from './classes/study-navigator';
 import { PositionService } from '../../services/position.service';
 import { MoveDelegation, MoveDelegator } from '../../chess-logic/moveDelegator';
-import { MoveDetail } from '../study-navigation/study-navigation.component';
 import { FloatingImageService } from '../../services/floating-image/floating-image.service';
 import { LichessService } from '../../services/lichess.service';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
@@ -122,6 +121,7 @@ export class StudyComponent implements OnInit {
       this.doStudy = false;
       MoveDelegator.stop();
       MoveDelegator.clear();
+      this.studyNavigationService.clearWeights();
     }
 
     oneMove = (): void => {

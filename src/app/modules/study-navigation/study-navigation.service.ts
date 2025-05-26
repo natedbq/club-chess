@@ -216,10 +216,18 @@ export class StudyNavigationService {
         return false;
       }
     
+      clearWeights = (): void => {
+        this.addWeightToTree(-1);
+      }
+
       addWeightToTree = (w: number): void => {
         let pointer = this.getPointer();
         if(pointer?.pointer){
-          pointer.pointer.weight += w;
+          if(w < 0){
+            pointer.pointer.weight = 0;
+          }else{
+            pointer.pointer.weight += w;
+          }
         }
         this.addWeightToTreeHelper(pointer, w);
         this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'addWieghtToTree');
@@ -231,7 +239,11 @@ export class StudyNavigationService {
           if(variations.length > 1){
             variations.forEach(v => {
               if(v.position?.weight){
-                v.position.weight += w;
+                if(w < 0){
+                  v.position.weight = 0;
+                }else{
+                  v.position.weight += w;
+                }
               }
             })
           }
