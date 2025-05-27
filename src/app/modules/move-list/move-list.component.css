@@ -1,5 +1,6 @@
 .move-list {
     max-height: 800px;
+    min-height: 75px;
     overflow-y: scroll;
     display: flex;
     flex-direction: column-reverse;
