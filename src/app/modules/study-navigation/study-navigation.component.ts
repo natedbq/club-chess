@@ -98,7 +98,55 @@ export class StudyNavigationComponent {
   }
 
   getPreviousMoves(): MoveDetail[][] {
-    return this.navService.getPreviousMoves();
+    //return this.navService.getPreviousMoves();
+    return [
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+      [{name: 'move', isDirty: false, position: null},{name: 'move', isDirty: false, position: null}],
+    ];
   }
 
   getTitle(): string | null {
