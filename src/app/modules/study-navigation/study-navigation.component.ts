@@ -107,7 +107,7 @@ export class StudyNavigationComponent {
 
   getVariations(): MoveDetail[] {
     let variations = this.navService.getVariations();
-    if(variations.length >= 2){
+    if(variations.length >= 1){
       return variations;
     }
     return [];

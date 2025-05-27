@@ -12,6 +12,7 @@ import { Rook } from "./pieces/rook";
 
 export class ChessBoard {
     private chessBoard: (Piece | null)[][];
+    private castlePieces: Piece[] = [];
     private readonly chessBoardSize: number = 8;
     private _playerColor = Color.White;
     private _safeSquares: SafeSquares;
@@ -37,11 +38,17 @@ export class ChessBoard {
     private _gameHistory: GameHistory;
 
     constructor() {
+        let wqRook = new Rook(Color.White);
+        let wkRook = new Rook(Color.White);
+        let bqRook = new Rook(Color.Black);
+        let bkRook = new Rook(Color.Black);
+
+        this.castlePieces = [wqRook, wkRook, bqRook, bkRook];
 
         this.chessBoard = [
             [
-                new Rook(Color.White), new Knight(Color.White), new Bishop(Color.White), new Queen(Color.White),
-                new King(Color.White), new Bishop(Color.White), new Knight(Color.White), new Rook(Color.White)
+                wqRook, new Knight(Color.White), new Bishop(Color.White), new Queen(Color.White),
+                new King(Color.White), new Bishop(Color.White), new Knight(Color.White), wkRook
             ],
             [
                 new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White),
@@ -56,8 +63,8 @@ export class ChessBoard {
                 new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black)
             ],
             [
-                new Rook(Color.Black), new Knight(Color.Black), new Bishop(Color.Black), new Queen(Color.Black),
-                new King(Color.Black), new Bishop(Color.Black), new Knight(Color.Black), new Rook(Color.Black)
+                bqRook, new Knight(Color.Black), new Bishop(Color.Black), new Queen(Color.Black),
+                new King(Color.Black), new Bishop(Color.Black), new Knight(Color.Black), bkRook
             ],
         ];
 

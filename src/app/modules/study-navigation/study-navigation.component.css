@@ -1,8 +1,9 @@
 .move-list {
-    max-height: 800px;
-    overflow-y: scroll;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
+    max-height: 528px;
+    min-height: 72px;
     /*  column-reverse is interesting to consider as well */
 }
 
@@ -19,14 +20,6 @@
     color: #282828;
 }
 
-.move-list::-webkit-scrollbar {
-    display: none;
-}
-
-.move-list {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
 
 .row {
     width: 250px;

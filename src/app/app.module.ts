@@ -23,6 +23,7 @@ import { ConfirmDialogComponent } from './modules/confirm-dialog/confirm-dialog-
 import { MatDialogModule } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FloatingImageComponent } from './modules/floating-image/floating-image.component';
+import { DevToolsComponent } from './modules/dev-tools/dev-tools.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { FloatingImageComponent } from './modules/floating-image/floating-image.
     ChessBoardComponent,
     ComputerModeComponent,
     RepertoireMenuComponent,
+    DevToolsComponent,
     StudyComponent,
     StudyNavigationComponent,
     StudyTitleComponent,
