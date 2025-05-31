@@ -1,4 +1,4 @@
-<h3>{{moveData?.move?.name}}<span>move#{{getMoveNumber()}}</span></h3>
+<h2>{{moveData?.move?.name}}<span>move#{{getMoveNumber()}}</span></h2>
 <div *ngIf="moveData?.move?.name != '-'">
     <div>
         <b>ID</b>
@@ -9,8 +9,12 @@
         <span>'{{moveData?.position?.title}}'</span>
     </div>
     <div>
+        <b>description</b>
+        <span>'{{getDescription()}}'</span>
+    </div>
+    <div>
         <b>fen</b>
-        <span>'{{moveData?.move?.fen}}'</span>
+        <div class="bordered">{{moveData?.move?.fen}}</div>
     </div>
     <div>
         <b>by</b>
@@ -24,7 +28,13 @@
         <b>dirty</b>
         <span>{{moveData?.position?.isDirty ? 'yes' : 'no'}}</span>
     </div>
+</div>
 <div>
+    <b>Tree</b>
+    <div>
+        <textarea class="textarea-fill width-overflow" rows="15" readonly >{{getTree()}}</textarea>
+    </div>
+</div>
 
 <!--
 export interface MoveData {

@@ -7,7 +7,6 @@
     /*  column-reverse is interesting to consider as well */
 }
 
-
 .variation-list {
     padding-top: 5px;
 }
@@ -19,7 +18,6 @@
 .move.disabled {
     color: #282828;
 }
-
 
 .row {
     width: 250px;

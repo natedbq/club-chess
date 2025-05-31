@@ -4,26 +4,31 @@
         <button class="btn btn-icon btn-commit" (click)="activateStudy()" [ngClass]="{active: doStudy}"><i class="bi bi-play inline-block" ></i></button>
         <button class="btn btn-icon btn-delete" (click)="pauseStudy()"><i class="bi bi-pause inline-block" ></i></button>
         <button class="btn btn-icon btn-commit" (click)="focus()"><i class="bi bi-bullseye inline-block" ></i></button>
-        <button class="btn btn-icon btn-delete" (click)="print()"><i class="bi bi-pause inline-block" ></i>print tree</button>
     </div>
     <tr>
         <td>
-            <div *ngIf="loading">loading...</div>
+            <div *ngIf="loading" >loading...</div>
             <div *ngIf="!loading">
                 <app-chess-board  [moveData]="moveData" [studyPerspective]="getPerspective()"> </app-chess-board>
             </div>
         </td>
         <td style="vertical-align: top;width: 380px;">
-            <app-study-title></app-study-title>
             <app-study-navigation [onUpdate]="updateBoard" ></app-study-navigation>
         </td>
         <td style="vertical-align: top; width: 600px">
-            <app-study-description ></app-study-description>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <app-dev-tools></app-dev-tools>
+            <app-tool-menu>
+                <app-tool [name]="'Info'" [icon]="'book'">
+                    <app-study-title></app-study-title>
+                    <app-move-editor></app-move-editor>
+                    <app-study-description></app-study-description>
+                </app-tool >
+                <app-tool [name]="'Debug Info'" [icon]="'bug'">
+                    <app-dev-tools></app-dev-tools>
+                </app-tool>
+                <app-tool [name]="'Settings'" [icon]="'gear'">
+                    <app-settings></app-settings>
+                </app-tool> 
+            </app-tool-menu>
         </td>
     </tr>
 </table>

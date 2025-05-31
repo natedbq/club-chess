@@ -245,13 +245,6 @@ export class StudyComponent implements OnInit {
       }
     }
 
-    print = (): void => {
-      this.studyNavigationService.printTree();
-      this.studyNavigationService.getVariations().forEach(v => {
-        this.studyNavigationService.getTotalExcessWeightInTree(v.name)
-      })
-    }
-
     updateStudy = (data: MoveData | null): void => {
       if(data?.move){
         if(this.studyNavigationService.hasNext(data.move.name ?? '-')){

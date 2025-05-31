@@ -7,35 +7,23 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog-component';
 import { FloatingImageService } from '../../services/floating-image/floating-image.service';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
+import { SettingsService } from './settings.service';
 
 @Component({
-  selector: 'app-dev-tools',
-  templateUrl: './dev-tools.component.html',
-  styleUrls: ['./dev-tools.component.css']
+  selector: 'app-settings',
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.css']
 })
-export class DevToolsComponent {
+export class SettingsComponent {
 
   moveData: MoveData | null = null;
+  showVariations: boolean = true;
 
-  constructor(private router: Router, private studyNavService: StudyNavigationService){
-    this.studyNavService.moveDetail$.subscribe(m => this.moveData = m);
+  constructor(private router: Router, private settingsService: SettingsService){
+    this.settingsService.showVariations$.subscribe(m => this.showVariations = m);
   }
 
-  public getMoveNumber(){
-    return this.studyNavService.getPreviousMoves().length;
+  toggleShowVariations() {
+    this.settingsService.showVariations(!this.showVariations);
   }
-
-  public getDescription() {
-    let desc = this.studyNavService.getDescription();
-    let ret = desc.substring(0, 30);
-    if(desc.length > 30){
-      ret += '...';
-    }
-    return ret;
-  }
-
-  getTree() {
-    return this.studyNavService.printTree();
-  }
-  
 }

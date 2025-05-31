@@ -91,6 +91,30 @@ export class StudyNavigationService {
       return of();
     }
 
+    isDirty = (): boolean => {
+      let firstPosition = this.studyPointer?.getRoot();
+      let isDirty = this.isDirtyHelper(firstPosition ?? null);
+
+      return isDirty;
+    }
+
+    private isDirtyHelper = (position: Position | null): boolean => {
+      if(!position){
+        return false;
+      }
+
+            
+      let isDirty = position.isDirty;
+      for(let i = 0; i < position.positions.length; i++){
+        if(isDirty){
+          break;
+        }
+        isDirty = isDirty || this.isDirtyHelper(position.positions[i]);
+      }
+
+      return isDirty;
+    }
+
     makeMove = (position: Position | null, source: string, direction: string, extra: any = null): void => {
       if(position){
         let movedata: MoveData = {
@@ -292,7 +316,7 @@ export class StudyNavigationService {
       }
     
       public printTree() {
-        this.printTreeHelper(this.getPointer(), 0);
+        return this.printTreeHelper(this.getPointer(), 0);
       }
     
       private printTreeHelper(p: StudyPointer | null, depth: number){
@@ -307,10 +331,10 @@ export class StudyNavigationService {
         s += '| ' + p.pointer?.move?.name + ' '+ p.pointer?.weight;
          
         p.getVariations().forEach(v => {
-          this.printTreeHelper(p.next(v.name), depth+1);
+          s += '\n'+this.printTreeHelper(p.next(v.name), depth+1);
         })
     
-        console.log(s);
+        return s;
       }
     
       getHighestWeightInTree = (name: string | null = null): number => {
