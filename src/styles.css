@@ -56,6 +56,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     padding: 10px;
 }
 
+
+.push-right {
+    margin-left: auto;
+}
+
 .padding-v-3 {
     padding: 30px;
 }
@@ -102,6 +107,57 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .red {
     color: var(--red);
+}
+
+button:disabled {
+    opacity: 1 !important;
+    cursor: pointer !important;
+    background-color: inherit !important; /* your normal color */
+    color: black !important;
+    border: none;
+    margin: 2px
+
+    /* Add more styles as needed */
+  }
+
+.hide {
+    display: none;
+}
+
+p-inputSwitch {
+    margin: 7px
+}
+
+.margin-left-10 {
+    margin-left: 10px;
+}
+
+.no-hover:hover {
+    background-color: inherit !important;
+    color: inherit !important;
+    cursor: default !important;
+    /* Add more overrides as needed */
+  }
+
+.disabled-black {
+    color: black;
+}
+
+textarea {
+    background-color: transparent;
+    border: none;
+    resize: none;
+    overflow-y: auto;
+    margin: 7px;
+    padding-right: 6px;
+    height: 80%;
+    color: white;
+    width: 95%;
+    height: 100%;
+}
+
+.width-overflow {
+    overflow-x: auto !important;
 }
 
 ::-webkit-scrollbar {

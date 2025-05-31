@@ -1,0 +1,11 @@
+.one-line {
+    display: flex;
+}
+
+.bi {
+    font-size: 35px;
+  }
+
+  .btn-commit {
+    background-color: transparent;
+  }

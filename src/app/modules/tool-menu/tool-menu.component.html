@@ -1,0 +1,16 @@
+
+ <div class="menu-container">
+  <div class="tool-viewport">
+    <ng-content></ng-content>
+  </div>
+
+  <div class="tool-menu">
+    <div *ngFor="let option of tools" class="tool-option btn-commit" [ngClass]="{'selected': option.selected}">
+      <i class="bi bi-{{option.icon}}" (click)="selectTool(option)"></i>
+    </div>
+    <div class="tool-option">
+      <app-save-study class="inline-block"></app-save-study>
+    </div>
+  </div>
+
+ </div>

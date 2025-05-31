@@ -5,6 +5,7 @@ import { StudyNavigator } from '../study/classes/study-navigator';
 import { PositionService } from '../../services/position.service';
 import { FENConverter } from '../../chess-logic/FENConverter';
 import { StudyNavigationService } from './study-navigation.service';
+import { SettingsService } from '../settings/settings.service';
 
 @Component({
   selector: 'app-study-navigation',
@@ -19,16 +20,15 @@ export class StudyNavigationComponent {
   moves: Move[] = [];
   showVariations: boolean = true;
 
-  constructor(private positionService: PositionService, private navService: StudyNavigationService){
+  constructor(private positionService: PositionService, private navService: StudyNavigationService, private settingsService: SettingsService){
 
     this.navService.moveDetail$.subscribe((s) => {
       if(s)
         this.onUpdate(s)
       return this.moveData = s;
     });
-  }
-  public save() {
-    this.navService.saveStudy();
+
+    this.settingsService.showVariations$.subscribe(m => this.showVariations = m);
   }
 
   determineFocus = (): number[] => {
@@ -41,24 +41,8 @@ export class StudyNavigationComponent {
     return x;
   }
 
-  setFEN = (): void => {
-    this.navService.setSummaryFEN();
-  }
-
-  delete = (): void => {
-    this.navService.deleteCurrentPosition();
-  }
-
   getMoveDetail = (): MoveDetail => {
     return {name:this.moveData?.move?.name ?? '-', isDirty: this.moveData?.position?.isDirty ?? false, position: this.moveData?.position };
-  }
-
-  show(): void {
-    this.showVariations = true;
-  }
-
-  hide(): void {
-    this.showVariations = false;
   }
 
   //TODO: delete this

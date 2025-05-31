@@ -24,6 +24,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FloatingImageComponent } from './modules/floating-image/floating-image.component';
 import { DevToolsComponent } from './modules/dev-tools/dev-tools.component';
+import { ToolNameDirective } from './directives/tool-name/tool-name.directive';
+import { ToolComponent, ToolMenuComponent } from './modules/tool-menu/tool-menu.component';
+import { SettingsComponent } from './modules/settings/settings.component';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { MoveEditorComponent } from './modules/move-editor/move-editor.component';
+import { SaveStudyComponent } from './modules/save-study/save-study.component';
 
 @NgModule({
   declarations: [
@@ -34,9 +40,15 @@ import { DevToolsComponent } from './modules/dev-tools/dev-tools.component';
     DevToolsComponent,
     StudyComponent,
     StudyNavigationComponent,
+    SettingsComponent,
     StudyTitleComponent,
+    SaveStudyComponent,
     StudyDescriptionComponent,
-    FloatingImageComponent
+    FloatingImageComponent,
+    ToolNameDirective,
+    ToolMenuComponent,
+    ToolComponent,
+    MoveEditorComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,6 +62,7 @@ import { DevToolsComponent } from './modules/dev-tools/dev-tools.component';
     FormsModule,
     DragDropModule,
     MatDialogModule,
+    InputSwitchModule,
     ConfirmDialogComponent
   ],
   providers: [],

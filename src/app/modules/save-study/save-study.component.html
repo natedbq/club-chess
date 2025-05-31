@@ -1,0 +1,4 @@
+<div class="inline-block">
+    <button class="btn btn-icon btn-commit" [ngClass]="{'disabled-black': !canSave() }" (click)="save()" 
+    [disabled]="!canSave()"><i class="bi bi-floppy inline-block" ></i></button>
+</div>

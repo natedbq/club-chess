@@ -1,0 +1,12 @@
+.toggles {
+    display: flex;
+}
+
+.toggles div:nth-child(2) {
+    margin-right: 20px;
+    margin-left: auto;
+}
+
+.space {
+    padding: 30px;
+}
