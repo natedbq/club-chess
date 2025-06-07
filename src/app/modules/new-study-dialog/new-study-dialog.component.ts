@@ -43,6 +43,8 @@ export class NewStudyDialogComponent {
     position.description = "";
     position.tags = [];
     position.move = new Move();
+    position.move.to = '';
+    position.move.from = '';
     position.move.name = '-';
     position.move.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     position.positions = [];
