@@ -8,6 +8,7 @@ import { MoveDelegation, MoveDelegator } from '../../chess-logic/moveDelegator';
 import { FloatingImageService } from '../../services/floating-image/floating-image.service';
 import { LichessService } from '../../services/lichess.service';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
+import { ActivateStudyService } from './activate-study.service';
 
 @Component({
   selector: 'app-study',
@@ -32,8 +33,17 @@ export class StudyComponent implements OnInit {
       private floatingImageService: FloatingImageService,
       private router: Router,
       private lichessService: LichessService,
-      private studyNavigationService: StudyNavigationService
+      private studyNavigationService: StudyNavigationService,
+      private activateStudyService: ActivateStudyService
     ) {
+        this.activateStudyService.play$.subscribe((p) => {
+          if(p){
+            this.activateStudy();
+          }else{
+            this.pauseStudy();
+          }
+        });
+
         this.router.events.subscribe(event => {
           if (event instanceof NavigationStart) {
             MoveDelegator.stop();

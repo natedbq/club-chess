@@ -1,8 +1,6 @@
 
 <table>
     <div class="padding">
-        <button class="btn btn-icon btn-commit" (click)="activateStudy()" [ngClass]="{active: doStudy}"><i class="bi bi-play inline-block" ></i></button>
-        <button class="btn btn-icon btn-delete" (click)="pauseStudy()"><i class="bi bi-pause inline-block" ></i></button>
         <button class="btn btn-icon btn-commit" (click)="focus()"><i class="bi bi-bullseye inline-block" ></i></button>
     </div>
     <tr>
@@ -21,6 +19,7 @@
                     <app-study-title></app-study-title>
                     <app-move-editor></app-move-editor>
                     <app-study-description></app-study-description>
+                    <app-study-control></app-study-control>
                 </app-tool >
                 <app-tool [name]="'Debug Info'" [icon]="'bug'">
                     <app-dev-tools></app-dev-tools>

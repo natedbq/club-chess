@@ -143,6 +143,15 @@ p-inputSwitch {
     color: black;
 }
 
+.push-down {
+    position: absolute;
+    background-origin: 0;
+}
+
+.bi.bi-large{
+    font-size: 35px;
+  }
+
 textarea {
     background-color: transparent;
     border: none;

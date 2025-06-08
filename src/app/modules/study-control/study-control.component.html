@@ -1,0 +1,4 @@
+
+<button *ngIf="!active" class="btn btn-icon btn-commit" (click)="startStudy()" ><i class="bi bi-large bi-play inline-block" ></i></button>
+<button *ngIf="active" class="btn btn-icon btn-commit active" (click)="startStudy()"><i class="bi bi-large bi-play-fill inline-block" ></i></button>
+<button class="btn btn-icon btn-delete" (click)="stopStudy()"><i class="bi bi-large bi-pause inline-block" ></i></button>

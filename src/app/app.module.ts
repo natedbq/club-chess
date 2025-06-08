@@ -28,12 +28,17 @@ import { ToolNameDirective } from './directives/tool-name/tool-name.directive';
 import { ToolComponent, ToolMenuComponent } from './modules/tool-menu/tool-menu.component';
 import { SettingsComponent } from './modules/settings/settings.component';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { SliderModule } from 'primeng/slider';
 import { MoveEditorComponent } from './modules/move-editor/move-editor.component';
 import { SaveStudyComponent } from './modules/save-study/save-study.component';
+import { ActivateStudyService } from './modules/study/activate-study.service';
+import { StudyControlComponent } from './modules/study-control/study-control.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    StudyControlComponent,
     ChessBoardComponent,
     ComputerModeComponent,
     RepertoireMenuComponent,
@@ -48,7 +53,7 @@ import { SaveStudyComponent } from './modules/save-study/save-study.component';
     ToolNameDirective,
     ToolMenuComponent,
     ToolComponent,
-    MoveEditorComponent,
+    MoveEditorComponent    
   ],
   imports: [
     BrowserModule,
@@ -63,7 +68,9 @@ import { SaveStudyComponent } from './modules/save-study/save-study.component';
     DragDropModule,
     MatDialogModule,
     InputSwitchModule,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    InputNumberModule,
+    SliderModule
   ],
   providers: [],
   bootstrap: [AppComponent]

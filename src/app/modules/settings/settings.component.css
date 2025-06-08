@@ -14,3 +14,8 @@
 .space {
     padding: 30px;
 }
+
+::ng-deep .p-slider .p-slider-handle {
+    top: 50% !important;
+    transform: translateY(-50%) translateX(-50%) !important;
+  }
