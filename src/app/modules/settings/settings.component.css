@@ -1,8 +1,12 @@
-.toggles {
+.toggles div {
     display: flex;
 }
 
-.toggles div:nth-child(2) {
+.toggles div div {
+    margin-left: auto;
+}
+
+.toggles div div:nth-child(2) {
     margin-right: 20px;
     margin-left: auto;
 }
@@ -10,3 +14,8 @@
 .space {
     padding: 30px;
 }
+
+::ng-deep .p-slider .p-slider-handle {
+    top: 50% !important;
+    transform: translateY(-50%) translateX(-50%) !important;
+  }

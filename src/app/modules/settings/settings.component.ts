@@ -18,12 +18,19 @@ export class SettingsComponent {
 
   moveData: MoveData | null = null;
   showVariations: boolean = true;
+  autoFavor: boolean = true;
+  pauseTime: number = 2.5;
 
   constructor(private router: Router, private settingsService: SettingsService){
     this.settingsService.showVariations$.subscribe(m => this.showVariations = m);
+    this.settingsService.autoFavor$.subscribe(m => this.autoFavor = m);
   }
 
   toggleShowVariations() {
     this.settingsService.showVariations(!this.showVariations);
+  }
+
+  toggleAutoFavor() {
+    this.settingsService.autoFavor(!this.autoFavor);
   }
 }
