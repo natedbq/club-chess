@@ -1,0 +1,15 @@
+<h2>Planning</h2>
+<h4>Draw Plans</h4>
+<div><p-inputSwitch (click)="toggleEnable()" [ngModel]="enable"></p-inputSwitch></div>
+<div>
+    <h4>color</h4>
+    <button *ngFor="let option of colors" class="btn btn-icon btn-commit" (click)="selectColor(option)" [ngClass]="{'active': color == option }">
+        <i class="bi bi-large bi-circle-fill inline-block" [ngClass]="option" ></i>
+    </button>
+</div>
+<div>
+    <h4>undo</h4>
+    <button class="btn btn-icon btn-commit" (click)="undo()">
+        <i class="bi bi-large bi-arrow-counterclockwise inline-block"></i>
+    </button>
+</div>

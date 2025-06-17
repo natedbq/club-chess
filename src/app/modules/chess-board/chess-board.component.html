@@ -1,8 +1,9 @@
 
 
+<div *ngIf="!isPreview" id="canvas" class="canvas"></div>
 <table>
     <tr>
-        <td>
+        <td style="padding-left: 10px">
             <div class="chess-board" [ngClass]="{'small': isPreview}"  #chessBoard>
                 <div *ngIf="flipMode">
                     <!--As Black-->
@@ -22,7 +23,9 @@
                             <div [ngClass]="{'safe-square': isSquareSafeForSelectedPiece(x, 7-y)}"></div>
                 
                             <img #pieceImage *ngIf="piece" [src]="pieceImagePaths[piece]" [alt]="piece" class="piece"
-                                [ngClass]="{'small': isPreview}" cdkDrag (cdkDragStarted)="onDragStart(x,7-y,pieceImage)" (cdkDragEnded)="onDragEnd($event,pieceImage)">
+                                [ngClass]="{'small': isPreview}" cdkDrag (cdkDragStarted)="onDragStart(x,7-y,pieceImage)" 
+                                [cdkDragDisabled]="isPreview || locked"
+                                (cdkDragEnded)="onDragEnd($event,pieceImage)">
                         </div>
                     </div>
                 </div>
@@ -44,7 +47,9 @@
                             <div [ngClass]="{'safe-square': isSquareSafeForSelectedPiece(7-x, y)}"></div>
                 
                             <img #pieceImage *ngIf="piece" [src]="pieceImagePaths[piece]" [alt]="piece" class="piece"
-                                [ngClass]="{'small': isPreview}" cdkDrag (cdkDragStarted)="onDragStart(7-x,y,pieceImage)" (cdkDragEnded)="onDragEnd($event,pieceImage)" >
+                                [ngClass]="{'small': isPreview}" cdkDrag (cdkDragStarted)="onDragStart(7-x,y,pieceImage)" 
+                                [cdkDragDisabled]="isPreview || locked"
+                                (cdkDragEnded)="onDragEnd($event,pieceImage)" >
                         </div>
                     </div>
                 </div>

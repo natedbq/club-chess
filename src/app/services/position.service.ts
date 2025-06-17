@@ -74,6 +74,7 @@ export class PositionService {
     p.parentId = position.parentId;
     p.tags = position.tags;
     p.title = position.title;
+    p.plans = position.plans;
     p.positions = [];
     return this.http.post(this.api, p).pipe(finalize(() => {
         position.isDirty = false;

@@ -9,6 +9,8 @@ import { Move, MoveData, Position, Study } from '../../chess-logic/models';
 import {CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule} from '@angular/cdk/drag-drop';
 import { MoveDelegator } from '../../chess-logic/moveDelegator';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
+import { ActivateStudyService } from '../study/activate-study.service';
+import { DrawingService } from '../drawing/drawing.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -40,6 +42,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   private pieceSafeSquares: Coords[] = [];
   private lastMove: LastMove | undefined = this.chessBoard.lastMove;
   private checkState: CheckState = this.chessBoard.checkState;
+  locked = false;
 
   public get moveList(): MoveList { return this.chessBoard.moveList; };
   public get gameHistory(): GameHistory { return this.chessBoard.gameHistory; };
@@ -57,9 +60,16 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
 
   private subscriptions$ = new Subscription();
 
-  constructor(protected chessBoardService: ChessBoardService, private navService: StudyNavigationService) {
+  constructor(protected chessBoardService: ChessBoardService, 
+    private navService: StudyNavigationService, 
+    private activateStudyService: ActivateStudyService,
+    private drawingService: DrawingService) {
     this.navService.moveDetail$.subscribe(m => {
       this.moveData = m;
+    })
+    this.activateStudyService.lockBoard$.subscribe((b) => {
+      this.locked = b;
+      this.pieceSafeSquares = [];
     })
    }
 
@@ -105,6 +115,10 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
 
 
   onDragStart(x:number, y:number, element: HTMLElement): void {
+    if(this.isPreview || this.activateStudyService.isBoardLocked()){
+      return;
+    }
+
     if(this.flipMode){
       this.move(x,y);
     }else{
@@ -113,6 +127,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onDragEnd($event: CdkDragEnd, element: HTMLElement): void {
+    
     let boardRect = this.chessBoardElement.nativeElement.getBoundingClientRect();
     let y = Math.floor(($event.dropPoint.x - boardRect.left) / (boardRect.right / 8) )
     let x = Math.floor(($event.dropPoint.y - boardRect.top) / (boardRect.right / 8) );
@@ -205,7 +220,12 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private selectingPiece(x: number, y: number): void {
-    if(this.isPreview){
+    if(this.isPreview || this.activateStudyService.isBoardLocked()){
+      // if(!this.flipMode){
+      //   this.drawingService.addShape(y,7-x);
+      // }else{
+      //   this.drawingService.addShape(7-y,x);
+      // }
       return
     }
     

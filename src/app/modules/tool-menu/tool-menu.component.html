@@ -5,8 +5,8 @@
   </div>
 
   <div class="tool-menu">
-    <div *ngFor="let option of tools" class="tool-option btn-commit" [ngClass]="{'selected': option.selected}">
-      <i class="bi bi-large bi-{{option.icon}}" (click)="selectTool(option)"></i>
+    <div *ngFor="let option of tools" class="tool-option btn-commit" [ngClass]="{'selected': option.selected}" (click)="selectTool(option)">
+      <i class="bi bi-large bi-{{option.icon}}" ></i>
     </div>
     <div class="tool-option">
       <app-save-study class="inline-block"></app-save-study>

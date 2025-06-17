@@ -9,6 +9,7 @@ import { FloatingImageService } from '../../services/floating-image/floating-ima
 import { LichessService } from '../../services/lichess.service';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 import { ActivateStudyService } from './activate-study.service';
+import { SettingsService } from '../settings/settings.service';
 
 @Component({
   selector: 'app-study',
@@ -34,8 +35,12 @@ export class StudyComponent implements OnInit {
       private router: Router,
       private lichessService: LichessService,
       private studyNavigationService: StudyNavigationService,
-      private activateStudyService: ActivateStudyService
+      private activateStudyService: ActivateStudyService,
+      private settingsService: SettingsService
     ) {
+      this.settingsService.pauseTime$.subscribe((t) => {
+        this.pauseTime = t * 1000;
+      })
         this.activateStudyService.play$.subscribe((p) => {
           if(p){
             this.activateStudy();

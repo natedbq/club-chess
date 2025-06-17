@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { ActivateStudyService } from "../study/activate-study.service";
+import { DrawingService } from "../drawing/drawing.service";
 
 @Component({
   selector: 'app-study-control',
@@ -8,7 +9,7 @@ import { ActivateStudyService } from "../study/activate-study.service";
 })
 export class StudyControlComponent {
     active = false;
-    constructor(private activateStudyService: ActivateStudyService){
+    constructor(private activateStudyService: ActivateStudyService, private drawingService: DrawingService){
         activateStudyService.play$.subscribe((p) => {
             this.active = p;
         })
@@ -16,6 +17,7 @@ export class StudyControlComponent {
 
     public startStudy(){
         this.activateStudyService.startStudy();
+        this.drawingService.setShape('none');
     }
 
     public stopStudy(){

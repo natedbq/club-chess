@@ -21,7 +21,7 @@ constructor(private studyNavService: StudyNavigationService)
 }
 
   isStudyDirty = (): boolean => {
-    return this.studyNavService.isStudyDirty();
+    return this.studyNavService.isStudyDirty() || (this.studyNavService.getPointer()?.pointer?.isDirty ?? false);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

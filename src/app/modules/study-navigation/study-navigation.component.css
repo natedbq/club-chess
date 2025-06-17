@@ -42,3 +42,9 @@
     background-color: rgb(0, 143, 168);
     opacity: 0.7
 }
+
+.move {
+    pointer-events: auto !important;
+    z-index: 9999;
+    position: relative;
+  }
