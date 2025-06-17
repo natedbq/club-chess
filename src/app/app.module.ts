@@ -34,6 +34,7 @@ import { MoveEditorComponent } from './modules/move-editor/move-editor.component
 import { SaveStudyComponent } from './modules/save-study/save-study.component';
 import { ActivateStudyService } from './modules/study/activate-study.service';
 import { StudyControlComponent } from './modules/study-control/study-control.component';
+import { DrawingControlsComponent } from './modules/drawing/drawing-controls.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { StudyControlComponent } from './modules/study-control/study-control.com
     ToolNameDirective,
     ToolMenuComponent,
     ToolComponent,
+    DrawingControlsComponent,
     MoveEditorComponent    
   ],
   imports: [
@@ -70,7 +72,8 @@ import { StudyControlComponent } from './modules/study-control/study-control.com
     InputSwitchModule,
     ConfirmDialogComponent,
     InputNumberModule,
-    SliderModule
+    SliderModule,
+    
   ],
   providers: [],
   bootstrap: [AppComponent]

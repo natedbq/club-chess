@@ -5,6 +5,8 @@ import { ChessBoardService } from '../chess-board/chess-board.service';
 import { Subscription, firstValueFrom } from 'rxjs';
 import { Color } from 'src/app/chess-logic/models';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
+import { ActivateStudyService } from '../study/activate-study.service';
+import { DrawingService } from '../drawing/drawing.service';
 
 @Component({
   selector: 'app-computer-mode',
@@ -15,7 +17,7 @@ export class ComputerModeComponent extends ChessBoardComponent implements OnInit
   private computerSubscriptions$ = new Subscription();
 
   constructor(private stockfishService: StockfishService) {
-    super(inject(ChessBoardService), inject(StudyNavigationService));
+    super(inject(ChessBoardService), inject(StudyNavigationService), inject(ActivateStudyService), inject(DrawingService));
   }
 
   public override ngOnInit(): void {

@@ -19,6 +19,7 @@ export class StudyNavigationComponent {
   @Input() onUpdate: (move: MoveData ) => void = () => {console.log('please provide study navigation with update callback')};
   moves: Move[] = [];
   showVariations: boolean = true;
+  variations: MoveDetail[] = [];
 
   constructor(private positionService: PositionService, private navService: StudyNavigationService, private settingsService: SettingsService){
 
@@ -29,6 +30,9 @@ export class StudyNavigationComponent {
     });
 
     this.settingsService.showVariations$.subscribe(m => this.showVariations = m);
+    this.navService.study$.subscribe((s) => {
+      this.updateVariations();
+    })
   }
 
   determineFocus = (): number[] => {
@@ -63,14 +67,17 @@ export class StudyNavigationComponent {
 
   first = (): void => {
     this.navService.first();
+    this.updateVariations();
   }
 
   previous = (): void => {
     this.navService.previous();
+    this.updateVariations();
   }
 
   next = (name: string | null = null, alwaysUpdate: boolean = false): void => {
     this.navService.next(name);
+    this.updateVariations();
   }
 
   last(): void {
@@ -79,6 +86,7 @@ export class StudyNavigationComponent {
 
   goto(name: string): void {
     this.navService.goto(name);
+    this.updateVariations();
   }
 
   getPreviousMoves(): MoveDetail[][] {
@@ -89,12 +97,8 @@ export class StudyNavigationComponent {
     return this.navService.getTitle();
   }
 
-  getVariations(): MoveDetail[] {
-    let variations = this.navService.getVariations();
-    if(variations.length >= 1){
-      return variations;
-    }
-    return [];
+  updateVariations():void {
+    this.variations = this.navService.getVariations();
   }
 
 }

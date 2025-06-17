@@ -11,11 +11,13 @@
     </div>
     <div>
         <div class="move-list">
-            <div *ngIf="getVariations().length == 0 || !showVariations" class="move disabled">
+            <div *ngIf="variations.length == 0 || !showVariations" class="move disabled">
                 <div >-</div>
             </div>
             <div class="row" *ngIf="showVariations">
-                <div class="move" *ngFor="let move of getVariations()"  [ngClass]="{'dirty': move.isDirty}" (click)="next(move.name)">{{move.name}}</div>
+                <div class="move" *ngFor="let move of variations"  [ngClass]="{'dirty': move.isDirty}" (click)="next(move.name)">
+                    {{move.name}}
+                </div>
             </div>
         </div>
     </div>

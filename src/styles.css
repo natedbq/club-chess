@@ -5,6 +5,7 @@
     --gray: rgb(42, 42, 42);
     --green: rgb(12, 227, 80);
     --blue: #66f2ff;
+    --dark-blue: #343aeb;
     --red: rgb(249, 30, 74);
 }
 
@@ -97,6 +98,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-color: var(--blue);
 }
 
+img {
+  user-drag: none;       /* Safari, Chrome */
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 .dirty{
     color: var(--yellow);
 }
@@ -107,6 +117,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .red {
     color: var(--red);
+}
+
+.blue {
+    color: var(--blue);
+}
+
+.dark-blue {
+    color: var(--dark-blue);
+}
+
+.green {
+    color: var(--green);
 }
 
 button:disabled {

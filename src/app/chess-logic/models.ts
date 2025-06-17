@@ -127,6 +127,7 @@ export class Position {
     parentId: string | null = null;
     isDirty: boolean = true;
     weight: number = 1;
+    plans: string = '';
 
     public static toPosition(data: any): Position {
         let position = new Position();
@@ -135,6 +136,7 @@ export class Position {
         position.tags = data.tags;
         position.description = data.description;
         position.isDirty = false;
+        position.plans = data.plans;
         if(data.move)
             position.move = Move.toMove(data.move);
         if(data.positions){
@@ -146,6 +148,8 @@ export class Position {
         return position;
     }
 }
+
+
 export class Queue<T> {
     private items: T[] = [];
   

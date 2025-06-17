@@ -11,8 +11,10 @@ import { SettingsService } from "../settings/settings.service";
 })
 export class ActivateStudyService {
     private _play = new BehaviorSubject<boolean>(false);
+    private _lockBoard = new BehaviorSubject<boolean>(false);
 
     play$ = this._play.asObservable();
+    lockBoard$ = this._lockBoard.asObservable();
 
     public isActive(){
         return this._play.value;
@@ -24,5 +26,17 @@ export class ActivateStudyService {
 
     public stopStudy(){
         this._play.next(false);
+    }
+
+    public lockBaord(){
+        this._lockBoard.next(true);
+    }
+
+    public unlockBaord(){
+        this._lockBoard.next(false);
+    }
+
+    public isBoardLocked(){
+        return this._lockBoard.value;
     }
 }
