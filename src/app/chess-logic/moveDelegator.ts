@@ -77,7 +77,7 @@ export class MoveDelegator {
                     }
                 })
             }
-            //console.log(JSON.stringify(options.map(o => o.high - o.low)), JSON.stringify(c));
+            console.log(JSON.stringify(options.map(o => o.high - o.low)), JSON.stringify(c));
             
             options.forEach(o => {
                 if(pick >= o.low && pick <= o.high){

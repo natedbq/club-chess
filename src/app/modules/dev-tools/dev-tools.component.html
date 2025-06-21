@@ -32,6 +32,14 @@
         <b>dirty</b>
         <span>{{moveData?.position?.isDirty ? 'yes' : 'no'}}</span>
     </div>
+    <div>
+        <b>notes</b>
+        <div>
+            <div *ngFor="let note of moveData?.position?.liveNotes">
+                <div>{{note}}</div>
+            </div>
+        </div>
+    </div>
 </div>
 <div>
     <b>Tree</b>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { Color, MoveData, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
@@ -67,6 +67,12 @@ export class StudyComponent implements OnInit {
       if(this.studyId != ''){
         this.studyNavigationService.load(this.studyId);
       }
+
+      this.studyNavigationService.moveDetail$.subscribe((m) => {
+        if(this.floatingImageService.isVisible()){
+          this.floatingImageService.hideImage();
+        }
+      })
 
       this.loading = true;
       if(this.studyId){
@@ -177,6 +183,34 @@ export class StudyComponent implements OnInit {
       this.studyNavigationService.addWeightToTree(3);
     }
 
+    
+    @HostListener('window:mousedown', ['$event'])
+    onGlobalMouseDown(event: MouseEvent) {
+      if(!this.settingsService.autoNextLine() && this.floatingImageService.isVisible()){
+        
+        const rect = document.getElementById('board')?.getBoundingClientRect();
+        if(rect 
+          && rect.left < event.clientX && rect.right > event.clientX
+          && rect.bottom > event.clientY && rect.top < event.clientY
+        ){
+          this.continueToNextLine();
+        }
+      }
+    }
+    
+    continueToNextLine(){
+      this.floatingImageService.hideImage();
+      if(this.doStudy){
+        this.studyNavigationService.first();
+        if(this.isWhitePerspective){
+          this.oneMove();
+          this.oneMove();
+        }else{
+          this.oneMove();
+        }
+      }
+    }
+
     completeLine(data: MoveData){
       if(!this.doStudy){
         return;
@@ -191,33 +225,19 @@ export class StudyComponent implements OnInit {
         this.lichessService.evaluate(pointer.move?.fen ?? '-').subscribe({ 
           next: (evaluation) => {
             this.floatingImageService.showImage('crown-gold.png',  y, x, evaluation / 100);
-            setTimeout(() => {
-              this.floatingImageService.hideImage();
-              if(this.doStudy){
-                this.studyNavigationService.first();
-                if(this.isWhitePerspective){
-                  this.oneMove();
-                  this.oneMove();
-                }else{
-                  this.oneMove();
-                }
-              }
-            }, this.pauseTime);
+            if(this.settingsService.autoNextLine()){
+              setTimeout(() => {
+                this.continueToNextLine();
+              }, this.pauseTime);
+            }
           },
           error: (e) => {
             this.floatingImageService.showImage('crown-gold.png',  y, x);
-            setTimeout(() => {
-              this.floatingImageService.hideImage();
-              if(this.doStudy){
-                this.studyNavigationService.first();
-                if(this.isWhitePerspective){
-                  this.oneMove();
-                  this.oneMove();
-                }else{
-                  this.oneMove();
-                }
-              }
-            }, this.pauseTime);
+            if(this.settingsService.autoNextLine()){
+              setTimeout(() => {
+                this.continueToNextLine();
+              }, this.pauseTime);
+            }
           }
         })
       }

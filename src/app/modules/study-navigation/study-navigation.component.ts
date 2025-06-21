@@ -25,7 +25,8 @@ export class StudyNavigationComponent {
 
     this.navService.moveDetail$.subscribe((s) => {
       if(s)
-        this.onUpdate(s)
+        this.onUpdate(s);
+      this.updateVariations();
       return this.moveData = s;
     });
 

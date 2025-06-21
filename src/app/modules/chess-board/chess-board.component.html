@@ -4,7 +4,7 @@
 <table>
     <tr>
         <td style="padding-left: 10px">
-            <div class="chess-board" [ngClass]="{'small': isPreview}"  #chessBoard>
+            <div id="board" class="chess-board" [ngClass]="{'small': isPreview}"  #chessBoard>
                 <div *ngIf="flipMode">
                     <!--As Black-->
                     <div *ngFor="let row of chessBoardView; let x = index" class="row">

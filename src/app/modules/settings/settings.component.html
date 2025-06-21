@@ -15,6 +15,11 @@
         <!-- when player makes the wrong move, should the study automatically update to favor this line more?-->
     </div>
     <div>
+        <h4>Auto Continue</h4>
+        <div><p-inputSwitch (click)="toggleAutoNextLine()" [ngModel]="autoNextLine"></p-inputSwitch></div>
+        <!-- when player completes a line, auto start the next one?-->
+    </div>
+    <div>
         <h4>Move Response</h4>
     </div>
     <div>
