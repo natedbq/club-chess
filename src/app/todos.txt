@@ -1,3 +1,6 @@
+BASED FROM: https://github.com/awsomeCStutorials/chess-game.git
+
+
 TODO b/save-load 
 - Fix: error: The specified key exceeded the maximum ModelState depth: 32
     - line gets too long. Payload gets too long. Might need to create a database :(
