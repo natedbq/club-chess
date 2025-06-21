@@ -10,12 +10,14 @@ export class SettingsService {
   private _autoFavor = new BehaviorSubject<boolean>(true);
   private _showPlans = new BehaviorSubject<boolean>(true);
     private _pauseTime = new BehaviorSubject<number>(2.5);
+    private _autoNextLine = new BehaviorSubject<boolean>(false);
     
 
     showVariations$ = this._showVariations.asObservable();
     pauseTime$ = this._pauseTime.asObservable();
     autoFavor$ = this._autoFavor.asObservable();
     showPlans$ = this._showPlans.asObservable();
+    autoNextLine$ = this._autoNextLine.asObservable();
 
     public setShowVariations = (show: boolean) => {
         this._showVariations.next(show);
@@ -33,7 +35,15 @@ export class SettingsService {
       this._showPlans.next(b);
     }
 
+    public setAutoNextLine(b: boolean){
+      this._autoNextLine.next(b);
+    }
+
     public showPlans(){
       return this._showPlans.value;
+    }
+
+    public autoNextLine(){
+      return this._autoNextLine.value;
     }
 }

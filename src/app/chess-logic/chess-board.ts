@@ -1,7 +1,8 @@
 import { columns } from "../modules/chess-board/models";
+import { StudyNavigationService } from "../modules/study-navigation/study-navigation.service";
 import { Data } from "../utilities/data";
 import { FENConverter } from "./FENConverter";
-import { CastleState, CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares } from "./models";
+import { CastleState, CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, Position, SafeSquares } from "./models";
 import { Bishop } from "./pieces/bishop";
 import { King } from "./pieces/king";
 import { Knight } from "./pieces/knight";
@@ -37,7 +38,7 @@ export class ChessBoard {
     private _moveList: MoveList = [];
     private _gameHistory: GameHistory;
 
-    constructor() {
+    constructor(private navService: StudyNavigationService | null = null) {
         let wqRook = new Rook(Color.White);
         let wkRook = new Rook(Color.White);
         let bqRook = new Rook(Color.Black);
@@ -338,9 +339,13 @@ export class ChessBoard {
         const piece: Piece | null = this.chessBoard[prevX][prevY];
         if (!piece) return false;
 
+        let position = this.navService?.getPointer()?.pointer ?? new Position();
+
         const newPiece: Piece | null = this.chessBoard[newX][newY];
-        // we cant put piece on a square that already contains piece of the same square
-        if (newPiece && newPiece.color === piece.color) return false;
+        // we cant put piece on a square that already contains piece of the same color
+        if (newPiece && newPiece.color === piece.color){ 
+            return false
+        };
 
         // simulate position
         this.chessBoard[prevX][prevY] = null;
@@ -457,22 +462,32 @@ export class ChessBoard {
     }
 
     private canCastle(king: King, kingSideCastle: boolean): boolean {
-        if (king.hasMoved) return false;
+        let position = this.navService?.getPointer()?.pointer ?? new Position();
+        position.liveNotes = [];
+        let side = kingSideCastle ? 'kingSide' : 'queenSide';
+        if (king.hasMoved){
+            position.addNote("Can't castle "+side+" because king has moved");
+            return false;
+        }
 
         if(king.color == Color.White){
             if(kingSideCastle && !this._castleState.whiteKingSide){
+                position.addNote("Can't castle "+side+" because king has moved kingSideCastle=true && this._castleState.whiteKingSide=false");
                 return false;
             }
             
             if(!kingSideCastle && !this._castleState.whiteQueenSide){
+                position.addNote("Can't castle "+side+" because king has moved kingSideCastle=false && this._castleState.whiteQueenSide=false");
                 return false;
             }
         }else{
             if(kingSideCastle && !this._castleState.blackKingSide){
+                position.addNote("Can't castle "+side+" because king has moved kingSideCastle=true && this._castleState.blackKingSide=false");
                 return false;
             }
             
             if(!kingSideCastle && !this._castleState.blackQueenSide){
+                position.addNote("Can't castle "+side+" because king has moved kingSideCastle=false && this._castleState.blackQueenSide=false");
                 return false;
             }
         }
@@ -480,10 +495,20 @@ export class ChessBoard {
         const kingPositionX: number = king.color === Color.White ? 0 : 7;
         const kingPositionY: number = 4;
 
-        if (this._checkState.isInCheck) return false;
+        if (this._checkState.isInCheck){
+            position.addNote("Can't castle "+side+" because king is in check");
+            return false;
+        } 
 
         const firstNextKingPositionY: number = kingPositionY + (kingSideCastle ? 1 : -1);
         const secondNextKingPositionY: number = kingPositionY + (kingSideCastle ? 2 : -2);
+
+        if(!this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, firstNextKingPositionY)){
+            position.addNote("Can't castle "+side+" because king can't move once that way");
+        } else
+        if(!this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, secondNextKingPositionY)){
+            position.addNote("Can't castle "+side+" because king can't move twice that way");
+        }
 
         return this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, firstNextKingPositionY) &&
             this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, secondNextKingPositionY);

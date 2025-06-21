@@ -21,12 +21,14 @@ export class SettingsComponent {
   autoFavor: boolean = true;
   pauseTime: number = 1;
   showPlans: boolean = true;
+  autoNextLine: boolean = true;
 
   constructor(private router: Router, private settingsService: SettingsService){
     this.settingsService.showVariations$.subscribe(m => this.showVariations = m);
     this.settingsService.autoFavor$.subscribe(m => this.autoFavor = m);
     this.settingsService.pauseTime$.subscribe(t => this.pauseTime = t);
     this.settingsService.showPlans$.subscribe(t => this.showPlans = t);
+    this.settingsService.autoNextLine$.subscribe(b => this.autoNextLine = b);
   }
 
   toggleShowVariations() {
@@ -39,5 +41,9 @@ export class SettingsComponent {
 
   toggleAutoFavor() {
     this.settingsService.setAutoFavor(!this.autoFavor);
+  }
+
+  toggleAutoNextLine() {
+    this.settingsService.setAutoNextLine(!this.autoNextLine);
   }
 }

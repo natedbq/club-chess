@@ -1,0 +1,50 @@
+.color-bar {
+    display: flex;
+    height: 30px;
+    width: 100% ;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .segment {
+    color: white;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .black {
+    background-color: black;
+  }
+  
+  .grey {
+    background-color: grey;
+  }
+  
+  .white {
+    background-color: white;
+    color: black;
+  }
+
+  .container {
+    display: flex;
+  }
+
+  .move {
+    width: 10%;
+    padding-right: 8px;
+  }
+  .win-loss{
+    width: 100%;
+  }
+
+  .explore-row {
+    height: 50px
+  }
+
+  .header {
+    height: 70px;
+  }

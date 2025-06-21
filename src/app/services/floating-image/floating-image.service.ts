@@ -25,6 +25,9 @@ export class FloatingImageService {
     });
   }
 
+  isVisible(){
+    return this._visible.value;
+  }
   showImage(src: string, top: number, left: number, evaluation: number | null = null) {
     this._src.next('/assets/emotes/' + src);
     this._position.next({ top, left });

@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, map } from "rxjs";
-import { Study } from "../chess-logic/models";
+import { ExploreNode, Study } from "../chess-logic/models";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,11 @@ export class LichessService {
 
       return cp;
     }));
+  }
+
+  public explore(fen: string, play: string): Observable<ExploreNode> {
+    return this.http.get<ExploreNode>('https://explorer.lichess.ovh/lichess?variant=standard&?fen=' + fen 
+      + '&play='+play+'&speeds=blitz%2Crapid%2Cclassical%2Ccorrespondence&ratings=1600%2C1800%2C2000%2C2200%2C2500&source=analysis');
   }
 
 }

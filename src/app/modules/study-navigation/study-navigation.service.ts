@@ -28,6 +28,10 @@ export class StudyNavigationService {
       this.study = null;
         this.router.events.subscribe(event => {
         if (event instanceof NavigationStart) {
+          this._study.next(null);
+          this._moveDetail.next(null);
+          this.study = null;
+          this.moveDetail = null;
         }
         });
     }

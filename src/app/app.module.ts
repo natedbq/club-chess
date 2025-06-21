@@ -35,6 +35,7 @@ import { SaveStudyComponent } from './modules/save-study/save-study.component';
 import { ActivateStudyService } from './modules/study/activate-study.service';
 import { StudyControlComponent } from './modules/study-control/study-control.component';
 import { DrawingControlsComponent } from './modules/drawing/drawing-controls.component';
+import { ExploreComponent } from './modules/explore/explore.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { DrawingControlsComponent } from './modules/drawing/drawing-controls.com
     StudyControlComponent,
     ChessBoardComponent,
     ComputerModeComponent,
+    ExploreComponent,
     RepertoireMenuComponent,
     DevToolsComponent,
     StudyComponent,

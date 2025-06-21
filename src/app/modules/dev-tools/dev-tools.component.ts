@@ -33,6 +33,7 @@ export class DevToolsComponent {
     }
     return ret;
   }
+  
 
   getTree() {
     return this.studyNavService.printTree();

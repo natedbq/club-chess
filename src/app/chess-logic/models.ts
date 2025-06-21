@@ -128,6 +128,7 @@ export class Position {
     isDirty: boolean = true;
     weight: number = 1;
     plans: string = '';
+    liveNotes: string[] = [];
 
     public static toPosition(data: any): Position {
         let position = new Position();
@@ -146,6 +147,10 @@ export class Position {
             position.positions = [];
         }
         return position;
+    }
+
+    public addNote(n: string){
+        this.liveNotes.push(n);
     }
 }
 
@@ -195,6 +200,18 @@ export class Move {
         move.to = data.to;
         return move;
     }
+}
+
+export interface ExploreNode {
+    white: number;
+    black: number;
+    draws: number;
+    uci: string;
+    san: string;
+    opening: {
+        name: string;
+    }
+    moves: ExploreNode[];
 }
 
 export interface MoveData {

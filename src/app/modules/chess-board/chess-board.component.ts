@@ -64,6 +64,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     private navService: StudyNavigationService, 
     private activateStudyService: ActivateStudyService,
     private drawingService: DrawingService) {
+      this.chessBoard = new ChessBoard(navService);
     this.navService.moveDetail$.subscribe(m => {
       this.moveData = m;
     })
