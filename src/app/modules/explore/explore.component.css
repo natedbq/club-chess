@@ -1,10 +1,17 @@
 .color-bar {
     display: flex;
     height: 30px;
-    width: 100% ;
+    width: 90% ;
     border: 1px solid #ccc;
     border-radius: 12px;
     overflow: hidden;
+    margin-right:8px;
+  }
+
+  .explore-row.selectable:hover {
+    background-color: var(--chill-blue);
+    opacity: 1;
+    cursor: pointer;
   }
   
   .segment {
@@ -14,6 +21,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    user-select: none;
   }
   
   .black {
@@ -36,13 +44,20 @@
   .move {
     width: 10%;
     padding-right: 8px;
+    padding-left: 8px;
+    user-select: none;
   }
   .win-loss{
     width: 100%;
   }
 
   .explore-row {
-    height: 50px
+    height: 50px;
+    padding: 18px;
+  }
+
+  .explore-row.selectable {
+    opacity: .7;
   }
 
   .header {
