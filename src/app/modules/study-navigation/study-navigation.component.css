@@ -30,7 +30,7 @@
 }
 
 .current-move {
-    background-color: rgb(0, 143, 168);
+    background-color: var(--chill-blue);
 }
 
 .move {
@@ -39,8 +39,7 @@
 }
 
 .move:hover {
-    background-color: rgb(0, 143, 168);
-    opacity: 0.7
+    background-color: var(--chill-blue)
 }
 
 .move {

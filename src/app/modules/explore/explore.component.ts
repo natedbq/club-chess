@@ -18,9 +18,11 @@ export class ExploreComponent {
 
   moveData: MoveData | null = null;
   explore: ExploreNode | null = null;
+  isWhite: boolean = true;
 
   constructor(private router: Router, private studyNavService: StudyNavigationService, private lichessService: LichessService){
     this.studyNavService.study$.subscribe((study) => {
+      this.isWhite = study?.perspective == Color.White;
       lichessService.explore(study?.position?.move?.fen ?? '', '').subscribe((moves) => {
         this.explore = moves;
       });
@@ -51,13 +53,19 @@ export class ExploreComponent {
   calc(node: ExploreNode | null): NodePercents {
     if(node == null){
       return {
+        plays: 0,
         white: 0,
         draws: 0,
         black: 0
       }
     }
     let total = node.white + node.black + node.draws + 0.0;
+    let grandTotal = total;
+    if(this.explore){
+      grandTotal = this.explore.white + this.explore.draws + this.explore.black;
+    }
     let per = {
+      plays: ((node.white + node.draws + node.black) / (grandTotal)) * 100,
       white: (node.white / total) * 100,
       draws: (node.draws / total) * 100,
       black: (node.black / total) * 100
@@ -67,6 +75,7 @@ export class ExploreComponent {
 }
 
 interface NodePercents{
+  plays: number;
   white: number;
   draws: number;
   black: number;

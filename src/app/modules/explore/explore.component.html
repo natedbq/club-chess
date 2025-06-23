@@ -3,10 +3,24 @@
     <table>
         <tr class="explore-row header">
             <td class="move">
+
+            </td>
+            <td class="move">
                 ∑
             </td>
             <td class="won-loss">
-                <div class="color-bar">
+                <div class="color-bar" *ngIf="isWhite" >
+                    <div class="segment white" [style.width.%]="calc(explore).white">
+                        <span  *ngIf="calc(explore).white > 6">{{calc(explore).white | number: '1.0-0'}}%</span>
+                    </div>
+                    <div class="segment grey" [style.width.%]="calc(explore).draws">
+                        <span  *ngIf="calc(explore).draws > 10">{{calc(explore).draws | number: '1.0-0'}}%</span>
+                    </div>
+                    <div class="segment black" [style.width.%]="calc(explore).black">
+                        <span *ngIf="calc(explore).black > 6">{{calc(explore).black | number: '1.0-0'}}%</span>
+                    </div>
+                </div>
+                <div class="color-bar" *ngIf="!isWhite" >
                     <div class="segment black" [style.width.%]="calc(explore).black">
                         <span *ngIf="calc(explore).black > 6">{{calc(explore).black | number: '1.0-0'}}%</span>
                     </div>
@@ -19,12 +33,26 @@
                 </div>
             </td>
         </tr>
-        <tr *ngFor="let node of explore?.moves" class="explore-row">
+        <tr *ngFor="let node of explore?.moves" class="explore-row selectable">
+            <td class="move">
+                {{(calc(node).plays >= 1 ? (calc(node).plays | number: '1.0-0'): '&#60;1')}}%
+            </td>
             <td class="move">
                 {{node.san}}
             </td>
             <td class="won-loss">
-                <div class="color-bar">
+                <div class="color-bar" *ngIf="isWhite">
+                    <div class="segment white" [style.width.%]="calc(node).white">
+                        <span  *ngIf="calc(node).white > 6">{{calc(node).white | number: '1.0-0'}}%</span>
+                    </div>
+                    <div class="segment grey" [style.width.%]="calc(node).draws">
+                        <span  *ngIf="calc(node).draws > 10">{{calc(node).draws | number: '1.0-0'}}%</span>
+                    </div>
+                    <div class="segment black" [style.width.%]="calc(node).black">
+                        <span *ngIf="calc(node).black > 6">{{calc(node).black | number: '1.0-0'}}%</span>
+                    </div>
+                </div>
+                <div class="color-bar" *ngIf="!isWhite">
                     <div class="segment black" [style.width.%]="calc(node).black">
                         <span *ngIf="calc(node).black > 6">{{calc(node).black | number: '1.0-0'}}%</span>
                     </div>
