@@ -10,6 +10,7 @@ import { LichessService } from '../../services/lichess.service';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 import { ActivateStudyService } from './activate-study.service';
 import { SettingsService } from '../settings/settings.service';
+import { ExternalBoardControlService } from '../chess-board/external-board-control.service';
 
 @Component({
   selector: 'app-study',
@@ -35,6 +36,7 @@ export class StudyComponent implements OnInit {
       private router: Router,
       private lichessService: LichessService,
       private studyNavigationService: StudyNavigationService,
+      private externalBoardControlService: ExternalBoardControlService,
       private activateStudyService: ActivateStudyService,
       private settingsService: SettingsService
     ) {
@@ -305,6 +307,7 @@ export class StudyComponent implements OnInit {
               let moveDelegation: MoveDelegation = new MoveDelegation(() => {
                 if(this.doStudy){
                   this.studyNavigationService.next(m.name);
+                  
                 }
     
               }, branchWeight, 'navigator');
