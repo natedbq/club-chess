@@ -17,6 +17,7 @@ export class DrawingService {
     private color: string = 'red';
     private active: boolean = false;
     private tries = 0;
+    private previewLayerData: string = '';
     private stage: Konva.Stage | null = null;
     private strokeWidth = 6;
     startCoord: coord = {x:0,y:0};
@@ -50,6 +51,9 @@ export class DrawingService {
         })
     }
 
+    clearPreview(){
+        this.previewLayerData = "";
+    }
 
     start(x: number, y: number){
         if(this._shape.value == 'none'){
@@ -103,57 +107,60 @@ export class DrawingService {
          || this.startCoord.y > 7 || this.stopCoord.y > 7){
             return;
          }
-        if(this.startCoord.x == this.stopCoord.x && this.startCoord.y == this.stopCoord.y){
-            this.addCircle();
-        }else{
-            this.addArrow();
-        }
-    }
-
-    public addArrow(){
-        let position = this.studyNavService.getPointer()?.pointer;
-        
-        if(position){
-            if(position.plans.length > 0){
-                position.plans += ";";
+         let position = this.studyNavService.getPointer()?.pointer;
+         if(position){
+            if(this.startCoord.x == this.stopCoord.x && this.startCoord.y == this.stopCoord.y){
+                position.plans = this.addCircle(position.plans);
+            }else{
+                position.plans = this.addArrow(position.plans);
             }
-            let plan =  `arrow.${this.color}.${this.startCoord.x}.${this.startCoord.y}.${this.stopCoord.x}.${this.stopCoord.y}`;
-            this.addOrRemovePlan(plan, position);
             this.draw();
-        }
-
+         }
+    }
+    public addMovePreview(x1:number,y1:number,x2:number,y2:number){
+        let plan =  `;arrow.blue.${x1}.${y1}.${x2}.${y2}`;
+        this.previewLayerData = this.addOrRemovePlan(plan, this.previewLayerData);
+        this.draw();
     }
 
-    public addCircle(){
-        let position = this.studyNavService.getPointer()?.pointer;
+    public addArrow(data: string){
+        let dataCopy = data + '';
+        if(dataCopy.length > 0){
+            dataCopy += ";";
+        }
+        let plan =  `arrow.${this.color}.${this.startCoord.x}.${this.startCoord.y}.${this.stopCoord.x}.${this.stopCoord.y}`;
+        dataCopy = this.addOrRemovePlan(plan, dataCopy);
+        return dataCopy;
+    }
+
+    public addCircle(data: string){
+        let dataCopy = data + '';
         
-        if(position){
-            if(position.plans.length > 0){
-                position.plans += ";";
-            }
-            let plan = `circle.${this.color}.${this.startCoord.x}.${this.startCoord.y}`;
-            this.addOrRemovePlan(plan, position);
-            this.draw();
+        if(dataCopy.length > 0){
+            dataCopy += ";";
         }
-
+        let plan = `circle.${this.color}.${this.startCoord.x}.${this.startCoord.y}`;
+        dataCopy = this.addOrRemovePlan(plan, dataCopy);
+        return dataCopy;
     }
 
-    public addOrRemovePlan(plan: string, position: Position){
+    public addOrRemovePlan(plan: string, data: string){
+        let dataCopy = data + '';
         let parts = plan.split('.');
         parts[1] = '[^;]*?'
         let regex = parts.join('\\.');
         const pattern = new RegExp(regex);
-        let newPlans = position.plans.replace(pattern, '');
-        if(newPlans.length == position.plans.length){
-            if(position.plans.length > 0){
-                position.plans += ";";
+        let newPlans = dataCopy.replace(pattern, '');
+        if(newPlans.length == dataCopy.length){
+            if(dataCopy.length > 0){
+                dataCopy += ";";
             }
-            position.plans += plan;
+            dataCopy += plan;
         }else{
-            position.plans = newPlans;
+            dataCopy = newPlans;
         }
-        position.plans = position.plans.replaceAll(new RegExp(';+', 'g'),";")
-        position.isDirty = true;
+        dataCopy = dataCopy.replaceAll(new RegExp(';+', 'g'),";");
+        return dataCopy;
     }
 
     scanForCanvas(){
@@ -183,8 +190,34 @@ export class DrawingService {
     }
 
     clear() {
+        this.previewLayerData = "";
         if(this.stage){
             this.stage.removeChildren();
+        }
+    }
+
+    drawOnLayer(layer: Konva.Layer, shape: string){
+        let vars = shape.split(".");
+        if(vars[0] == 'circle'){
+            let circle = new Konva.Circle({
+                x: Number(vars[2]) * 100 + 50,
+                y: Number(vars[3]) * 100 + 50,
+                radius: 50,
+                stroke: getComputedStyle(document.documentElement).getPropertyValue('--'+vars[1]).trim(),
+                strokeWidth: this.strokeWidth
+            });
+            layer.add(circle);
+        }
+        if(vars[0] == 'arrow'){
+            let arrow = new Konva.Arrow({
+                points: [Number(vars[2]) * 100 + 50, Number(vars[3]) * 100 + 50, Number(vars[4]) * 100 + 50, Number(vars[5]) * 100 + 50],
+                fill: getComputedStyle(document.documentElement).getPropertyValue('--'+vars[1]).trim(),
+                stroke: getComputedStyle(document.documentElement).getPropertyValue('--'+vars[1]).trim(),
+                strokeWidth: this.strokeWidth,
+                pointerLength: 20,
+                pointerWidth: 20
+            });
+            layer.add(arrow);
         }
     }
 
@@ -201,32 +234,17 @@ export class DrawingService {
 
 
         position?.plans.split(';').forEach((s) => {
-            let vars = s.split(".");
-            if(vars[0] == 'circle'){
-                let circle = new Konva.Circle({
-                    x: Number(vars[2]) * 100 + 50,
-                    y: Number(vars[3]) * 100 + 50,
-                    radius: 50,
-                    stroke: getComputedStyle(document.documentElement).getPropertyValue('--'+vars[1]).trim(),
-                    strokeWidth: this.strokeWidth
-                });
-                layer.add(circle);
-            }
-            if(vars[0] == 'arrow'){
-                let arrow = new Konva.Arrow({
-                    points: [Number(vars[2]) * 100 + 50, Number(vars[3]) * 100 + 50, Number(vars[4]) * 100 + 50, Number(vars[5]) * 100 + 50],
-                    fill: getComputedStyle(document.documentElement).getPropertyValue('--'+vars[1]).trim(),
-                    stroke: getComputedStyle(document.documentElement).getPropertyValue('--'+vars[1]).trim(),
-                    strokeWidth: this.strokeWidth,
-                    pointerLength: 20,
-                    pointerWidth: 20
-                });
-                layer.add(arrow);
-            }
+            this.drawOnLayer(layer, s);
         })
+
+        var previewLayer = new Konva.Layer({});
+        this.previewLayerData.split(';').forEach((s) => {
+            this.drawOnLayer(previewLayer, s)
+        });
 
 
         this.stage.add(layer);
+        this.stage.add(previewLayer);
     }
 
     public setColor(color: string){

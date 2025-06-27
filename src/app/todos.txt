@@ -1,32 +1,14 @@
 BASED FROM: https://github.com/awsomeCStutorials/chess-game.git
+SQL
+- Server=DESKTOP-6KOUAD3\\SQLEXPRESS;Database=chess;Trusted_Connection=True;
 
+TODO: b/board-control
+- change move delegation from nav.next(...) to externalBoardControl.clickUCI(...)
 
-TODO b/save-load 
-- Fix: error: The specified key exceeded the maximum ModelState depth: 32
-    - line gets too long. Payload gets too long. Might need to create a database :(
-- delete move 
-    - Add a piece to navigator that shows the move that was taken to get to the current position.
-    - trash icon appears next to the move.
-    - clicking the trash icon removes the position from the parent position
-- create database 
-    - studies are represented in a relational database in the back-end 
-    - studies reach front end in exactly the same format as they do now 
-- save button does not save the whole study, only the current node and the parent chain, only dirty nodes
+TODO b/explore-optimize 
+- cache lichess explore requests so we don't spam them when going back and forth in study
+- do not make request when position doesn't change (clicking next when there is no next movep)
 
-TODO b/summary-fen 
-- upon loading a study, study fast-forwards to key position, playing one move at a time
-
-TODO b/sounds
-- Add check sound FX
-- Only play non basic sound when navigating forward in study 
-
-TODO b/navigation
-- go to start position
-- go to end of study
-- make Main-Line
-    - button next to current move 
-    - button makes the node and parent nodes the first in the list of positions in all parents 
-    - causes spamming the next move button follow this line, and last move button follow this line
 
 TODO b/drag-n-drop
 - promotion piece
@@ -34,26 +16,24 @@ TODO b/drag-n-drop
 TODO b/scoring 
 - Player gets a score based on whether they respond to computer move according to their study or engine accuracy
 
-TODO b/interactive
-- study responds to player move 
-- study responds to player move with 1 second delay
-- study responds by selecting a random move from position variations
-- study responds to player by playing a computer recommended move 
-- study weighs move options and plays one the player typically responds less accurately to; dependency b/scoring
 
 TODO b/user-interface
 - make element sizing dynamic, chessboard, move list, description
 
-TODO b/sql 
-- Server=DESKTOP-6KOUAD3\\SQLEXPRESS;Database=chess;Trusted_Connection=True;
-- log folder C:\Program Files\Microsoft SQL Server\160\Setup Bootstrap\Log\20250321_220003
-- setup ef core https://www.youtube.com/watch?v=SryQxUeChMc&list=PLdo4fOcmZ0oX7uTkjYwvCJDG2qhcSzwZ6
+TODO b/castle-preview
+- Show the move preview arrow when user highlights a castling move in the lichess explorer
 
-TODO/move-data
-- there is a bug with the navigator. If you make a move, then go back and then go forward, moveData thinks its a player move when it should be a navigator move.. or not?
+TODO b/engine-rec 
+- Show top x engine moves
 
+TODO b/line-recommend-tags
+- give a tag that highlights when condition is met 
+    - move is a book move 
+    - high engine ranking and low % played in lichess DB 
+    - opponent's response is mistake (engine gains points in our advantage), but high % played in lichess DB 
 
 BUGS
 - game does not like when you push a pawn 2 spaces and then push it again on your next move. It always thinks it is a captures move
+
 
 

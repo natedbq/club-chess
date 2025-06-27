@@ -11,6 +11,7 @@ import { MoveDelegator } from '../../chess-logic/moveDelegator';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 import { ActivateStudyService } from '../study/activate-study.service';
 import { DrawingService } from '../drawing/drawing.service';
+import { ExternalBoardControlService } from './external-board-control.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -63,6 +64,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   constructor(protected chessBoardService: ChessBoardService, 
     private navService: StudyNavigationService, 
     private activateStudyService: ActivateStudyService,
+    private externalControl: ExternalBoardControlService,
     private drawingService: DrawingService) {
       this.chessBoard = new ChessBoard(navService);
     this.navService.moveDetail$.subscribe(m => {
@@ -71,7 +73,10 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     this.activateStudyService.lockBoard$.subscribe((b) => {
       this.locked = b;
       this.pieceSafeSquares = [];
-    })
+    });
+    this.externalControl.clickSquare$.subscribe((coord) => {
+      this.move(coord.y, coord.x);
+    });
    }
 
   public ngOnInit(): void {

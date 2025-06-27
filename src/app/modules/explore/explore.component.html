@@ -1,7 +1,7 @@
 <div>
     <h2>{{explore?.opening?.name ?? 'Chess'}}</h2>
     <table>
-        <tr class="explore-row header">
+        <tr class="explore-row header" *ngIf="explore">
             <td class="move">
 
             </td>
@@ -33,7 +33,10 @@
                 </div>
             </td>
         </tr>
-        <tr *ngFor="let node of explore?.moves" class="explore-row selectable">
+        <tr *ngFor="let node of explore?.moves" class="explore-row selectable"
+            (mouseenter)="drawPreview(node)" 
+            (mouseleave)="drawPreview(node)"
+            (click)="select(node)">
             <td class="move">
                 {{(calc(node).plays >= 1 ? (calc(node).plays | number: '1.0-0'): '&#60;1')}}%
             </td>
