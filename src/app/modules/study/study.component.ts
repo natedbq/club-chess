@@ -9,7 +9,7 @@ import { FloatingImageService } from '../../services/floating-image/floating-ima
 import { LichessService } from '../../services/lichess.service';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 import { ActivateStudyService } from './activate-study.service';
-import { SettingsService } from '../settings/settings.service';
+import { GlobalValues, SettingsService } from '../settings/settings.service';
 import { ExternalBoardControlService } from '../chess-board/external-board-control.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -157,14 +157,7 @@ export class StudyComponent implements OnInit {
       if(!this.doStudy){
         return;
       }
-
-      let  moveDelegation = new MoveDelegation(() => {
-        if(this.doStudy){
-          this.studyNavigationService.nextWithSource(null, 'study-'+this.id, 'start-study');
-        }
-      }, 1, 'init');
-
-      MoveDelegator.addDelegations(moveDelegation);
+      this.createMoveDecisions();
     }
 
 
@@ -193,8 +186,7 @@ export class StudyComponent implements OnInit {
     
     @HostListener('window:mousedown', ['$event'])
     onGlobalMouseDown(event: MouseEvent) {
-      if(!this.settingsService.autoNextLine() && this.floatingImageService.isVisible()){
-        
+      if(!this.settingsService.autoNextLine() && this.floatingImageService.isVisible() && !this.activateStudyService.isBoardLocked()){
         const rect = document.getElementById('board')?.getBoundingClientRect();
         if(rect 
           && rect.left < event.clientX && rect.right > event.clientX
@@ -262,7 +254,7 @@ export class StudyComponent implements OnInit {
       if(pointer){
         let position = pointer.pointer;
         if(position && this.mistakeCounter < 3){
-          position.weight++;
+          position.weight += GlobalValues.weights.wrong;
           this.mistakeCounter++;
         }
       }
@@ -281,7 +273,7 @@ export class StudyComponent implements OnInit {
         let position = pointer.pointer;
         this.mistakeCounter = 0;
         if(!this.isRetry){
-          position.weight = Math.max(0, position.weight - 1)
+          position.weight = Math.max(0, position.weight - GlobalValues.weights.wrong)
         }
         this.isRetry = false;
       }
@@ -297,6 +289,42 @@ export class StudyComponent implements OnInit {
       }
     }
 
+    createMoveDecisions = () => {
+      let delegations: MoveDelegation[] = [];
+      let variations = this.studyNavigationService.getVariations()
+        .sort((a,b) => new Date(b.position?.lastStudied ?? '').getTime() - new Date(a.position?.lastStudied ?? '').getTime());
+
+        
+        let now = new Date();
+        let longestWait = new Date(variations[variations.length - 1].position?.lastStudied ?? '') ?? new Date();
+        let longestMinutesElapsed = (now.getTime() - longestWait.getTime()) / (1000 * 60);
+
+      variations.forEach((m, i) => {
+        let minutesElapsed = (now.getTime() - (new Date(m.position?.lastStudied ?? '').getTime() ?? new Date().getTime())) / (1000 * 60);
+        let timeWeight = Math.round(((minutesElapsed / longestMinutesElapsed)*1.2) * (i * GlobalValues.weights.neglect));
+        let branchWeight = Math.max(1,this.studyNavigationService.getTotalExcessWeightInTree(m.name) + timeWeight);
+        console.log(m.name,m.position?.lastStudied,(minutesElapsed / longestMinutesElapsed), timeWeight, branchWeight)
+        
+        let moveDelegation: MoveDelegation = new MoveDelegation(() => {
+          if(this.doStudy){
+            if(m.position?.move){
+              this.externalBoardControlService.playMove(m.position?.move)
+            }else{
+              this.studyNavigationService.nextWithSource(m.name, 'study-'+this.id, 'play');
+            }
+          }
+
+          if(m.position?.id){
+            m.position.lastStudied = new Date(new Date().toISOString());
+            this.positionService.study(m.position.id).subscribe();
+          }
+
+        }, branchWeight, 'delegator');
+        delegations.push(moveDelegation);
+      });
+      MoveDelegator.addDelegations(delegations);
+    }
+
     correctMove = (data: MoveData) => {
       if(this.doStudy){
         this.markCorrect();
@@ -305,20 +333,7 @@ export class StudyComponent implements OnInit {
           this.completeLine(data);
         }else{
           if(data.player == (this.isWhitePerspective ? Color.White : Color.Black)){
-            let delegations: MoveDelegation[] = [];
-            let variations = this.studyNavigationService.getVariations();
-            variations.forEach(m => {
-              let branchWeight = Math.max(1,this.studyNavigationService.getTotalExcessWeightInTree(m.name));
-              let moveDelegation: MoveDelegation = new MoveDelegation(() => {
-                if(this.doStudy){
-                  this.studyNavigationService.nextWithSource(m.name, 'study-'+this.id, 'play');
-                  
-                }
-    
-              }, branchWeight, 'delegator');
-              delegations.push(moveDelegation);
-            });
-            MoveDelegator.addDelegations(delegations);
+            this.createMoveDecisions();
           }
         }
       }else{

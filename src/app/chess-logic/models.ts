@@ -99,6 +99,7 @@ export class Study {
     summaryFEN:string | null = null;
     positionId: string | null = null;
     isDirty: boolean = true;
+    lastStudied: Date | null = null;
 
     public static toStudy(data: any): Study{
         let study = new Study();
@@ -109,6 +110,7 @@ export class Study {
         study.summaryFEN = data.summaryFEN;
         study.isDirty = false;
         study.positionId = data.positionId;
+        study.lastStudied = data.lastStudied
     
         if(data.position){
           study.position = Position.toPosition(data.position);
@@ -129,6 +131,7 @@ export class Position {
     weight: number = 1;
     plans: string = '';
     liveNotes: string[] = [];
+    lastStudied: Date | null = null;
 
     public static toPosition(data: any): Position {
         let position = new Position();
@@ -138,6 +141,7 @@ export class Position {
         position.description = data.description;
         position.isDirty = false;
         position.plans = data.plans;
+        position.lastStudied = data.lastStudied;
         if(data.move)
             position.move = Move.toMove(data.move);
         if(data.positions){

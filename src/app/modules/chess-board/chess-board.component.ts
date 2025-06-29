@@ -3,7 +3,7 @@ import { ChessBoard } from 'src/app/chess-logic/chess-board';
 import { CheckState, Color, Coords, FENChar, GameHistory, LastMove, MoveList, MoveType, SafeSquares, pieceImagePaths } from 'src/app/chess-logic/models';
 import { SelectedSquare } from './models';
 import { ChessBoardService } from './chess-board.service';
-import { Subscription, filter, fromEvent, tap } from 'rxjs';
+import { Subject, Subscription, filter, fromEvent, takeUntil, tap } from 'rxjs';
 import { FENConverter } from 'src/app/chess-logic/FENConverter';
 import { Move, MoveData, Position, Study } from '../../chess-logic/models';
 import {CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule} from '@angular/cdk/drag-drop';
@@ -12,6 +12,7 @@ import { StudyNavigationService } from '../study-navigation/study-navigation.ser
 import { ActivateStudyService } from '../study/activate-study.service';
 import { DrawingService } from '../drawing/drawing.service';
 import { ExternalBoardControlService } from './external-board-control.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chess-board',
@@ -27,6 +28,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('chessBoard') chessBoardElement: any;
   @Input() moveDelegation: ((data: MoveData) => void) | null = null;
   @Input() studyPerspective: Color = Color.White;
+  destroy$ = new Subject<void>();
   flipMode: boolean = false;
   lastFEN: string = '-';
 
@@ -65,7 +67,11 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     private navService: StudyNavigationService, 
     private activateStudyService: ActivateStudyService,
     private externalControl: ExternalBoardControlService,
-    private drawingService: DrawingService) {
+    private drawingService: DrawingService,
+    private router: Router) {
+      this.router.events.subscribe(event => {
+        this.destroy$.next();
+      });
       this.chessBoard = new ChessBoard(navService);
     this.navService.moveDetail$.subscribe(m => {
       this.moveData = m;
@@ -74,7 +80,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       this.locked = b;
       this.pieceSafeSquares = [];
     });
-    this.externalControl.clickSquare$.subscribe((coord) => {
+    this.externalControl.clickSquare$.pipe(takeUntil(this.destroy$)).subscribe((coord) => {
       this.move(coord.y, coord.x);
     });
    }

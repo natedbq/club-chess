@@ -47,3 +47,10 @@ export class SettingsService {
       return this._autoNextLine.value;
     }
 }
+
+export class GlobalValues {
+  static weights = {
+    wrong: 10,
+    neglect: 2
+  }
+}

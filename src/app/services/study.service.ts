@@ -48,4 +48,8 @@ export class StudyService {
         })
     }));
   }  
+
+  public study(id: string){
+    return this.http.put(`${this.api}/study/${id}/study`, null);
+  }
 }
