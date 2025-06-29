@@ -119,13 +119,16 @@ export class DrawingService {
             }else{
                 position.plans = this.addArrow(position.plans);
             }
+            position.isDirty = true;
             this.draw();
          }
     }
     public addMovePreview(x1:number,y1:number,x2:number,y2:number){
-        let plan =  `;arrow.blue.${x1}.${y1}.${x2}.${y2}`;
-        this.previewLayerData = this.addOrRemovePlan(plan, this.previewLayerData);
-        this.draw();
+        if(this.stage){
+            let plan =  `;arrow.blue.${x1}.${y1}.${x2}.${y2}`;
+            this.previewLayerData = this.addOrRemovePlan(plan, this.previewLayerData);
+            this.draw();
+        }
     }
 
     public addArrow(data: string){

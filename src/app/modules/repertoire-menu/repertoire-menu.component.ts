@@ -23,6 +23,7 @@ export class RepertoireMenuComponent {
   init(): void {
     this.studyService.getSimpleStudies().subscribe(s => {
         this.previews = [];
+        s = s.sort((a, b) => (new Date(a.lastStudied ?? '').getTime() ?? 0) - (new Date(b.lastStudied ?? '').getTime() ?? 0));
         s.forEach((study) => {
           let move = new Move();
           move.fen = study.summaryFEN;

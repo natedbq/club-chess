@@ -36,7 +36,6 @@ export class StudyNavigationService {
           this.moveDetail = null;
           MoveDelegator.stop();
           MoveDelegator.clear();
-          console.log("kill")
         }
         });
     }
@@ -125,7 +124,6 @@ export class StudyNavigationService {
     }
 
     makeMove = (position: Position | null, source: string, direction: string, extra: any = null): void => {
-      console.log('called', source, direction);
       if(position){
         let movedata: MoveData = {
             studyId: this.study?.id ?? null,

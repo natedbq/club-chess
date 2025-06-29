@@ -52,6 +52,10 @@ export class PositionService {
     return this.http.post(this.api + `/delete/${id}`, null);
   }
 
+  public study(id: string): Observable<Object> {
+    return this.http.put(`${this.api}/${id}/study`, null);
+  }
+
   private getTailNodes(position: Position): Position[] {
     let tails: Position[] = [];
 
@@ -75,6 +79,7 @@ export class PositionService {
     p.tags = position.tags;
     p.title = position.title;
     p.plans = position.plans;
+    p.lastStudied = position.lastStudied;
     p.positions = [];
     return this.http.post(this.api, p).pipe(finalize(() => {
         position.isDirty = false;

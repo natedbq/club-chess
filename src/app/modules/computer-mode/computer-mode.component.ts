@@ -8,6 +8,7 @@ import { StudyNavigationService } from '../study-navigation/study-navigation.ser
 import { ActivateStudyService } from '../study/activate-study.service';
 import { DrawingService } from '../drawing/drawing.service';
 import { ExternalBoardControlService } from '../chess-board/external-board-control.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-computer-mode',
@@ -22,7 +23,8 @@ export class ComputerModeComponent extends ChessBoardComponent implements OnInit
       inject(StudyNavigationService), 
       inject(ActivateStudyService), 
       inject(ExternalBoardControlService), 
-      inject(DrawingService)
+      inject(DrawingService),
+      inject(Router)
     );
   }
 
