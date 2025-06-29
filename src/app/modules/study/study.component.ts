@@ -11,6 +11,7 @@ import { StudyNavigationService } from '../study-navigation/study-navigation.ser
 import { ActivateStudyService } from './activate-study.service';
 import { SettingsService } from '../settings/settings.service';
 import { ExternalBoardControlService } from '../chess-board/external-board-control.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-study',
@@ -28,6 +29,8 @@ export class StudyComponent implements OnInit {
     pauseTime = 2500;
     mistakeCounter = 0;
     isRetry = false;
+    id = Date.now();
+    destroy$ = new Subject<void>();
 
     constructor(private route: ActivatedRoute, 
       private studyService: StudyService, 
@@ -40,10 +43,10 @@ export class StudyComponent implements OnInit {
       private activateStudyService: ActivateStudyService,
       private settingsService: SettingsService
     ) {
-      this.settingsService.pauseTime$.subscribe((t) => {
+      this.settingsService.pauseTime$.pipe(takeUntil(this.destroy$)).subscribe((t) => {
         this.pauseTime = t * 1000;
       })
-        this.activateStudyService.play$.subscribe((p) => {
+        this.activateStudyService.play$.pipe(takeUntil(this.destroy$)).subscribe((p) => {
           if(p){
             this.activateStudy();
           }else{
@@ -55,10 +58,12 @@ export class StudyComponent implements OnInit {
           if (event instanceof NavigationStart) {
             MoveDelegator.stop();
             MoveDelegator.clear();
+            this.destroy$.next();
+            this.destroy$.complete();
           }
         });
 
-      this.studyNavigationService.proposedMove$.subscribe(m => {
+      this.studyNavigationService.proposedMove$.pipe(takeUntil(this.destroy$)).subscribe(m => {
         if(m?.source == 'board'){
           this.updateStudy(m);
         }
@@ -155,7 +160,7 @@ export class StudyComponent implements OnInit {
 
       let  moveDelegation = new MoveDelegation(() => {
         if(this.doStudy){
-          this.studyNavigationService.next();
+          this.studyNavigationService.nextWithSource(null, 'study-'+this.id, 'start-study');
         }
       }, 1, 'init');
 
@@ -306,11 +311,11 @@ export class StudyComponent implements OnInit {
               let branchWeight = Math.max(1,this.studyNavigationService.getTotalExcessWeightInTree(m.name));
               let moveDelegation: MoveDelegation = new MoveDelegation(() => {
                 if(this.doStudy){
-                  this.studyNavigationService.next(m.name);
+                  this.studyNavigationService.nextWithSource(m.name, 'study-'+this.id, 'play');
                   
                 }
     
-              }, branchWeight, 'navigator');
+              }, branchWeight, 'delegator');
               delegations.push(moveDelegation);
             });
             MoveDelegator.addDelegations(delegations);
@@ -333,42 +338,5 @@ export class StudyComponent implements OnInit {
           this.studyNavigationService.next(data.move?.name);
         }
       }
-    }
-
-    updateStudyOld = (data: MoveData | null): void => {
-      // if(data?.move) {
-      //   if(this.studyNav.hasNext(data.move.name ?? '-')){
-      //     this.markCorrect();
-      //     this.studyNav.next(data.move.name);
-      //   }else{
-          
-      //     this.wrongLine(data);
-      //     if(!this.doStudy){
-      //       this.studyNav.addMove(data.move);
-      //       this.studyNav.next(data.move.name);
-      //     }
-      //     return;
-      //   }
-
-
-      //   if(data.player == (this.isWhitePerspective ? Color.White : Color.Black)){
-      //     let variations = this.studyNav.getVariations();
-      //     if(variations.length > 0){
-      //       let delegations: MoveDelegation[] = [];
-      //       variations.forEach(m => {
-      //         let branchWeight = Math.max(1,this.studyNav.getTotalExcessWeightInTree(m.name));
-      //         let moveDelegation: MoveDelegation = new MoveDelegation(() => {
-      //           if(this.doStudy)
-      //           this.controller.next(m.name, true);
-    
-      //         }, branchWeight, 'navigator');
-      //         delegations.push(moveDelegation);
-      //       });
-      //       MoveDelegator.addDelegations(delegations);
-      //     }else{
-      //       this.completeLine(data);
-      //     }
-      //   }
-      // }
     }
 }

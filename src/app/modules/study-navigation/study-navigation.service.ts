@@ -6,6 +6,7 @@ import { MoveDetail } from './study-navigation.component';
 import { FENConverter } from '../../chess-logic/FENConverter';
 import { StudyService } from '../../services/study.service';
 import { PositionService } from '../../services/position.service';
+import { MoveDelegator } from '../../chess-logic/moveDelegator';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +31,12 @@ export class StudyNavigationService {
         if (event instanceof NavigationStart) {
           this._study.next(null);
           this._moveDetail.next(null);
+          this._proposedMove.next(null);
           this.study = null;
           this.moveDetail = null;
+          MoveDelegator.stop();
+          MoveDelegator.clear();
+          console.log("kill")
         }
         });
     }
@@ -120,6 +125,7 @@ export class StudyNavigationService {
     }
 
     makeMove = (position: Position | null, source: string, direction: string, extra: any = null): void => {
+      console.log('called', source, direction);
       if(position){
         let movedata: MoveData = {
             studyId: this.study?.id ?? null,
@@ -258,7 +264,7 @@ export class StudyNavigationService {
           }
         }
         this.addWeightToTreeHelper(pointer, w);
-        this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'addWieghtToTree');
+        //this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'addWieghtToTree');
       }
     
       private addWeightToTreeHelper = (pointer: StudyPointer | null, w: number): void => {
@@ -401,6 +407,16 @@ export class StudyNavigationService {
         return moves;
       }
     
+      nextWithSource = (name: string | null = null, source: string, direction: string):  Move | null => {
+        let sp = this.studyPointer?.next(name);
+        if(sp?.pointer){
+          this.studyPointer = sp;
+        }
+        
+        this.makeMove(this.studyPointer?.pointer ?? null, source, direction);
+        return this.studyPointer?.peek() ?? null;
+      }
+
       next = (name: string | null = null, silence: boolean = false):  Move | null => {
         let sp = this.studyPointer?.next(name);
         if(sp?.pointer){

@@ -15,13 +15,12 @@ import { BehaviorSubject } from "rxjs";
 })
 export class DrawingService {
     private color: string = 'red';
-    private active: boolean = false;
     private tries = 0;
     private previewLayerData: string = '';
     private stage: Konva.Stage | null = null;
     private strokeWidth = 6;
-    startCoord: coord = {x:0,y:0};
-    stopCoord: coord = {x:0,y:0};
+    private startCoord: coord = {x:0,y:0};
+    private stopCoord: coord = {x:0,y:0};
 
     
     private _shape = new BehaviorSubject<string>('none');
@@ -39,6 +38,12 @@ export class DrawingService {
               if (event instanceof NavigationStart) {
                 this.scanForCanvas();
                 this.tries = 0;
+                this.color = 'red'
+                this.stage = null;
+                this.previewLayerData = '';
+                this.startCoord = {x:0,y:0};
+                this.stopCoord = {x:0,y:0};
+            
               }
             });
         this.studyNavService.moveDetail$.subscribe((m) => {
