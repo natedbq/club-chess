@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { Color, MoveData, Study } from '../../chess-logic/models';
+import { Color, ExploreNode, MoveData, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { StudyNavigator } from './classes/study-navigator';
 import { PositionService } from '../../services/position.service';
@@ -294,35 +294,70 @@ export class StudyComponent implements OnInit {
       let variations = this.studyNavigationService.getVariations()
         .sort((a,b) => new Date(b.position?.lastStudied ?? '').getTime() - new Date(a.position?.lastStudied ?? '').getTime());
 
-        
+      const build = (explore: ExploreNode | null) => {
+
         let now = new Date();
         let longestWait = new Date(variations[variations.length - 1].position?.lastStudied ?? '') ?? new Date();
         let longestMinutesElapsed = (now.getTime() - longestWait.getTime()) / (1000 * 60);
 
-      variations.forEach((m, i) => {
-        let minutesElapsed = (now.getTime() - (new Date(m.position?.lastStudied ?? '').getTime() ?? new Date().getTime())) / (1000 * 60);
-        let timeWeight = Math.round(((minutesElapsed / longestMinutesElapsed)*1.2) * (i * GlobalValues.weights.neglect));
-        let branchWeight = Math.max(1,this.studyNavigationService.getTotalExcessWeightInTree(m.name) + timeWeight);
-        console.log(m.name,m.position?.lastStudied,(minutesElapsed / longestMinutesElapsed), timeWeight, branchWeight)
-        
-        let moveDelegation: MoveDelegation = new MoveDelegation(() => {
-          if(this.doStudy){
-            if(m.position?.move){
-              this.externalBoardControlService.playMove(m.position?.move)
-            }else{
-              this.studyNavigationService.nextWithSource(m.name, 'study-'+this.id, 'play');
+        variations.forEach((m, i) => {
+          let node = explore ? explore.moves.filter(x => x.san == m.name)[0] : null;
+          let percentPicked = node ? node.percent : 0;
+          let commonWeight = Math.round(percentPicked * GlobalValues.weights.common);
+
+          let minutesElapsed = (now.getTime() - (new Date(m.position?.lastStudied ?? '').getTime() ?? new Date().getTime())) / (1000 * 60);
+          let timeWeight = Math.round(((minutesElapsed / longestMinutesElapsed)*1.2) * (i * GlobalValues.weights.neglect));
+
+          let volatileWeight =  Math.max(1,this.studyNavigationService.getTotalExcessWeightInTree(m.name));
+
+          let branchWeight = volatileWeight 
+            + timeWeight
+            + commonWeight;
+          console.log({name:m.name, volatile:volatileWeight, common:commonWeight, time:timeWeight, total:branchWeight})
+          
+          let moveDelegation: MoveDelegation = new MoveDelegation(() => {
+            if(this.doStudy){
+              if(m.position?.move){
+                this.externalBoardControlService.playMove(m.position?.move)
+              }else{
+                this.studyNavigationService.nextWithSource(m.name, 'study-'+this.id, 'play');
+              }
             }
-          }
 
-          if(m.position?.id){
-            m.position.lastStudied = new Date(new Date().toISOString());
-            this.positionService.study(m.position.id).subscribe();
-          }
+            if(m.position?.id){
+              m.position.lastStudied = new Date(new Date().toISOString());
+              this.positionService.study(m.position.id).subscribe();
+            }
 
-        }, branchWeight, 'delegator');
-        delegations.push(moveDelegation);
-      });
-      MoveDelegator.addDelegations(delegations);
+          }, branchWeight, 'delegator');
+          delegations.push(moveDelegation);
+        });
+        MoveDelegator.addDelegations(delegations);
+      }
+
+
+      let play = '';
+      let pointer = this.studyNavigationService.getPointer();
+      if(pointer?.pointer){
+        while(pointer && pointer.pointer?.move?.name != '-'){
+          if(play.length > 0){
+            play = ','+play;
+          }
+          play = (pointer.pointer?.move?.from ?? '') + (pointer.pointer?.move?.to ?? '') + play;
+          pointer = pointer.parent;
+        }
+        this.lichessService.explore(pointer?.pointer?.move?.fen ?? '', play).subscribe({
+          
+          next: (moves) => {
+            build(moves);
+          },
+          error : (e) => {
+            build(null);
+          }
+        });
+      }
+        
+        
     }
 
     correctMove = (data: MoveData) => {

@@ -212,6 +212,7 @@ export interface ExploreNode {
     draws: number;
     uci: string;
     san: string;
+    percent: number;
     opening: {
         name: string;
     }
