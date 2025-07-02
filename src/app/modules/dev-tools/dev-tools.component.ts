@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog-component';
 import { FloatingImageService } from '../../services/floating-image/floating-image.service';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
+import { BoardUtility } from '../../chess-logic/FENConverter';
 
 @Component({
   selector: 'app-dev-tools',
@@ -16,9 +17,12 @@ import { StudyNavigationService } from '../study-navigation/study-navigation.ser
 export class DevToolsComponent {
 
   moveData: MoveData | null = null;
+  test: string = "";
 
   constructor(private router: Router, private studyNavService: StudyNavigationService){
-    this.studyNavService.moveDetail$.subscribe(m => this.moveData = m);
+    this.studyNavService.moveDetail$.subscribe(m => {
+      this.moveData = m;
+    });
   }
 
   public getMoveNumber(){

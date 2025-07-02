@@ -1,9 +1,12 @@
 import { columns } from "../modules/chess-board/models";
 import { ChessBoard } from "./chess-board";
-import { CastleState, Color, LastMove } from "./models";
+import { CastleState, Color, FENChar, LastMove } from "./models";
+import { Bishop } from "./pieces/bishop";
 import { King } from "./pieces/king";
+import { Knight } from "./pieces/knight";
 import { Pawn } from "./pieces/pawn";
 import { Piece } from "./pieces/piece";
+import { Queen } from "./pieces/queen";
 import { Rook } from "./pieces/rook";
 
 export class FENConverter {
@@ -101,5 +104,147 @@ export class FENConverter {
             return columns[prevY] + String(row);
         }
         return "-";
+    }
+
+    public fenToBoard(fen: string){
+        let chessBoard: (Piece | null)[][] =[
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null]
+        ];
+        let row = 7;
+        
+        let parts = fen.split(" ");
+        
+
+        let position = parts[0].split('/');
+
+        [...position].forEach((r, i) => {
+            let piece: Piece | null = null;
+            let col = 0;
+            [...r].forEach(c => {
+                piece = null;
+                switch(c){
+                    case "p":
+                        piece = new Pawn(Color.Black);
+                        break;
+                    case "n":
+                        piece = new Knight(Color.Black);
+                        break;
+                    case "b":
+                        piece = new Bishop(Color.Black);
+                        break;
+                    case "r":
+                        piece = new Rook(Color.Black);
+                        break;
+                    case "q":
+                        piece = new Queen(Color.Black);
+                        break;
+                    case "k":
+                        piece = new King(Color.Black);
+                        break;
+                    case "P":
+                        piece = new Pawn(Color.White);
+                        break;
+                    case "N":
+                        piece = new Knight(Color.White);
+                        break;
+                    case "B":
+                        piece = new Bishop(Color.White);
+                        break;
+                    case "R":
+                        piece = new Rook(Color.White);
+                        break;
+                    case "Q":
+                        piece = new Queen(Color.White);
+                        break;
+                    case "K":
+                        piece = new King(Color.White);
+                        break;
+
+                }
+                if(/\d+/.test(c)){
+                    let n = Number(c);
+                    for(let x = 0; x < n; x++){
+                        chessBoard[row][col] = piece;
+                        col++;
+                    }
+                }else{
+                    chessBoard[row][col] = piece;
+                    col++;
+                }
+                if(piece instanceof Pawn){
+                    if(piece.color == Color.White){
+                        if(row != 1){
+                            piece.hasMoved = true;
+                        }
+                    }else{
+                        if(row != 6){
+                            piece.hasMoved = true;
+                        }
+                    }
+                }
+            });
+            row--;
+        });
+    }
+}
+
+export class BoardUtility {
+    public static getMoveNames(uci: string, fen: string): string{
+        let moveNames: string[] = [];
+        try{
+            let chessBoard = new ChessBoard();
+            
+            chessBoard.loadFromFEN(fen);
+            uci.split(" ").forEach(e => {
+                let x1 = "abcdefgh".indexOf(e[0]);
+                let y1 = Number.parseInt(e[1]) - 1;
+                let x2 = "abcdefgh".indexOf(e[2]);
+                let y2 = Number.parseInt(e[3]) - 1;
+                let promotedPiece: FENChar|null = null;
+                if(e.length == 5){
+                    let p = e[4];
+                    switch(p){
+                        case "r":
+                            promotedPiece = FENChar.BlackRook;
+                            break;
+                        case "n":
+                            promotedPiece = FENChar.BlackKnight;
+                            break;
+                        case "b":
+                            promotedPiece = FENChar.BlackBishop;
+                            break;
+                        case "q":
+                            promotedPiece = FENChar.BlackQueen;
+                            break;
+                        case "R":
+                            promotedPiece = FENChar.WhiteRook;
+                            break;
+                        case "N":
+                            promotedPiece = FENChar.WhiteKnight;
+                            break;
+                        case "B":
+                            promotedPiece = FENChar.WhiteBishop;
+                            break;
+                        case "Q":
+                            promotedPiece = FENChar.WhiteQueen;
+                            break;
+                    }
+                }
+                
+                let moveName = chessBoard.move(y1,x1,y2,x2,promotedPiece);
+                moveNames.push(moveName);
+            });
+            return moveNames.join(" ");
+        }catch(err){
+            alert(err);
+            return moveNames.join(" ");
+        }
     }
 }

@@ -72,7 +72,7 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
       this.router.events.subscribe(event => {
         this.destroy$.next();
       });
-      this.chessBoard = new ChessBoard(navService);
+      this.chessBoard = new ChessBoard();
     this.navService.moveDetail$.subscribe(m => {
       this.moveData = m;
     })

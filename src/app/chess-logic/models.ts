@@ -223,6 +223,18 @@ export interface ExploreNode {
     moves: ExploreNode[];
 }
 
+export interface Evaluation {
+    fen: string;
+    knodes: number;
+    depth: number;
+    pvs: PV[];
+}
+export interface PV{
+    moves: string;
+    moveNames: string;
+    cp: 42;
+}
+
 export interface MoveData {
     studyId: string | null;
     studyTitle: string | null;

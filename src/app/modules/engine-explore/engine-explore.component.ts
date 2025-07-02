@@ -10,6 +10,7 @@ import { StudyNavigationService } from '../study-navigation/study-navigation.ser
 import { LichessService } from '../../services/lichess.service';
 import { DrawingService } from '../drawing/drawing.service';
 import { ExternalBoardControlService } from '../chess-board/external-board-control.service';
+import { BoardUtility } from '../../chess-logic/FENConverter';
 
 @Component({
   selector: 'app-engine-explore',
@@ -34,7 +35,10 @@ export class EngineExploreComponent {
     });
     this.studyNavService.moveDetail$.subscribe((m) => {
       this.moveData = m;
-      if(m){
+      if(m?.move?.fen && (m.move.name ?? '-') != '-'){
+        lichessService.cloudEval(m.move.fen).subscribe((evaluation) => {
+          console.log(JSON.stringify(evaluation));
+        })
       }
     });
   }
