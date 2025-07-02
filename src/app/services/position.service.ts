@@ -48,6 +48,14 @@ export class PositionService {
     }))
   }
 
+  public mistake(id: string): Observable<Object> {
+    return this.http.put(`${this.api}/${id}/mistake`, null);
+  }
+
+  public correct(id: string): Observable<Object> {
+    return this.http.put(`${this.api}/${id}/correct`, null);
+  }
+
   public delete(id: string): Observable<Object> {
     return this.http.post(this.api + `/delete/${id}`, null);
   }
@@ -80,6 +88,8 @@ export class PositionService {
     p.title = position.title;
     p.plans = position.plans;
     p.lastStudied = position.lastStudied;
+    p.mistakes = position.mistakes;
+    p.isKeyPosition = position.isKeyPosition;
     p.positions = [];
     return this.http.post(this.api, p).pipe(finalize(() => {
         position.isDirty = false;

@@ -11,8 +11,9 @@ export class LichessService {
   //TODO, no longer Lichess related, fix name
   private readonly api: string = "http://localhost/chess.api/stockfish";
 
-  private exploreCache = new FIFOCache(500);
+  private exploreCache = new FIFOCache(3000);
   private evaluateCache = new FIFOCache(500);
+  private requestCache = new FIFOCache(20);
 
   constructor(private http: HttpClient) { }
 
@@ -29,28 +30,31 @@ export class LichessService {
       return cp;
     })).pipe(tap(data => this.evaluateCache.put(key, data)), shareReplay(1));
   }
+  
+  public testexplore(fen: string, play: string): Observable<ExploreNode> {
+    return of(<ExploreNode>{});
+  }
 
-  private exploreObs: {obs: Observable<ExploreNode>, key: string} | null=  null;
   public explore(fen: string, play: string): Observable<ExploreNode> {
     const key = `${fen}:${play}`;
     if(this.exploreCache.has(key)){
       return of(this.exploreCache.get(key));
     }
 
-    if(this.exploreObs && this.exploreObs.key == key){
-      return this.exploreObs.obs;
+    if(this.requestCache.has(key)){
+      return this.requestCache.get(key);
     }
     let obs =  this.http.get<ExploreNode>('https://explorer.lichess.ovh/lichess?variant=standard&?fen=' + fen 
       + '&play='+play+'&speeds=blitz%2Crapid%2Cclassical%2Ccorrespondence&ratings=1600%2C1800%2C2000%2C2200%2C2500&source=analysis')
       .pipe(tap((data) => {
-        this.exploreObs = null;
+        this.requestCache.delete(key);
         const total = data.black + data.white + data.draws;
         data.moves.forEach((n) => {
           n.percent = (n.black + n.white + n.draws) / total;
         })
         this.exploreCache.put(key,data);
       }), shareReplay(1));
-      this.exploreObs = {obs: obs, key: key};
+      this.requestCache.put(key,obs);
       return obs;
   }
 

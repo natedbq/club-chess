@@ -36,6 +36,7 @@ import { ActivateStudyService } from './modules/study/activate-study.service';
 import { StudyControlComponent } from './modules/study-control/study-control.component';
 import { DrawingControlsComponent } from './modules/drawing/drawing-controls.component';
 import { ExploreComponent } from './modules/explore/explore.component';
+import { EngineExploreComponent } from './modules/engine-explore/engine-explore.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { ExploreComponent } from './modules/explore/explore.component';
     ComputerModeComponent,
     ExploreComponent,
     RepertoireMenuComponent,
+    EngineExploreComponent,
     DevToolsComponent,
     StudyComponent,
     StudyNavigationComponent,
