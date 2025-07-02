@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
-import { BehaviorSubject, forkJoin, lastValueFrom, Observable, of, Subscription } from 'rxjs';
-import { Study, Move, Position, MoveData } from '../../chess-logic/models';
+import { BehaviorSubject, firstValueFrom, forkJoin, lastValueFrom, Observable, of, shareReplay, Subscription } from 'rxjs';
+import { Study, Move, Position, MoveData, ExploreNode, Color } from '../../chess-logic/models';
 import { MoveDetail } from './study-navigation.component';
 import { FENConverter } from '../../chess-logic/FENConverter';
 import { StudyService } from '../../services/study.service';
 import { PositionService } from '../../services/position.service';
 import { MoveDelegator } from '../../chess-logic/moveDelegator';
+import { LichessService } from '../../services/lichess.service';
+import { GlobalValues } from '../settings/settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +26,9 @@ export class StudyNavigationService {
     moveDetail$ = this._moveDetail.asObservable();
     proposedMove$ = this._proposedMove.asObservable();
 
-    constructor(private router: Router, private studyService: StudyService, private positionService: PositionService) {
+    constructor(private router: Router, private studyService: StudyService, private positionService: PositionService,
+      private lichessService: LichessService
+    ) {
       this.studyPointer = new StudyPointer(null);
       this.study = null;
         this.router.events.subscribe(event => {
@@ -91,6 +95,68 @@ export class StudyNavigationService {
       return forkJoin(saveTasks);
     }
 
+    public async setWeight(node: StudyPointer) 
+    {
+      let date = new Date(node.pointer?.lastStudied??'') ?? new Date();
+        await this.setWeightRec(date, node);        
+    }
+
+    private async setWeightRec(oldest: Date, node: StudyPointer): Promise<Components> {
+      let position = node.pointer ?? new Position(); 
+      if(position.id == null){
+        return {oldest, mistakes: 0, percent: 0};
+      }
+
+      let perspective = position.move?.fen?.split(" ")[1] == "w" ? Color.White : Color.Black;
+      let nodeDate = new Date(position.lastStudied ?? '');
+      oldest = oldest.getTime() > nodeDate.getTime() ? nodeDate : oldest;
+
+      let mistakes = position.mistakes ?? 0;
+      await position.positions.forEach(async (p) => {
+          let pointer = node.next(p.move?.name);
+          let c = await this.setWeightRec(oldest, pointer);
+          let nodeDate = new Date(position?.lastStudied ?? '');
+          oldest = oldest.getTime() > c.oldest.getTime() ? nodeDate : oldest;
+          mistakes += c.mistakes;
+      });
+
+      //TODO: for now, percent is set 0 and the calculation is delegated to study copmonent
+      //  reason - lichess explorer only allows so many requests in a small amount of time, 
+      //      putting that calculation here will require some load time and optimization,
+      //  actually - lets try it and see what happens
+      let explore: ExploreNode | null = null;
+      let play = '';
+      let pointer: StudyPointer | null = node;
+      if(pointer?.pointer && perspective != this.study?.perspective){
+        while(pointer && pointer.pointer?.move?.name != '-'){
+          if(play.length > 0){
+            play = ','+play;
+          }
+          play = (pointer.pointer?.move?.from ?? '') + (pointer.pointer?.move?.to ?? '') + play;
+          pointer = pointer.parent;
+        }
+        try{
+          this.lichessService.explore(pointer?.pointer?.move?.fen ?? '', play).subscribe((explore) => {
+            position.positions.forEach(p => {
+              
+              let matches = explore.moves.filter(m => m.san == p.move?.name);
+              let match = matches.length ? matches[0] : null;
+              if(match){
+                let percent = match.percent ? (match.percent * 1.2) : 0;
+                p.weight = p.weight + Math.round(percent * GlobalValues.weights.commonScalar) + 10;
+              }
+            });
+          })
+        }catch(err){
+          explore = null;
+        }
+      }
+
+
+      position.weight = (1) + (mistakes) + 30;
+      return <Components>{oldest, mistakes: 0, percent: 0};
+    }
+
     setSummaryFEN() {
       if(this.moveDetail?.position?.move && this.study){
         this.study.summaryFEN = this.moveDetail.position.move.fen;
@@ -141,6 +207,8 @@ export class StudyNavigationService {
     }
 
     emitNextMove = (moveData: MoveData) => {
+      let p = this.getPointer();
+      moveData.position = p?.next(moveData.move?.name).pointer ?? undefined;
       this._proposedMove.next(moveData);
       // let extra = moveData.extra ?? {};
       // if(moveData.move){
@@ -321,6 +389,58 @@ export class StudyNavigationService {
         });
     
         return weight;
+      }
+
+      getTotalMistakesInTree = (name: string | null = null): number => {
+        let pointer = this.studyPointer;
+        if(name && pointer){
+          pointer = pointer.next(name);
+        }
+        let mistakes = this.getTotalMistakesInTreeHelper(pointer);
+    
+        return mistakes;
+    
+      }
+    
+      private getTotalMistakesInTreeHelper = (pointer: StudyPointer | null): number => {
+        if(!pointer?.pointer){
+          return 0;
+        }
+    
+        let mistakes = pointer.pointer.mistakes ?? 0;
+    
+        pointer.getVariations().forEach(v => {
+          mistakes += this.getTotalMistakesInTreeHelper(pointer.next(v.name))
+        });
+    
+        return mistakes;
+      }
+
+      getOldestInTree = (name: string | null = null): Date => {
+        let pointer = this.studyPointer;
+        if(name && pointer){
+          pointer = pointer.next(name);
+        }
+        let oldest = this.getOldestInTreeHelper(pointer, new Date(pointer?.pointer?.lastStudied ?? ''));
+    
+        return oldest;
+    
+      }
+    
+      private getOldestInTreeHelper = (pointer: StudyPointer | null, oldest: Date): Date => {
+        if(!pointer?.pointer){
+          return oldest;
+        }
+    
+        let pDate = new Date(pointer.pointer.lastStudied ?? '');
+        oldest = oldest.getTime() > pDate.getTime() ? pDate : oldest;
+    
+        pointer.getVariations().forEach(v => {
+          let vDate = this.getOldestInTreeHelper(pointer.next(v.name), oldest);
+          oldest = vDate.getTime() > oldest.getTime() ? oldest : vDate;
+        });
+    
+        return oldest;
       }
     
       public printTree() {
@@ -642,6 +762,10 @@ class StudyPointer{
       c.positions = []
       c.isDirty = true;
       c.parentId = p.id;
+      c.isKeyPosition = false;
+      c.lastStudied = new Date();
+      c.mistakes = 0;
+      c.plans = '';
   
       p.positions.push(c);
   
@@ -660,3 +784,10 @@ class StudyPointer{
     }
   }
 
+
+
+interface Components {
+    oldest: Date;
+    mistakes: number;
+    percent: number;
+}

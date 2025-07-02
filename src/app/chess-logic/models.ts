@@ -132,6 +132,8 @@ export class Position {
     plans: string = '';
     liveNotes: string[] = [];
     lastStudied: Date | null = null;
+    mistakes: number | null = null;
+    isKeyPosition: boolean = false;
 
     public static toPosition(data: any): Position {
         let position = new Position();
@@ -142,6 +144,8 @@ export class Position {
         position.isDirty = false;
         position.plans = data.plans;
         position.lastStudied = data.lastStudied;
+        position.mistakes = data.mistakes;
+        position.isKeyPosition = data.isKeyPosition;
         if(data.move)
             position.move = Move.toMove(data.move);
         if(data.positions){

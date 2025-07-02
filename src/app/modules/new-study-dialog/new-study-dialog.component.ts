@@ -47,6 +47,10 @@ export class NewStudyDialogComponent {
     position.move.from = '';
     position.move.name = '-';
     position.move.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    position.mistakes = 0;
+    position.plans = '';
+    position.lastStudied = new Date();
+    position.isKeyPosition = false;
     position.positions = [];
 
     study.positionId = position.id;

@@ -50,8 +50,10 @@ export class SettingsService {
 
 export class GlobalValues {
   static weights = {
-    wrong: 10,
-    neglect: 2,
-    common: 5
+    neglectScalar: 20,
+    maxNeglectInDays: 15,
+    mistakesScalr: 20,
+    maxMistakes: 10,
+    commonScalar: 5
   }
 }

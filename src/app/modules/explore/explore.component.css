@@ -14,6 +14,10 @@
     cursor: pointer;
   }
   
+  .explore-view {
+    height: 470px;
+    overflow-y: auto;
+  }
   .segment {
     color: white;
     height: 100%;

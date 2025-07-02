@@ -83,33 +83,41 @@ export class StudyComponent implements OnInit {
 
       this.loading = true;
       if(this.studyId){
-        this.studyService.getStudy(this.studyId).subscribe(s => {
-          this.study = s;
-
-          if(this.study.positionId){
-            this.positionService.getByParentId(this.study.positionId, 5).subscribe(children => {
-              if(this.study?.position?.positions){
-                this.study.position.positions = children;
-
-                let studyNav = new StudyNavigator(this.study);
-                this.isWhitePerspective = s.perspective == Color.White;
-                this.moveData = <MoveData>{
-                  move: studyNav.peek(),
-                  source: 'study-component',
-                  player: s.perspective ,
-                  extra: {}
-                };
-              }
-              this.loading = false;
-              if(!this.isWhitePerspective){
-                
-                setTimeout(() => {
-                  this.oneMove();                  
-                }, 1000);
-              }
-            });
+        this.studyNavigationService.study$.subscribe((s) => {
+          if(!s || !s.position){
+            return;
           }
+          let pointer = this.studyNavigationService.getPointer();
+          if(pointer){
+            //this.studyNavigationService.setWeight(pointer).then(() => {
+              this.study = s;
 
+              if(this.study.positionId){
+                this.positionService.getByParentId(this.study.positionId, 5).subscribe(children => {
+                  if(this.study?.position?.positions){
+                    this.study.position.positions = children;
+
+                    let studyNav = new StudyNavigator(this.study);
+                    this.isWhitePerspective = s.perspective == Color.White;
+                    this.moveData = <MoveData>{
+                      move: studyNav.peek(),
+                      source: 'study-component',
+                      player: s.perspective ,
+                      extra: {}
+                    };
+                  }
+                  this.loading = false;
+                  console.log("done loading");
+                  if(!this.isWhitePerspective){
+                    
+                    setTimeout(() => {
+                      this.oneMove();                  
+                    }, 1000);
+                  }
+                });
+              }
+            //});
+          }
         });
       }
     }
@@ -249,12 +257,15 @@ export class StudyComponent implements OnInit {
         return;
       }
 
+
       this.isRetry = true;
       let pointer = this.studyNavigationService.getPointer();
       if(pointer){
         let position = pointer.pointer;
-        if(position && this.mistakeCounter < 3){
-          position.weight += GlobalValues.weights.wrong;
+        if(position?.mistakes != null && position?.id && this.mistakeCounter < 3){
+          console.log("wrong");
+          this.positionService.mistake(position.id).subscribe();
+          position.mistakes++;
           this.mistakeCounter++;
         }
       }
@@ -269,11 +280,12 @@ export class StudyComponent implements OnInit {
     
     markCorrect = (): void => {
       let pointer = this.studyNavigationService.getPointer();
-      if(pointer?.pointer){
-        let position = pointer.pointer;
+      if(pointer?.parent?.pointer){
+        let position = pointer.parent.pointer;
         this.mistakeCounter = 0;
-        if(!this.isRetry){
-          position.weight = Math.max(0, position.weight - GlobalValues.weights.wrong)
+        if(!this.isRetry && position.id){
+          position.mistakes = Math.max(0, (position.mistakes ?? 0) - 1);
+          this.positionService.correct(position.id).subscribe();
         }
         this.isRetry = false;
       }
@@ -296,24 +308,22 @@ export class StudyComponent implements OnInit {
 
       const build = (explore: ExploreNode | null) => {
 
-        let now = new Date();
-        let longestWait = new Date(variations[variations.length - 1].position?.lastStudied ?? '') ?? new Date();
-        let longestMinutesElapsed = (now.getTime() - longestWait.getTime()) / (1000 * 60);
-
         variations.forEach((m, i) => {
           let node = explore ? explore.moves.filter(x => x.san == m.name)[0] : null;
           let percentPicked = node ? node.percent : 0;
-          let commonWeight = Math.round(percentPicked * GlobalValues.weights.common);
+          let commonWeight = Math.round(percentPicked * GlobalValues.weights.commonScalar);
 
-          let minutesElapsed = (now.getTime() - (new Date(m.position?.lastStudied ?? '').getTime() ?? new Date().getTime())) / (1000 * 60);
-          let timeWeight = Math.round(((minutesElapsed / longestMinutesElapsed)*1.2) * (i * GlobalValues.weights.neglect));
+          let oldest = this.studyNavigationService.getOldestInTree(m.name);
+          let minutesElapsed = (new Date().getTime() - oldest.getTime()) / (1000 * 60);
+          let timeWeight = Math.round((Math.min(1, minutesElapsed / (GlobalValues.weights.maxNeglectInDays * 24 * 60))*1.2)
+             * (GlobalValues.weights.neglectScalar));
 
-          let volatileWeight =  Math.max(1,this.studyNavigationService.getTotalExcessWeightInTree(m.name));
-
-          let branchWeight = volatileWeight 
+          let mistakesWeight =  Math.min(this.studyNavigationService.getTotalMistakesInTree(m.name)/GlobalValues.weights.maxMistakes,1)
+            * GlobalValues.weights.mistakesScalr;
+          let branchWeight = mistakesWeight 
             + timeWeight
             + commonWeight;
-          console.log({name:m.name, volatile:volatileWeight, common:commonWeight, time:timeWeight, total:branchWeight})
+          //console.log({name:m.name, mistakes:mistakesWeight, common:commonWeight, time:timeWeight, total:branchWeight})
           
           let moveDelegation: MoveDelegation = new MoveDelegation(() => {
             if(this.doStudy){
@@ -329,7 +339,7 @@ export class StudyComponent implements OnInit {
               this.positionService.study(m.position.id).subscribe();
             }
 
-          }, branchWeight, 'delegator');
+          }, Math.max(1, branchWeight), 'delegator');
           delegations.push(moveDelegation);
         });
         MoveDelegator.addDelegations(delegations);
@@ -363,6 +373,10 @@ export class StudyComponent implements OnInit {
     correctMove = (data: MoveData) => {
       if(this.doStudy){
         this.markCorrect();
+        if(data.position?.id){
+          this.positionService.study(data.position.id).subscribe();
+          data.position.lastStudied = new Date(new Date().toISOString());
+        }
         this.studyNavigationService.next(data.move?.name);
         if(this.studyNavigationService.getVariations().length == 0){
           this.completeLine(data);

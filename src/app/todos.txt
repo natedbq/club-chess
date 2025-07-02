@@ -33,7 +33,8 @@ TODO b/line-recommend-tags
     - opponent's response is mistake (engine gains points in our advantage), but high % played in lichess DB 
 
 BUGS
-- game does not like when you push a pawn 2 spaces and then push it again on your next move. It always thinks it is a captures move
+- game does not like when you push a pawn 2 spaces and then push it again on your next move. It always thinks it is a captures move\
+- eval endpoint fails when the eval is not centerpawn, but mate in x
 
 
 
