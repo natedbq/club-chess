@@ -38,7 +38,7 @@ export class ChessBoard {
     private _moveList: MoveList = [];
     private _gameHistory: GameHistory;
 
-    constructor(private navService: StudyNavigationService | null = null) {
+    constructor() {
         let wqRook = new Rook(Color.White);
         let wkRook = new Rook(Color.White);
         let bqRook = new Rook(Color.Black);
@@ -78,6 +78,9 @@ export class ChessBoard {
         this._gameHistory = [{ board: this.chessBoardView, lastMove: this._lastMove, checkState: this._checkState,  boardAsFEN: boardAsFEN}];
     }
 
+    public invertPlayerTurn(){
+        this._playerColor = this._playerColor == Color.White ? Color.Black : Color.White;
+    }
     public loadFromFEN(fen: string): void {
         let row = 7;
 
@@ -339,8 +342,6 @@ export class ChessBoard {
         const piece: Piece | null = this.chessBoard[prevX][prevY];
         if (!piece) return false;
 
-        let position = this.navService?.getPointer()?.pointer ?? new Position();
-
         const newPiece: Piece | null = this.chessBoard[newX][newY];
         // we cant put piece on a square that already contains piece of the same color
         if (newPiece && newPiece.color === piece.color){ 
@@ -462,32 +463,25 @@ export class ChessBoard {
     }
 
     private canCastle(king: King, kingSideCastle: boolean): boolean {
-        let position = this.navService?.getPointer()?.pointer ?? new Position();
-        position.liveNotes = [];
         let side = kingSideCastle ? 'kingSide' : 'queenSide';
         if (king.hasMoved){
-            position.addNote("Can't castle "+side+" because king has moved");
             return false;
         }
 
         if(king.color == Color.White){
             if(kingSideCastle && !this._castleState.whiteKingSide){
-                position.addNote("Can't castle "+side+" because king has moved kingSideCastle=true && this._castleState.whiteKingSide=false");
                 return false;
             }
             
             if(!kingSideCastle && !this._castleState.whiteQueenSide){
-                position.addNote("Can't castle "+side+" because king has moved kingSideCastle=false && this._castleState.whiteQueenSide=false");
                 return false;
             }
         }else{
             if(kingSideCastle && !this._castleState.blackKingSide){
-                position.addNote("Can't castle "+side+" because king has moved kingSideCastle=true && this._castleState.blackKingSide=false");
                 return false;
             }
             
             if(!kingSideCastle && !this._castleState.blackQueenSide){
-                position.addNote("Can't castle "+side+" because king has moved kingSideCastle=false && this._castleState.blackQueenSide=false");
                 return false;
             }
         }
@@ -496,7 +490,6 @@ export class ChessBoard {
         const kingPositionY: number = 4;
 
         if (this._checkState.isInCheck){
-            position.addNote("Can't castle "+side+" because king is in check");
             return false;
         } 
 
@@ -504,10 +497,8 @@ export class ChessBoard {
         const secondNextKingPositionY: number = kingPositionY + (kingSideCastle ? 2 : -2);
 
         if(!this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, firstNextKingPositionY)){
-            position.addNote("Can't castle "+side+" because king can't move once that way");
         } else
         if(!this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, secondNextKingPositionY)){
-            position.addNote("Can't castle "+side+" because king can't move twice that way");
         }
 
         return this.isPositionSafeAfterMove(kingPositionX, kingPositionY, kingPositionX, firstNextKingPositionY) &&
@@ -527,7 +518,17 @@ export class ChessBoard {
 
         if (!this.areCoordsValid(prevX, prevY) || !this.areCoordsValid(newX, newY)) return '-';
         const piece: Piece | null = this.chessBoard[prevX][prevY];
+        console.log("HERE")
         if (!piece || piece.color !== this._playerColor) return '-';
+
+        if(piece instanceof King){
+            if(prevY == 4 && newY == 7){
+                newY = 6;
+            }
+            if(prevY == 4 && newY == 0){
+                newY = 2;
+            }
+        }
 
         const pieceSafeSquares: Coords[] | undefined = this._safeSquares.get(prevX + "," + prevY);
         if (!pieceSafeSquares || !pieceSafeSquares.find(coords => coords.x === newX && coords.y === newY))
@@ -554,6 +555,7 @@ export class ChessBoard {
         }
 
         this.chessBoard[prevX][prevY] = null;
+
 
         this._lastMove = { prevX, prevY, currX: newX, currY: newY, piece, moveType };
         this._playerColor = this._playerColor === Color.White ? Color.Black : Color.White;
