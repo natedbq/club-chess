@@ -1,0 +1,24 @@
+td{
+    padding: 5px;
+    font-size: 20px;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.too-close {
+    padding-right: 5px;
+}
+
+.selectable {
+    opacity: .7;
+}
+
+.selectable:hover {
+    background-color: var(--chill-blue);
+    opacity: 1;
+    cursor: pointer;
+  }
+  
+.head {
+    padding-right: 15px;
+}

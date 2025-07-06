@@ -1,17 +1,70 @@
 <div>
     <h3>Stockfish</h3>
+    <div *ngIf="evaluating">
+        <app-loading></app-loading>
+    </div>
+    <div *ngIf="!evaluating">
     <table>
-        <tr>
-            <td>+1.3</td>
-            <td>e4</td>
+        <tr *ngIf="pv1" class="selectable"
+            (mouseenter)="drawPreview(1)" 
+            (mouseleave)="drawPreview(1)"
+            (click)="select(1)">
+            <td class="head"><b>{{cp1 | number: '1.2-2' }}</b></td>
+            <td>
+                <span *ngFor="let move of moves1; let i = index">
+
+                    <span class="too-close" *ngIf="(player + i) % 2 == 0"><b>{{getMoveNum(i)}}.</b></span>
+                    <app-graphical-move class="inline-block too-close"  
+                    [moveName]="move" [player]="(player + i) % 2"></app-graphical-move>
+                    <span  *ngIf="(player + i) % 2 == 0" >, </span>
+                </span>
+            </td>
         </tr>
-        <tr>
-            <td>-8.0</td>
-            <td>d4</td>
+        <tr *ngIf="pv2" class="selectable"
+            (mouseenter)="drawPreview(2)" 
+            (mouseleave)="drawPreview(2)"
+            (click)="select(2)">
+            <td class="head"><b>{{cp2 | number: '1.2-2' }}</b></td>
+            <td>
+                <span *ngFor="let move of moves2; let i = index">
+
+                    <span class="too-close" *ngIf="(player + i) % 2 == 0"><b>{{getMoveNum(i)}}.</b></span>
+                    <app-graphical-move class="inline-block too-close"  
+                    [moveName]="move" [player]="(player + i) % 2"></app-graphical-move>
+                    <span  *ngIf="(player + i) % 2 == 0" >, </span>
+                </span>
+            </td>
         </tr>
-        <tr>
-            <td>+34.3</td>
-            <td>e3</td>
+        <tr *ngIf="pv3" class="selectable" 
+            (mouseenter)="drawPreview(3)" 
+            (mouseleave)="drawPreview(3)"
+            (click)="select(3)">
+            <td class="head"><b>{{cp3 | number: '1.2-2' }}</b></td>
+            <td>
+                <span *ngFor="let move of moves3; let i = index">
+
+                    <span class="too-close" *ngIf="(player + i) % 2 == 0"><b>{{getMoveNum(i)}}.</b></span>
+                    <app-graphical-move class="inline-block too-close"  
+                    [moveName]="move" [player]="(player + i) % 2"></app-graphical-move>
+                    <span  *ngIf="(player + i) % 2 == 0" >, </span>
+                </span>
+            </td>
+        </tr>
+        <tr *ngIf="pv4" class="selectable" 
+            (mouseenter)="drawPreview(4)" 
+            (mouseleave)="drawPreview(4)"
+            (click)="select(4)">
+            <td class="head"><b>{{cp4 | number: '1.2-2' }}</b></td>
+            <td>
+                <span *ngFor="let move of moves4; let i = index">
+
+                    <span class="too-close" *ngIf="(player + i) % 2 == 0"><b>{{getMoveNum(i)}}.</b></span>
+                    <app-graphical-move class="inline-block too-close"  
+                    [moveName]="move" [player]="(player + i) % 2"></app-graphical-move>
+                    <span  *ngIf="(player + i) % 2 == 0" >, </span>
+                </span>
+            </td>
         </tr>
     </table>
+    </div>
 </div>

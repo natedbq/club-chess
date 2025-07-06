@@ -65,6 +65,11 @@ export class StudyNavigationService {
         });
     }
 
+    getMoveNumber = (): number => {
+      let moves = this.getPreviousMoves();
+      return moves.length + 1;
+    }
+
     saveStudy = (): Observable<Object[]> => {
       let saveTasks: Observable<Object>[] = [];
 

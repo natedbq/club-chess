@@ -43,6 +43,10 @@ export class SettingsService {
       return this._showPlans.value;
     }
 
+    public showVariations(){
+      return this._showVariations.value;
+    }
+
     public autoNextLine(){
       return this._autoNextLine.value;
     }

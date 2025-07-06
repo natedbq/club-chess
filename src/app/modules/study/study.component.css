@@ -1,0 +1,8 @@
+app-tool-menu {
+    position: relative;
+}
+
+.hug-bottom {
+    position: absolute;
+    bottom: 0;
+}
