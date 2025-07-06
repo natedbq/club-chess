@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, map, of, shareReplay, switchMap, tap } from "rxjs";
+import { Observable, catchError, map, of, shareReplay, switchMap, tap } from "rxjs";
 import { Evaluation, ExploreNode, PV, Study } from "../chess-logic/models";
 import { FIFOCache } from "../utilities/fifo-cache";
 import { BoardUtility } from "../chess-logic/FENConverter";
@@ -33,18 +33,38 @@ export class LichessService {
     })).pipe(tap(data => this.evaluateCache.put(key, data)), shareReplay(1));
   }
 
+  public stockfishEval(fen: string): Observable<Evaluation> {
+    const key = `cloudEval:${fen}`;
+    if(this.cloudEvalCache.has(key)){
+      return of(this.cloudEvalCache.get(key));
+    }
+
+    let obs =  this.http.get<Evaluation>(`${this.api}/engine?fen=${fen}&depth=24`)
+      .pipe(map((data) => {
+        data.pvs.forEach((p) => {
+          p.moveNames = BoardUtility.getMoveNames(p.moves, fen);
+        })
+        return data;
+      }))
+      .pipe(tap((data) => {
+        this.cloudEvalCache.put(key,data);
+      }), shareReplay(1));
+      return obs; 
+  }
+
   public cloudEval(fen: string): Observable<Evaluation>{
     const key = `cloudEval:${fen}`;
-    if(this.exploreCache.has(key)){
-      return of(this.exploreCache.get(key));
+    if(this.cloudEvalCache.has(key)){
+      return of(this.cloudEvalCache.get(key));
     }
 
     if(this.lichessRequestCache.has(key)){
       return this.lichessRequestCache.get(key);
     }
     let obs =  this.http.get<Evaluation>(`https://lichess.org/api/cloud-eval?fen=${fen}&multiPv=4`)
+      .pipe(map((response) => { return response;}), catchError((err) => { return this.stockfishEval(fen)}))
       .pipe(map((data) => {
-        console.log("first",JSON.stringify(data));
+        console.log("reached",JSON.stringify(data))
         data.pvs.forEach((p) => {
           p.moveNames = BoardUtility.getMoveNames(p.moves, fen);
         })

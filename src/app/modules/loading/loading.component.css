@@ -1,0 +1,13 @@
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  20%      { opacity: 1; }
+  40%      { opacity: 0; }
+}
+
+.pulse-img {
+    opacity: 0;
+  animation: fadeInOut 2s ease-in-out infinite;
+  width: 60px;
+  height: 60px;
+  animation-duration: 4s;
+}

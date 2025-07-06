@@ -6,6 +6,7 @@ import { PositionService } from '../../services/position.service';
 import { FENConverter } from '../../chess-logic/FENConverter';
 import { StudyNavigationService } from './study-navigation.service';
 import { SettingsService } from '../settings/settings.service';
+import { ActivateStudyService } from '../study/activate-study.service';
 
 @Component({
   selector: 'app-study-navigation',
@@ -20,8 +21,11 @@ export class StudyNavigationComponent {
   moves: Move[] = [];
   showVariations: boolean = true;
   variations: MoveDetail[] = [];
+  playing = false;
 
-  constructor(private positionService: PositionService, private navService: StudyNavigationService, private settingsService: SettingsService){
+  constructor(private positionService: PositionService, private navService: StudyNavigationService, private settingsService: SettingsService,
+    private activateStucyService: ActivateStudyService
+  ){
 
     this.navService.moveDetail$.subscribe((s) => {
       if(s)
@@ -33,6 +37,11 @@ export class StudyNavigationComponent {
     this.settingsService.showVariations$.subscribe(m => this.showVariations = m);
     this.navService.study$.subscribe((s) => {
       this.updateVariations();
+    })
+
+    this.activateStucyService.play$.subscribe(p => {
+      this.playing = p;
+      this.showVariations = settingsService.showVariations() && !this.playing;
     })
   }
 

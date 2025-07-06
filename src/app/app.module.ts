@@ -37,6 +37,8 @@ import { StudyControlComponent } from './modules/study-control/study-control.com
 import { DrawingControlsComponent } from './modules/drawing/drawing-controls.component';
 import { ExploreComponent } from './modules/explore/explore.component';
 import { EngineExploreComponent } from './modules/engine-explore/engine-explore.component';
+import { GraphicalMoveComponent } from './modules/graphical-move/graphical-move.component';
+import { LoadingComponent } from './modules/loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +61,8 @@ import { EngineExploreComponent } from './modules/engine-explore/engine-explore.
     ToolMenuComponent,
     ToolComponent,
     DrawingControlsComponent,
+    GraphicalMoveComponent,
+    LoadingComponent,
     MoveEditorComponent    
   ],
   imports: [
