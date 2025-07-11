@@ -58,15 +58,21 @@ export class ExploreComponent {
   }
 
   select(node: ExploreNode){
-    let x1 = "abcdefgh".indexOf(node.uci[0]);
-    let y1 = (Number(node.uci[1]) - 1);
-    let x2 = "abcdefgh".indexOf(node.uci[2]);
-    let y2 = Number(node.uci[3]) - 1;
+    let uci = node.uci;
+    if(node.san.toLowerCase().indexOf("o-o-o") >= 0){
+      uci = uci.replace("a","c");
+    }else if(node.san.toLowerCase().indexOf("o-o") >= 0){
+      uci = uci.replace("h", "g");
+    }
+    let x1 = "abcdefgh".indexOf(uci[0]);
+    let y1 = (Number(uci[1]) - 1);
+    let x2 = "abcdefgh".indexOf(uci[2]);
+    let y2 = Number(uci[3]) - 1;
 
-    this.drawingService.clearPreview();
 
     this.externalBoardControlService.click(x1,y1);
     this.externalBoardControlService.click(x2,y2);
+    this.drawingService.clearPreview();
   }
   drawPreview(node: ExploreNode){
     let x1 = "abcdefgh".indexOf(node.uci[0]);

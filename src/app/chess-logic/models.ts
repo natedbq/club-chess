@@ -88,9 +88,11 @@ export class CastleState{
     whiteQueenSide: boolean = true;
 }
 
+export interface TaggedObject {
+    tags: string[];
+}
 
-
-export class Study {
+export class Study implements TaggedObject {
     id: string | null = null;
     title: string | null = null;
     description: string | null = null;
@@ -100,6 +102,8 @@ export class Study {
     positionId: string | null = null;
     isDirty: boolean = true;
     lastStudied: Date | null = null;
+    accuracy: number | null = null;
+    tags: string[] = [];
 
     public static toStudy(data: any): Study{
         let study = new Study();
@@ -110,7 +114,9 @@ export class Study {
         study.summaryFEN = data.summaryFEN;
         study.isDirty = false;
         study.positionId = data.positionId;
-        study.lastStudied = data.lastStudied
+        study.lastStudied = data.lastStudied;
+        study.accuracy = data.accuracy;
+        study.tags = data.tags;
     
         if(data.position){
           study.position = Position.toPosition(data.position);
@@ -119,7 +125,7 @@ export class Study {
       }  
 }
 
-export class Position {
+export class Position implements TaggedObject {
     id: string | null = null;
     title: string | null = null;
     tags: string[] = [];
@@ -146,6 +152,7 @@ export class Position {
         position.lastStudied = data.lastStudied;
         position.mistakes = data.mistakes;
         position.isKeyPosition = data.isKeyPosition;
+        position.tags = data.tags;
         if(data.move)
             position.move = Move.toMove(data.move);
         if(data.positions){

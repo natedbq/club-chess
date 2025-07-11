@@ -196,6 +196,17 @@ export class FENConverter {
 }
 
 export class BoardUtility {
+    public static DateNow(){
+        const now = new Date();
+        return new Date(Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate(),
+            now.getUTCHours(),
+            now.getUTCMinutes(),
+            now.getUTCSeconds()
+        ));
+    }
     public static getMoveNames(uci: string, fen: string): string{
         let moveNames: string[] = [];
         try{

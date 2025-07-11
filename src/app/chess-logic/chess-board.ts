@@ -518,7 +518,6 @@ export class ChessBoard {
 
         if (!this.areCoordsValid(prevX, prevY) || !this.areCoordsValid(newX, newY)) return '-';
         const piece: Piece | null = this.chessBoard[prevX][prevY];
-        console.log("HERE")
         if (!piece || piece.color !== this._playerColor) return '-';
 
         if(piece instanceof King){

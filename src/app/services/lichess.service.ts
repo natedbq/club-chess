@@ -62,9 +62,8 @@ export class LichessService {
       return this.lichessRequestCache.get(key);
     }
     let obs =  this.http.get<Evaluation>(`https://lichess.org/api/cloud-eval?fen=${fen}&multiPv=4`)
-      .pipe(map((response) => { return response;}), catchError((err) => { return this.stockfishEval(fen)}))
+      //.pipe(map((response) => { return response;}), catchError((err) => { return this.stockfishEval(fen)}))
       .pipe(map((data) => {
-        console.log("reached",JSON.stringify(data))
         data.pvs.forEach((p) => {
           p.moveNames = BoardUtility.getMoveNames(p.moves, fen);
         })

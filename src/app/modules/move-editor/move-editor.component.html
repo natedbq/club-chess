@@ -1,5 +1,3 @@
 <div class="one-line">
     <h3 class="padding-right" [ngClass]="{dirty: position?.isDirty}">{{move?.name}}</h3>
-    <button class="btn btn-icon btn-commit push-right" (click)="setFEN()"><i class="bi bi-key " ></i></button>
-    <button class="btn btn-icon btn-delete" (click)="delete()" [ngClass]="{'disabled-black': !canDelete() }" [disabled]="!canDelete()"><i class="bi bi-trash3 inline-block" ></i></button>
 </div>

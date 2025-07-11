@@ -20,6 +20,7 @@ export class StudyService {
     s.summaryFEN = study.summaryFEN;
     s.title = study.title;
     s.positionId = study.positionId;
+    s.accuracy = 0;
 
     return this.http.post(this.api + '/study', s);
   }

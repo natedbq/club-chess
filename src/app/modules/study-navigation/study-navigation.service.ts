@@ -3,7 +3,7 @@ import { NavigationStart, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom, forkJoin, lastValueFrom, Observable, of, shareReplay, Subscription } from 'rxjs';
 import { Study, Move, Position, MoveData, ExploreNode, Color } from '../../chess-logic/models';
 import { MoveDetail } from './study-navigation.component';
-import { FENConverter } from '../../chess-logic/FENConverter';
+import { BoardUtility, FENConverter } from '../../chess-logic/FENConverter';
 import { StudyService } from '../../services/study.service';
 import { PositionService } from '../../services/position.service';
 import { MoveDelegator } from '../../chess-logic/moveDelegator';
@@ -17,6 +17,7 @@ export class StudyNavigationService {
     private _study = new BehaviorSubject<Study|null>(null);
     private _moveDetail = new BehaviorSubject<MoveData | null>(null);
     private _proposedMove = new BehaviorSubject<MoveData | null>(null);
+    private root: Position | null = null;
 
     private studyPointer: StudyPointer | null;
     private study: Study | null;
@@ -56,6 +57,7 @@ export class StudyNavigationService {
 
                     this.studyPointer = new StudyPointer(null, this.study?.position);
                     this._study.next(this.study);
+                    this.root = this.study?.position ?? null;
                     this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'load');
                     
                     return s;
@@ -63,6 +65,33 @@ export class StudyNavigationService {
             }
             return of();
         });
+    }
+
+    calculateScore(position: Position|null = null): any {
+      let score: any = {total: 1, mistakes: 0};
+      if(position == null){
+        position = this.root;
+      }
+      if(!position){
+        return score;
+      }
+      score = this.calculateScoreHelper(position);
+
+      if(!score){
+        return 0;
+      }
+
+      return score;
+    }
+
+    private calculateScoreHelper(position: Position): any {
+      let score: any = {total: 1, mistakes: position.mistakes};
+      position.positions.forEach(p => {
+        let s = this.calculateScoreHelper(p);
+        score.total += s.total;
+        score.mistakes += s.mistakes;
+      })
+      return score;
     }
 
     getMoveNumber = (): number => {
@@ -768,7 +797,7 @@ class StudyPointer{
       c.isDirty = true;
       c.parentId = p.id;
       c.isKeyPosition = false;
-      c.lastStudied = new Date();
+      c.lastStudied = BoardUtility.DateNow();
       c.mistakes = 0;
       c.plans = '';
   

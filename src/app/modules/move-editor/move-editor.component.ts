@@ -35,6 +35,6 @@ export class MoveEditorComponent {
   }
   
   canDelete = () => {
-    return this.move?.name !== '-';
+    return (this.move?.name ?? '-') !== '-';
   }
 }

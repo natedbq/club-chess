@@ -1,0 +1,5 @@
+<div class="panel">
+    <button class="btn btn-icon btn-commit push-right" [ngClass]="{'selected': isPreview()}" (click)="setFEN()"><i class="bi bi-eye " ></i></button>
+    <button class="btn btn-icon btn-delete" (click)="delete()" [ngClass]="{'disabled-black': !canDelete() }" [disabled]="!canDelete()"><i class="bi bi-trash3 inline-block" ></i></button>
+
+</div>
