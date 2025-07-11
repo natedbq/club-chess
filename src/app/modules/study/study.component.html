@@ -1,11 +1,11 @@
 
 <table>
     <div class="padding">
-        <button class="btn btn-icon btn-commit" (click)="focus()"><i class="bi bi-bullseye inline-block" ></i></button>
+        <app-score></app-score>
     </div>
     <tr>
         <td>
-            <div *ngIf="loading" >loading...</div>
+            <div *ngIf="loading" ><app-loading></app-loading></div>
             <div *ngIf="!loading">
                 <app-chess-board  [moveData]="moveData" [studyPerspective]="getPerspective()"> </app-chess-board>
             </div>
@@ -34,7 +34,10 @@
                     <app-settings></app-settings>
                 </app-tool> 
             </app-tool-menu>
+            <div>
+                <app-move-controls></app-move-controls>
                 <app-study-control ></app-study-control>
+            </div>
         </td>
     </tr>
 </table>

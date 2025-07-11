@@ -39,6 +39,8 @@ import { ExploreComponent } from './modules/explore/explore.component';
 import { EngineExploreComponent } from './modules/engine-explore/engine-explore.component';
 import { GraphicalMoveComponent } from './modules/graphical-move/graphical-move.component';
 import { LoadingComponent } from './modules/loading/loading.component';
+import { MoveControlsComponent } from './modules/move-controls/move-controls.component';
+import { ScoreComponent } from './modules/score/score.component';
 
 @NgModule({
   declarations: [
@@ -61,8 +63,10 @@ import { LoadingComponent } from './modules/loading/loading.component';
     ToolMenuComponent,
     ToolComponent,
     DrawingControlsComponent,
+    MoveControlsComponent,
     GraphicalMoveComponent,
     LoadingComponent,
+    ScoreComponent,
     MoveEditorComponent    
   ],
   imports: [

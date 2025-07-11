@@ -35,7 +35,7 @@ export class RepertoireMenuComponent {
             source: 'repertoire-menu',
             direction: 'preview',
             player: study.perspective,
-            extra: {}
+            extra: {accuracy: study.accuracy}
           })
         } )
     });

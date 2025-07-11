@@ -18,13 +18,20 @@ export class DevToolsComponent {
 
   moveData: MoveData | null = null;
   test: string = "";
+  size = 0;
 
   constructor(private router: Router, private studyNavService: StudyNavigationService){
     this.studyNavService.moveDetail$.subscribe(m => {
       this.moveData = m;
+      this.size = JSON.stringify(m?.position).length;
     });
   }
+  //86800
+  //86925
 
+  copy() {
+    navigator.clipboard.writeText(JSON.stringify(this.moveData?.position));
+  }
   public getMoveNumber(){
     return this.studyNavService.getPreviousMoves().length;
   }

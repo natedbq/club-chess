@@ -12,6 +12,7 @@ import { ActivateStudyService } from './activate-study.service';
 import { GlobalValues, SettingsService } from '../settings/settings.service';
 import { ExternalBoardControlService } from '../chess-board/external-board-control.service';
 import { Subject, takeUntil } from 'rxjs';
+import { BoardUtility } from '../../chess-logic/FENConverter';
 
 @Component({
   selector: 'app-study',
@@ -93,7 +94,7 @@ export class StudyComponent implements OnInit {
               this.study = s;
 
               if(this.study.positionId){
-                this.positionService.getByParentId(this.study.positionId, 5).subscribe(children => {
+                this.positionService.getByParentId(this.study.positionId, 7).subscribe(children => {
                   if(this.study?.position?.positions){
                     this.study.position.positions = children;
 
@@ -281,7 +282,10 @@ export class StudyComponent implements OnInit {
     markCorrect = (): void => {
       let pointer = this.studyNavigationService.getPointer();
       if(pointer?.parent?.pointer){
-        let position = pointer.parent.pointer;
+        let position = pointer.pointer;
+        if(!position){
+          return;
+        }
         this.mistakeCounter = 0;
         if(!this.isRetry && position.id){
           position.mistakes = Math.max(0, (position.mistakes ?? 0) - 1);
@@ -335,7 +339,7 @@ export class StudyComponent implements OnInit {
             }
 
             if(m.position?.id){
-              m.position.lastStudied = new Date(new Date().toISOString());
+              m.position.lastStudied = BoardUtility.DateNow();
               this.positionService.study(m.position.id).subscribe();
             }
 
@@ -372,10 +376,11 @@ export class StudyComponent implements OnInit {
 
     correctMove = (data: MoveData) => {
       if(this.doStudy){
-        this.markCorrect();
+        if(data.player == this.getPerspective())
+          this.markCorrect();
         if(data.position?.id){
           this.positionService.study(data.position.id).subscribe();
-          data.position.lastStudied = new Date(new Date().toISOString());
+          data.position.lastStudied = BoardUtility.DateNow();
         }
         this.studyNavigationService.next(data.move?.name);
         if(this.studyNavigationService.getVariations().length == 0){

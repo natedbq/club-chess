@@ -133,6 +133,10 @@ img {
     color: var(--green);
 }
 
+.selected {
+  color: var(--blue);
+}
+
 button:disabled {
     opacity: 1 !important;
     cursor: pointer !important;
@@ -154,6 +158,10 @@ p-inputSwitch {
 
 .margin-left-10 {
     margin-left: 10px;
+}
+
+.margin-left-20 {
+    margin-left: 20px;
 }
 
 .no-hover:hover {

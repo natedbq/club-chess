@@ -7,6 +7,7 @@ import { Color, Move, Position, Study } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { FormsModule } from '@angular/forms';
 import { PositionService } from '../../services/position.service';
+import { BoardUtility } from '../../chess-logic/FENConverter';
 
 @Component({
   selector: 'app-new-study-dialog',
@@ -49,7 +50,7 @@ export class NewStudyDialogComponent {
     position.move.fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
     position.mistakes = 0;
     position.plans = '';
-    position.lastStudied = new Date();
+    position.lastStudied = BoardUtility.DateNow();
     position.isKeyPosition = false;
     position.positions = [];
 

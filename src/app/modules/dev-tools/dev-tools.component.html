@@ -13,12 +13,16 @@
         <span>'{{getDescription()}}'</span>
     </div>
     <div>
+        <button class="btn btn-icon" (click)="copy()"><b>copy object</b><i class="bi bi-copy inline-block margin-left-20" ></i></button>
+
+    </div>
+    <div>
         <b>fen</b>
         <div class="bordered">{{moveData?.move?.fen}}</div>
     </div>
     <div>
-        <b>weight</b>
-        <span>{{moveData?.position?.weight}}</span>
+        <b>mistakes</b>
+        <span>{{moveData?.position?.mistakes}}</span>
     </div>
     <div>
         <b>by</b>
@@ -31,6 +35,10 @@
     <div>
         <b>dirty</b>
         <span>{{moveData?.position?.isDirty ? 'yes' : 'no'}}</span>
+    </div>
+    <div>
+        <b>size</b>
+        <span>{{size}}</span>
     </div>
 </div>
 <div>

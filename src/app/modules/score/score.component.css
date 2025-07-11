@@ -1,0 +1,15 @@
+.better {
+  color: var(--green);
+}
+
+.worse {
+  color: var(--red);
+}
+
+table {
+  opacity: 0;
+}
+
+.visible {
+  opacity: 1;
+}

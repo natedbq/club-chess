@@ -8,6 +8,11 @@
     margin-right:8px;
   }
 
+  .title {
+    height: 115px;
+    max-height: 115px;
+    overflow-y: auto;
+  }
   .explore-row.selectable:hover {
     background-color: var(--chill-blue);
     opacity: 1;
@@ -15,7 +20,8 @@
   }
   
   .explore-view {
-    height: 470px;
+    height: 420px;
+    max-height: 420px;
     overflow-y: auto;
   }
   .segment {
