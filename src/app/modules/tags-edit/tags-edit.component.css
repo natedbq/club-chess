@@ -1,0 +1,21 @@
+.tags-section {
+    display: flex;
+    user-select: none;
+    flex-wrap: wrap;
+}
+
+.bi {
+    cursor:pointer
+}
+
+input,
+input:focus,
+input:hover,
+input:active  {
+    height: 25px;
+    border: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background-color: rgba(0,0,0,0);
+}

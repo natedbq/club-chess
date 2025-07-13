@@ -52,12 +52,6 @@ export class EngineExploreComponent {
   constructor(private router: Router, private studyNavService: StudyNavigationService, private lichessService: LichessService,
     private drawingService: DrawingService, private externalBoardControlService: ExternalBoardControlService
   ){
-    this.update(<MoveData>{
-      move: {
-        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        name: 'new'
-      }
-    })
     this.studyNavService.study$.subscribe((study) => {
       this.isWhite = study?.perspective == Color.White;
       lichessService.explore(study?.position?.move?.fen ?? '', '').subscribe({
@@ -81,22 +75,6 @@ export class EngineExploreComponent {
       }
     });
   }
-  
-  
-  select(index: number){
-    let uci: string|null = null;
-    if(index == 1){
-      uci = this.uci1
-    }
-    if(index == 2){
-      uci = this.uci2;
-    }
-    if(index == 3){
-      uci = this.uci3;
-    }
-    if(index == 4){
-      uci = this.uci4;
-    }
 
   getMoveNum(index: number){
     return this.moveNum + Math.floor(index / 2);

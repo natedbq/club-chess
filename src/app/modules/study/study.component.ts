@@ -327,7 +327,7 @@ export class StudyComponent implements OnInit {
           let branchWeight = mistakesWeight 
             + timeWeight
             + commonWeight;
-          //console.log({name:m.name, mistakes:mistakesWeight, common:commonWeight, time:timeWeight, total:branchWeight})
+          console.log({name:m.name, mistakes:mistakesWeight, common:commonWeight, time:timeWeight, total:branchWeight})
           
           let moveDelegation: MoveDelegation = new MoveDelegation(() => {
             if(this.doStudy){

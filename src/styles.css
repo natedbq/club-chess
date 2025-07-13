@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
-    --yellow: #ffe100;
+    --yellow: #ded014;
+    --purple: #a347ff;
+    --orange: #fcaf42;
     --soft-white: rgb(235, 233, 233);
     --gray: rgb(42, 42, 42);
     --green: rgb(12, 227, 80);
@@ -133,8 +135,32 @@ img {
     color: var(--green);
 }
 
+.yellow {
+    color: var(--yellow);
+}
+
+.purple {
+    color: var(--purple);
+}
+
+.orange {
+    color: var(--orange);
+}
+
 .selected {
   color: var(--blue);
+}
+
+.pill {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin: 5px;
+    background-color: var(--blue);
+    color: black;
+    font-size: 21px;
+    border-radius: 20px;
 }
 
 button:disabled {

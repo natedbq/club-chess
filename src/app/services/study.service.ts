@@ -21,6 +21,7 @@ export class StudyService {
     s.title = study.title;
     s.positionId = study.positionId;
     s.accuracy = 0;
+    s.tags = study.tags;
 
     return this.http.post(this.api + '/study', s);
   }

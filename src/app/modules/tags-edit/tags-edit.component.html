@@ -1,0 +1,17 @@
+<div>
+    <h1>{{name}} Tags</h1>
+    <div class="tags-section">
+        <div *ngFor="let tag of tags" class="inline-block pill tag">{{tag}} 
+            <span class="delete-box" (click)="remove(tag)"><i class="bi bi-x"></i></span>
+        </div>
+        <div class="inline-block pill tag" *ngIf="!adding">
+            <span (click)="startAdding()"><i class="bi bi-plus"></i></span>
+        </div>
+        <div class="inline-block pill tag" *ngIf="adding">
+            <input type="text" [(ngModel)]="toAdd">
+            <span (click)="add()">
+                <i class="bi bi-check"></i>
+            </span>
+        </div>
+    </div>
+</div>

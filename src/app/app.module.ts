@@ -41,6 +41,7 @@ import { GraphicalMoveComponent } from './modules/graphical-move/graphical-move.
 import { LoadingComponent } from './modules/loading/loading.component';
 import { MoveControlsComponent } from './modules/move-controls/move-controls.component';
 import { ScoreComponent } from './modules/score/score.component';
+import { TagsEditComponent } from './modules/tags-edit/tags-edit.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { ScoreComponent } from './modules/score/score.component';
     GraphicalMoveComponent,
     LoadingComponent,
     ScoreComponent,
+    TagsEditComponent,
     MoveEditorComponent    
   ],
   imports: [

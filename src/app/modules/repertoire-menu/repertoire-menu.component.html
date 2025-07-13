@@ -1,6 +1,25 @@
 <div class="page">
-    <div class="padding-v-3">
-        <button class="btn b1" (click)="newStudy()">New Study</button>
+    <table>
+        <tr>
+            <td>
+                <div class="padding-v-3">
+                    <button class="btn b1" (click)="newStudy()">New Study</button>
+                </div>
+            </td>
+            <td>
+                <h1>Tags</h1>
+            </td>
+            <td>
+                <div class="tag-section">
+                    <div class="inline-block pill" *ngFor="let tag of tags" [ngClass]="{'not-selected': !tag.isSelected}" (click)="tag.isSelected = !tag.isSelected">
+                        {{tag.name}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div >
+        
     </div>
     <div ></div>
     <div *ngIf="whiteGames().length">

@@ -1,0 +1,17 @@
+.tag-section {
+    display: flex;
+    user-select: none;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+    margin-left: 50px;
+    max-width: 1000px;
+}
+
+.pill {
+    cursor: pointer;
+}
+
+.not-selected {
+    background-color: var(--gray);
+    color: black;
+}

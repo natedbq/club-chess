@@ -8,7 +8,7 @@ import { Study, MoveData } from "../../chess-logic/models";
 export class SettingsService {
   private _showVariations = new BehaviorSubject<boolean>(true);
   private _autoFavor = new BehaviorSubject<boolean>(true);
-  private _showPlans = new BehaviorSubject<boolean>(true);
+  private _showPlans = new BehaviorSubject<boolean>(false);
     private _pauseTime = new BehaviorSubject<number>(2.5);
     private _autoNextLine = new BehaviorSubject<boolean>(false);
     
@@ -55,7 +55,7 @@ export class SettingsService {
 export class GlobalValues {
   static weights = {
     neglectScalar: 20,
-    maxNeglectInDays: 1,
+    maxNeglectInDays: 5,
     mistakesScalr: 20,
     maxMistakes: 10,
     commonScalar: 5
