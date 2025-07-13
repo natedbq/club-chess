@@ -230,7 +230,8 @@ export class DrawingService {
     }
 
     draw() {
-        if(!this.stage || !this.settingsService.showPlans()){
+        if(!this.stage || (this.activateStudyService.isActive() && !this.settingsService.showPlans())){
+            this.stage?.removeChildren();
             return;
         }
 

@@ -32,7 +32,9 @@ export class ScoreComponent {
       if(p){
         this.show = true;
         this.score = this.calculateScore(this.navService.calculateScore()) * 100;
-        this.startScore = this.score;
+        if(this.startScore == 0){
+          this.startScore = this.score;
+        }
         this.diff = 0;
       }else{
         this.show = false;

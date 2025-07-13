@@ -6,6 +6,12 @@ import { NewStudyDialogComponent } from '../new-study-dialog/new-study-dialog.co
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog-component';
 import { FloatingImageService } from '../../services/floating-image/floating-image.service';
+import { withJsonpSupport } from '@angular/common/http';
+
+interface Selection {
+  name: string;
+  isSelected: boolean;
+}
 
 @Component({
   selector: 'app-repertoire-menu',
@@ -15,6 +21,7 @@ import { FloatingImageService } from '../../services/floating-image/floating-ima
 export class RepertoireMenuComponent {
 
   previews: MoveData[] = [];
+  tags: Selection[] = [];
 
   constructor(private router: Router, private studyService: StudyService, private dialog: MatDialog){
     this.init();
@@ -25,6 +32,14 @@ export class RepertoireMenuComponent {
         this.previews = [];
         s = s.sort((a, b) => (new Date(a.lastStudied ?? '').getTime() ?? 0) - (new Date(b.lastStudied ?? '').getTime() ?? 0));
         s.forEach((study) => {
+          study.tags.forEach((tag) => {
+            if(!this.tags.some(t => t.name == tag)){
+              this.tags.push({
+                name: tag,
+                isSelected: true
+              });
+            }
+          })
           let move = new Move();
           move.fen = study.summaryFEN;
           move.name = '-';
@@ -35,7 +50,7 @@ export class RepertoireMenuComponent {
             source: 'repertoire-menu',
             direction: 'preview',
             player: study.perspective,
-            extra: {accuracy: study.accuracy}
+            extra: {accuracy: study.accuracy, tags: study.tags}
           })
         } )
     });
@@ -55,11 +70,17 @@ export class RepertoireMenuComponent {
   }
 
   public whiteGames(): MoveData[] {
-    return this.previews.filter(p => p.player == Color.White);
+    return this.previews.filter(p => p.player == Color.White && (
+      !this.tags.some(t => t.isSelected) 
+      || p.extra.tags.length == 0 
+      || this.tags.filter(t => t.isSelected).some(t => p.extra.tags.includes(t.name))));
   }
   
   public blackGames(): MoveData[] {
-    return this.previews.filter(p => p.player == Color.Black);
+    return this.previews.filter(p => p.player == Color.Black && (
+      !this.tags.some(t => t.isSelected) 
+      || p.extra.tags.length == 0 
+      || this.tags.filter(t => t.isSelected).some(t => p.extra.tags.includes(t.name))));
   }
 
   public loadStudy(id: string | null){

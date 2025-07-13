@@ -16,7 +16,7 @@ export class DrawingControlsComponent {
   enable: boolean = false;
   color: string = 'red'
   colors = [
-    'red','dark-blue','green'
+    'green','yellow','orange','red','purple','dark-blue'
   ];
 
   constructor(private drawingService: DrawingService){

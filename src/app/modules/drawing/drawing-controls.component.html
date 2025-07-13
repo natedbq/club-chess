@@ -4,12 +4,12 @@
 <div>
     <h4>color</h4>
     <button *ngFor="let option of colors" class="btn btn-icon btn-commit" (click)="selectColor(option)" [ngClass]="{'active': color == option }">
-        <i class="bi bi-large bi-circle-fill inline-block" [ngClass]="option" ></i>
+        <i class="bi bi-circle-fill inline-block" [ngClass]="option" ></i>
     </button>
 </div>
 <div>
-    <h4>undo</h4>
-    <button class="btn btn-icon btn-commit" (click)="undo()">
-        <i class="bi bi-large bi-arrow-counterclockwise inline-block"></i>
+    <h4>Remove Top</h4>
+    <button class="btn btn-icon btn-delete" (click)="undo()">
+        <i class="bi bi-large bi-trash inline-block"></i>
     </button>
 </div>
