@@ -140,6 +140,7 @@ export class Position implements TaggedObject {
     lastStudied: Date | null = null;
     mistakes: number | null = null;
     isKeyPosition: boolean = false;
+    isActive: boolean = true;
 
     public static toPosition(data: any): Position {
         let position = new Position();
@@ -153,6 +154,7 @@ export class Position implements TaggedObject {
         position.mistakes = data.mistakes;
         position.isKeyPosition = data.isKeyPosition;
         position.tags = data.tags;
+        position.isActive = data.isActive;
         if(data.move)
             position.move = Move.toMove(data.move);
         if(data.positions){

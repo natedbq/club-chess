@@ -22,6 +22,7 @@ export class SettingsComponent {
   pauseTime: number = 1;
   showPlans: boolean = true;
   autoNextLine: boolean = true;
+  favorUnvisited: boolean = true;
 
   constructor(private router: Router, private settingsService: SettingsService){
     this.settingsService.showVariations$.subscribe(m => this.showVariations = m);
@@ -29,6 +30,10 @@ export class SettingsComponent {
     this.settingsService.pauseTime$.subscribe(t => this.pauseTime = t);
     this.settingsService.showPlans$.subscribe(t => this.showPlans = t);
     this.settingsService.autoNextLine$.subscribe(b => this.autoNextLine = b);
+  }
+
+  toggleFavorUnvisited() {
+    this.settingsService.setFavorUnvisited(!this.favorUnvisited);
   }
 
   toggleShowVariations() {

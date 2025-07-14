@@ -22,6 +22,7 @@ export class MoveControlsComponent {
 
   move: Move | null = null;
   position: Position | null = null;
+  positionIsActive: boolean | null = null;
   loaded = false;
 
   constructor(private positionService: PositionService, private navService: StudyNavigationService){
@@ -37,9 +38,23 @@ export class MoveControlsComponent {
       if(s){
         this.move = s.move;
         this.position = s.position ?? null;
+        if(this.position){
+          this.positionIsActive = this.position.isActive;
+        }
       }
     });
 
+  }
+
+  ignore = (): void => {
+    if(this.position){
+      if(this.position.move?.name == "-"){
+        alert("Error: cannot deactivate the root position.");
+        return;
+      }
+      this.position.isActive = !this.position.isActive;
+      this.position.isDirty = true;
+    }
   }
 
   isPreview = (): boolean => {

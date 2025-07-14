@@ -437,7 +437,7 @@ export class StudyNavigationService {
       }
     
       private getTotalMistakesInTreeHelper = (pointer: StudyPointer | null): number => {
-        if(!pointer?.pointer){
+        if(!pointer?.pointer || !pointer.pointer.isActive){
           return 0;
         }
     
@@ -462,7 +462,7 @@ export class StudyNavigationService {
       }
     
       private getOldestInTreeHelper = (pointer: StudyPointer | null, oldest: Date): Date => {
-        if(!pointer?.pointer){
+        if(!pointer?.pointer || !pointer.pointer.isActive){
           return oldest;
         }
     
@@ -800,6 +800,7 @@ class StudyPointer{
       c.lastStudied = BoardUtility.DateNow();
       c.mistakes = 0;
       c.plans = '';
+      c.isActive = true;
   
       p.positions.push(c);
   

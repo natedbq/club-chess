@@ -12,9 +12,14 @@ import { SettingsService } from "../settings/settings.service";
 export class ActivateStudyService {
     private _play = new BehaviorSubject<boolean>(false);
     private _lockBoard = new BehaviorSubject<boolean>(false);
+    private startTime: Date | null = null;
 
     play$ = this._play.asObservable();
     lockBoard$ = this._lockBoard.asObservable();
+
+    public getStartTime() {
+        return this.startTime;
+    }
 
     public isActive(){
         return this._play.value;
@@ -22,10 +27,12 @@ export class ActivateStudyService {
 
     public startStudy(){
         this._play.next(true);
+        this.startTime = new Date();
     }
 
     public stopStudy(){
         this._play.next(false);
+        this.startTime = null;
     }
 
     public lockBaord(){
