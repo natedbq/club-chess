@@ -11,6 +11,7 @@ export class SettingsService {
   private _showPlans = new BehaviorSubject<boolean>(false);
     private _pauseTime = new BehaviorSubject<number>(2.5);
     private _autoNextLine = new BehaviorSubject<boolean>(false);
+    private _favorUnvisited = new BehaviorSubject<boolean>(true);
     
 
     showVariations$ = this._showVariations.asObservable();
@@ -18,6 +19,7 @@ export class SettingsService {
     autoFavor$ = this._autoFavor.asObservable();
     showPlans$ = this._showPlans.asObservable();
     autoNextLine$ = this._autoNextLine.asObservable();
+    _favorUnvisited$ = this._favorUnvisited.asObservable();
 
     public setShowVariations = (show: boolean) => {
         this._showVariations.next(show);
@@ -39,6 +41,10 @@ export class SettingsService {
       this._autoNextLine.next(b);
     }
 
+    public setFavorUnvisited(b: boolean){
+      this._favorUnvisited.next(b);
+    }
+
     public showPlans(){
       return this._showPlans.value;
     }
@@ -50,6 +56,10 @@ export class SettingsService {
     public autoNextLine(){
       return this._autoNextLine.value;
     }
+
+    public favorUnvisited(){
+      return this._favorUnvisited.value;
+    }
 }
 
 export class GlobalValues {
@@ -58,6 +68,7 @@ export class GlobalValues {
     maxNeglectInDays: 5,
     mistakesScalr: 20,
     maxMistakes: 10,
-    commonScalar: 5
+    commonScalar: 5,
+    NotVisitedYetScalar: 20
   }
 }

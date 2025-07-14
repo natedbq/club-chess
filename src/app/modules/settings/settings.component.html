@@ -15,6 +15,11 @@
         <!-- when player makes the wrong move, should the study automatically update to favor this line more?-->
     </div>
     <div>
+        <h4>Favor Unvisited Lines</h4>
+        <div><p-inputSwitch (click)="toggleFavorUnvisited()" [ngModel]="favorUnvisited"></p-inputSwitch></div>
+        <!-- if a line was last visited before this study was started, give it a weight boost -->
+    </div>
+    <div>
         <h4>Auto Continue</h4>
         <div><p-inputSwitch (click)="toggleAutoNextLine()" [ngModel]="autoNextLine"></p-inputSwitch></div>
         <!-- when player completes a line, auto start the next one?-->

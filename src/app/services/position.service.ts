@@ -90,6 +90,7 @@ export class PositionService {
     p.lastStudied = position.lastStudied;
     p.mistakes = position.mistakes;
     p.isKeyPosition = position.isKeyPosition;
+    p.isActive = position.isActive;
     p.positions = [];
     return this.http.post(this.api, p).pipe(finalize(() => {
         position.isDirty = false;

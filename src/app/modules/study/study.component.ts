@@ -312,39 +312,48 @@ export class StudyComponent implements OnInit {
 
       const build = (explore: ExploreNode | null) => {
 
+        let studyStartTime = this.activateStudyService.getStartTime();
         variations.forEach((m, i) => {
-          let node = explore ? explore.moves.filter(x => x.san == m.name)[0] : null;
-          let percentPicked = node ? node.percent : 0;
-          let commonWeight = Math.round(percentPicked * GlobalValues.weights.commonScalar);
+          if(m.position?.isActive){
+            let node = explore ? explore.moves.filter(x => x.san == m.name)[0] : null;
+            let percentPicked = node ? node.percent : 0;
+            let commonWeight = Math.round(percentPicked * GlobalValues.weights.commonScalar);
 
-          let oldest = this.studyNavigationService.getOldestInTree(m.name);
-          let minutesElapsed = (new Date().getTime() - oldest.getTime()) / (1000 * 60);
-          let timeWeight = Math.round((Math.min(1, minutesElapsed / (GlobalValues.weights.maxNeglectInDays * 24 * 60))*1.2)
-             * (GlobalValues.weights.neglectScalar));
+            let oldest = this.studyNavigationService.getOldestInTree(m.name);
+            let minutesElapsed = (new Date().getTime() - oldest.getTime()) / (1000 * 60);
+            let timeWeight = Math.round((Math.min(1, minutesElapsed / (GlobalValues.weights.maxNeglectInDays * 24 * 60))*1.2)
+              * (GlobalValues.weights.neglectScalar));
+            
+            let alreadyVisited = (oldest.getTime() ?? 0) > (studyStartTime?.getTime() ?? 0);
+            let notVisitedWeight = alreadyVisited ? 0 : GlobalValues.weights.NotVisitedYetScalar;
 
-          let mistakesWeight =  Math.min(this.studyNavigationService.getTotalMistakesInTree(m.name)/GlobalValues.weights.maxMistakes,1)
-            * GlobalValues.weights.mistakesScalr;
-          let branchWeight = mistakesWeight 
-            + timeWeight
-            + commonWeight;
-          console.log({name:m.name, mistakes:mistakesWeight, common:commonWeight, time:timeWeight, total:branchWeight})
-          
-          let moveDelegation: MoveDelegation = new MoveDelegation(() => {
-            if(this.doStudy){
-              if(m.position?.move){
-                this.externalBoardControlService.playMove(m.position?.move)
-              }else{
-                this.studyNavigationService.nextWithSource(m.name, 'study-'+this.id, 'play');
+            let mistakesWeight =  Math.min(this.studyNavigationService.getTotalMistakesInTree(m.name)/GlobalValues.weights.maxMistakes,1)
+              * GlobalValues.weights.mistakesScalr;
+            let branchWeight = mistakesWeight 
+              + timeWeight
+              + commonWeight
+              + notVisitedWeight;
+            console.log(
+              JSON.stringify({name:m.name, mistakes:mistakesWeight, common:commonWeight, time:timeWeight, notVisited:notVisitedWeight, total:branchWeight })
+            );
+            
+            let moveDelegation: MoveDelegation = new MoveDelegation(() => {
+              if(this.doStudy){
+                if(m.position?.move){
+                  this.externalBoardControlService.playMove(m.position?.move)
+                }else{
+                  this.studyNavigationService.nextWithSource(m.name, 'study-'+this.id, 'play');
+                }
               }
-            }
 
-            if(m.position?.id){
-              m.position.lastStudied = BoardUtility.DateNow();
-              this.positionService.study(m.position.id).subscribe();
-            }
+              if(m.position?.id){
+                m.position.lastStudied = BoardUtility.DateNow();
+                this.positionService.study(m.position.id).subscribe();
+              }
 
-          }, Math.max(1, branchWeight), 'delegator');
-          delegations.push(moveDelegation);
+            }, Math.max(1, branchWeight), 'delegator');
+            delegations.push(moveDelegation);
+          }
         });
         MoveDelegator.addDelegations(delegations);
       }
