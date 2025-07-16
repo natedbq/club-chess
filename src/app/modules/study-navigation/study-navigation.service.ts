@@ -67,6 +67,50 @@ export class StudyNavigationService {
         });
     }
 
+    getPositionTags(): string[] {
+      let tags: string[] = [];
+
+      if(this.root){
+        this.getPositionTagsHelper(this.root, tags);
+      }
+
+      return tags;
+    }
+
+    private getPositionTagsHelper(position: Position, tags: string[]): void {
+      if(!position.isActive){
+        return;
+      }
+      
+      position.tags.forEach(t => {
+        if(!tags.includes(t)){
+          tags.push(t);
+        }
+      });
+
+      //todo
+      /*
+                             _                 _             __                  
+                            (_)               | |           / _|                 
+  _ __  _   _  _ __   _ __   _  _ __    __ _  | |__    ___ | |_  ___   _ __  ___ 
+ | '__|| | | || '_ \ | '_ \ | || '_ \  / _` | | '_ \  / _ \|  _|/ _ \ | '__|/ _ \
+ | |   | |_| || | | || | | || || | | || (_| | | |_) ||  __/| | | (_) || |  |  __/
+ |_|    \__,_||_| |_||_| |_||_||_| |_| \__, | |_.__/ _\___||_|  \___/ |_| _ \___|
+                     (_)| |  (_)        __/ |       | |                  | || |  
+   _ __    ___   ___  _ | |_  _   ___  |___/   ___  | |  ___    __ _   __| || |  
+  | '_ \  / _ \ / __|| || __|| | / _ \ | '_ \ / __| | | / _ \  / _` | / _` || |  
+  | |_) || (_) |\__ \| || |_ | || (_) || | | |\__ \ | || (_) || (_| || (_| ||_|  
+  | .__/  \___/ |___/|_| \__||_| \___/ |_| |_||___/ |_| \___/  \__,_| \__,_|(_)  
+  | |                                                                            
+  |_|                                                                            
+      */
+
+
+      position.positions.forEach(p => {
+        this.getPositionTagsHelper(p, tags);
+      })
+    }
+
     calculateScore(position: Position|null = null): any {
       let score: any = {total: 1, mistakes: 0};
       if(position == null){
@@ -85,6 +129,9 @@ export class StudyNavigationService {
     }
 
     private calculateScoreHelper(position: Position): any {
+      if(!position.isActive){
+        return {total: 0, mistakes: 0};
+      }
       let score: any = {total: 1, mistakes: position.mistakes};
       position.positions.forEach(p => {
         let s = this.calculateScoreHelper(p);

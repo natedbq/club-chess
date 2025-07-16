@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { Color, ExploreNode, MoveData, Study } from '../../chess-logic/models';
+import { Color, ExploreNode, MoveData, Study, TaggedObject } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { StudyNavigator } from './classes/study-navigator';
 import { PositionService } from '../../services/position.service';
@@ -31,6 +31,9 @@ export class StudyComponent implements OnInit {
     mistakeCounter = 0;
     isRetry = false;
     id = Date.now();
+    tagEditTarget: TaggedObject | null = null;
+    focusTagTarget: TaggedObject | null = null;
+    focusTagsLimit: string[] = [];
     destroy$ = new Subject<void>();
 
     constructor(private route: ActivatedRoute, 
@@ -47,6 +50,7 @@ export class StudyComponent implements OnInit {
       this.settingsService.pauseTime$.pipe(takeUntil(this.destroy$)).subscribe((t) => {
         this.pauseTime = t * 1000;
       })
+        this.activateStudyService.initStudy();
         this.activateStudyService.play$.pipe(takeUntil(this.destroy$)).subscribe((p) => {
           if(p){
             this.activateStudy();
@@ -77,6 +81,11 @@ export class StudyComponent implements OnInit {
       }
 
       this.studyNavigationService.moveDetail$.subscribe((m) => {
+        if(m?.move?.name == '-'){
+          this.tagEditTarget = this.studyNavigationService.getStudy();
+        }else{
+          this.tagEditTarget = m?.position ?? null;
+        }
         if(this.floatingImageService.isVisible()){
           this.floatingImageService.hideImage();
         }
@@ -88,6 +97,8 @@ export class StudyComponent implements OnInit {
           if(!s || !s.position){
             return;
           }
+          this.focusTagTarget = s.studySettings;
+          this.focusTagsLimit = this.studyNavigationService.getPositionTags();
           let pointer = this.studyNavigationService.getPointer();
           if(pointer){
             //this.studyNavigationService.setWeight(pointer).then(() => {
@@ -192,15 +203,18 @@ export class StudyComponent implements OnInit {
       this.studyNavigationService.addWeightToTree(3);
     }
 
-    
+
+    waitingForClick = false;
     @HostListener('window:mousedown', ['$event'])
     onGlobalMouseDown(event: MouseEvent) {
-      if(!this.settingsService.autoNextLine() && this.floatingImageService.isVisible() && !this.activateStudyService.isBoardLocked()){
+      if(!this.settingsService.autoNextLine() && this.floatingImageService.isVisible() && !this.activateStudyService.isBoardLocked()
+      && this.waitingForClick){
         const rect = document.getElementById('board')?.getBoundingClientRect();
         if(rect 
           && rect.left < event.clientX && rect.right > event.clientX
           && rect.bottom > event.clientY && rect.top < event.clientY
         ){
+          this.waitingForClick = false;
           this.continueToNextLine();
         }
       }
@@ -237,6 +251,8 @@ export class StudyComponent implements OnInit {
               setTimeout(() => {
                 this.continueToNextLine();
               }, this.pauseTime);
+            }else{
+              this.waitingForClick = true;
             }
           },
           error: (e) => {
@@ -245,6 +261,8 @@ export class StudyComponent implements OnInit {
               setTimeout(() => {
                 this.continueToNextLine();
               }, this.pauseTime);
+            }else{
+              this.waitingForClick = true;
             }
           }
         })
@@ -313,6 +331,7 @@ export class StudyComponent implements OnInit {
       const build = (explore: ExploreNode | null) => {
 
         let studyStartTime = this.activateStudyService.getStartTime();
+        let allVisited = !variations.some(v => new Date(v.position?.lastStudied ?? '').getTime() < new Date(studyStartTime ?? '').getTime());
         variations.forEach((m, i) => {
           if(m.position?.isActive){
             let node = explore ? explore.moves.filter(x => x.san == m.name)[0] : null;
@@ -329,6 +348,10 @@ export class StudyComponent implements OnInit {
 
             let mistakesWeight =  Math.min(this.studyNavigationService.getTotalMistakesInTree(m.name)/GlobalValues.weights.maxMistakes,1)
               * GlobalValues.weights.mistakesScalr;
+            if(allVisited){
+              mistakesWeight = mistakesWeight ** 2;
+            }
+
             let branchWeight = mistakesWeight 
               + timeWeight
               + commonWeight

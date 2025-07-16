@@ -42,6 +42,7 @@ import { LoadingComponent } from './modules/loading/loading.component';
 import { MoveControlsComponent } from './modules/move-controls/move-controls.component';
 import { ScoreComponent } from './modules/score/score.component';
 import { TagsEditComponent } from './modules/tags-edit/tags-edit.component';
+import { TagsSelectComponent } from './modules/tags-select/tags-select.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { TagsEditComponent } from './modules/tags-edit/tags-edit.component';
     LoadingComponent,
     ScoreComponent,
     TagsEditComponent,
+    TagsSelectComponent,
     MoveEditorComponent    
   ],
   imports: [

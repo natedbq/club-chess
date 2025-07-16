@@ -1,0 +1,5 @@
+<div class="tag-section">
+    <div class="inline-block pill" *ngFor="let tag of tags" [ngClass]="{'not-selected': !tag.isSelected}" (click)="tag.isSelected = !tag.isSelected">
+        {{tag.tag}}
+    </div>
+</div>
