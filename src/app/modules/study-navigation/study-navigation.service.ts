@@ -50,14 +50,14 @@ export class StudyNavigationService {
             this.study = s;
   
             if(this.study.positionId){
-                return this.positionService.getByParentId(this.study.positionId, 5).subscribe(children => {
+                return this.positionService.getByParentId(this.study.positionId, 7).subscribe(children => {
                     if(this.study?.position?.positions){
                         this.study.position.positions = children;
                     }
-
+                    
                     this.studyPointer = new StudyPointer(null, this.study?.position);
-                    this._study.next(this.study);
                     this.root = this.study?.position ?? null;
+                    this._study.next(this.study);
                     this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'load');
                     
                     return s;
@@ -69,7 +69,6 @@ export class StudyNavigationService {
 
     getPositionTags(): string[] {
       let tags: string[] = [];
-
       if(this.root){
         this.getPositionTagsHelper(this.root, tags);
       }
@@ -87,25 +86,6 @@ export class StudyNavigationService {
           tags.push(t);
         }
       });
-
-      //todo
-      /*
-                             _                 _             __                  
-                            (_)               | |           / _|                 
-  _ __  _   _  _ __   _ __   _  _ __    __ _  | |__    ___ | |_  ___   _ __  ___ 
- | '__|| | | || '_ \ | '_ \ | || '_ \  / _` | | '_ \  / _ \|  _|/ _ \ | '__|/ _ \
- | |   | |_| || | | || | | || || | | || (_| | | |_) ||  __/| | | (_) || |  |  __/
- |_|    \__,_||_| |_||_| |_||_||_| |_| \__, | |_.__/ _\___||_|  \___/ |_| _ \___|
-                     (_)| |  (_)        __/ |       | |                  | || |  
-   _ __    ___   ___  _ | |_  _   ___  |___/   ___  | |  ___    __ _   __| || |  
-  | '_ \  / _ \ / __|| || __|| | / _ \ | '_ \ / __| | | / _ \  / _` | / _` || |  
-  | |_) || (_) |\__ \| || |_ | || (_) || | | |\__ \ | || (_) || (_| || (_| ||_|  
-  | .__/  \___/ |___/|_| \__||_| \___/ |_| |_||___/ |_| \___/  \__,_| \__,_|(_)  
-  | |                                                                            
-  |_|                                                                            
-      */
-
-
       position.positions.forEach(p => {
         this.getPositionTagsHelper(p, tags);
       })

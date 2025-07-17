@@ -8,6 +8,10 @@
     cursor:pointer
 }
 
+.pill {
+    user-select: none;
+}
+
 input,
 input:focus,
 input:hover,
@@ -18,4 +22,10 @@ input:active  {
     outline: none;
     box-shadow: none;
     background-color: rgba(0,0,0,0);
+}
+
+
+.not-selected {
+    background-color: var(--gray);
+    color: black;
 }

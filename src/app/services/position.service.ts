@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { finalize, forkJoin, lastValueFrom, map, Observable } from "rxjs";
+import { finalize, forkJoin, lastValueFrom, map, mergeMap, Observable, of, tap } from "rxjs";
 import { Move, Position, Study } from "../chess-logic/models";
 
 @Injectable({
@@ -26,26 +26,38 @@ export class PositionService {
     return forkJoin(tasks);
   }
 
-  public getByParentId(id: string, depth:number = 0): Observable<Position[]> {
-    return this.http.get<Position[]>(this.api + `/parentId/${id}?depth=${depth}`).pipe(map((apiChildren) => {
-        let children = apiChildren.map(c => Position.toPosition(c));
-        let tails: Position[] = [];
+  public getByParentId(id: string, depth: number = 0): Observable<Position[]> {
+    return this.http.get<Position[]>(this.api + `/parentId/${id}?depth=${depth}`).pipe(
+      map(apiChildren => apiChildren.map(c => Position.toPosition(c))),
+      mergeMap((children: Position[]) => {
+        // Gather all tail node calls into an array of observables
+        const tailCalls: Observable<any>[] = [];
+
         children.forEach(c => {
-            c.positions.forEach(gc => {
-                tails = tails.concat(this.getTailNodes(gc));
+          c.positions.forEach(gc => {
+            const tails = this.getTailNodes(gc);
+            tails.forEach(t => {
+              if (t.id) {
+                const subCall = this.getByParentId(t.id, depth).pipe(
+                  tap((subChildren) => {
+                    t.positions = subChildren;
+                  })
+                );
+                tailCalls.push(subCall);
+              }
             });
+          });
         });
 
-        tails.forEach(t => {
-            if(t.id){
-                lastValueFrom(this.getByParentId(t.id, depth)).then(c => {
-                    t.positions = c;
-                });
-            }
-        })
+        if (tailCalls.length === 0) {
+          // No tail calls, return children immediately
+          return of(children);
+        }
 
-        return children;
-    }))
+        // Wait for all tail calls to complete before returning
+        return forkJoin(tailCalls).pipe(map(() => children));
+      })
+    );
   }
 
   public mistake(id: string): Observable<Object> {

@@ -97,38 +97,26 @@ export class StudyComponent implements OnInit {
           if(!s || !s.position){
             return;
           }
-          this.focusTagTarget = s.studySettings;
-          this.focusTagsLimit = this.studyNavigationService.getPositionTags();
-          let pointer = this.studyNavigationService.getPointer();
-          if(pointer){
-            //this.studyNavigationService.setWeight(pointer).then(() => {
-              this.study = s;
+          this.study = s;
+          
+          if(this.study?.position?.positions){
 
-              if(this.study.positionId){
-                this.positionService.getByParentId(this.study.positionId, 7).subscribe(children => {
-                  if(this.study?.position?.positions){
-                    this.study.position.positions = children;
-
-                    let studyNav = new StudyNavigator(this.study);
-                    this.isWhitePerspective = s.perspective == Color.White;
-                    this.moveData = <MoveData>{
-                      move: studyNav.peek(),
-                      source: 'study-component',
-                      player: s.perspective ,
-                      extra: {}
-                    };
-                  }
-                  this.loading = false;
-                  console.log("done loading");
-                  if(!this.isWhitePerspective){
-                    
-                    setTimeout(() => {
-                      this.oneMove();                  
-                    }, 1000);
-                  }
-                });
-              }
-            //});
+            let studyNav = new StudyNavigator(this.study);
+            this.isWhitePerspective = s.perspective == Color.White;
+            this.moveData = <MoveData>{
+              move: studyNav.peek(),
+              source: 'study-component',
+              player: s.perspective ,
+              extra: {}
+            };
+          }
+          this.loading = false;
+          console.log("done loading");
+          if(!this.isWhitePerspective){
+            
+            setTimeout(() => {
+              this.oneMove();                  
+            }, 1000);
           }
         });
       }

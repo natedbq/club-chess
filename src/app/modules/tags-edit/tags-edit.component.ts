@@ -6,7 +6,7 @@ import { Router } from "@angular/router";
 import { MoveDelegation, MoveDelegator } from "../../chess-logic/moveDelegator";
 import { StudyNavigationService } from "../study-navigation/study-navigation.service";
 import { StudyService } from "../../services/study.service";
-import { Position, Study, StudySettings, TaggedObject } from "../../chess-logic/models";
+import { Position, Study, TaggedObject } from "../../chess-logic/models";
 import { PositionService } from "../../services/position.service";
 
 @Component({
@@ -31,8 +31,6 @@ export class TagsEditComponent implements OnChanges {
             this.name = this.editTarget.move?.name ?? 'Position';
         } else if(this.editTarget instanceof Study){
             this.name = 'Study';
-        } else if(this.editTarget instanceof StudySettings){
-            this.name = 'Focus';
         }
     }
 

@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
-import { Move, Position, Study, StudySettings } from "../chess-logic/models";
+import { Move, Position, Study } from "../chess-logic/models";
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +22,7 @@ export class StudyService {
     s.positionId = study.positionId;
     s.accuracy = 0;
     s.tags = study.tags;
-    s.studySettings = new StudySettings();
-    s.studySettings.focusTags = study.tags;
+    s.focusTags = study.focusTags ?? [];
 
     return this.http.post(this.api + '/study', s);
   }
