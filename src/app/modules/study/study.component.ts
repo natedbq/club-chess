@@ -232,7 +232,7 @@ export class StudyComponent implements OnInit {
       if(pointer){
 
         console.log('eval',pointer.move?.name)
-        this.lichessService.evaluate(pointer.move?.fen ?? '-').subscribe({ 
+        let sub = this.lichessService.evaluate(pointer.move?.fen ?? '-').subscribe({ 
           next: (evaluation) => {
             this.floatingImageService.showImage('crown-gold.png',  y, x, evaluation / 100);
             if(this.settingsService.autoNextLine()){
@@ -252,6 +252,9 @@ export class StudyComponent implements OnInit {
             }else{
               this.waitingForClick = true;
             }
+          },
+          complete: () => {
+            sub.unsubscribe();
           }
         })
       }

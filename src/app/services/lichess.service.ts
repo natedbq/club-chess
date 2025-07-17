@@ -72,7 +72,7 @@ export class LichessService {
       .pipe(tap((data) => {
         this.lichessRequestCache.delete(key);
         this.cloudEvalCache.put(key,data);
-      }), shareReplay(1));
+      }), shareReplay({bufferSize: 1, refCount: true}));
       this.lichessRequestCache.put(key,obs);
       return obs; 
   }
