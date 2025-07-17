@@ -32,21 +32,12 @@ TODO b/line-recommend-tags
     - high engine ranking and low % played in lichess DB 
     - opponent's response is mistake (engine gains points in our advantage), but high % played in lichess DB 
 
+TODO b/story-board 
+- Would be super cool to have some way to do a story board which takes you position to position (not move by move) with drawings and descriptions what our ideas for our opening are 
+
 BUGS
 - game does not like when you push a pawn 2 spaces and then push it again on your next move. It always thinks it is a captures move\
 - eval endpoint fails when the eval is not centerpawn, but mate in x
 
 
-Neglected Review !!!
-- if a player creates a study where they give themselves options in a position, and create lines for each, if they never play the alternatives, the whole line is considered neglected review and will 
-  be picked by the computer more often.
-  - Example: Danish gambit, study is white's perspective. After black playes Bb4+, white can play Nc3 or Kf1. Kf1 is more risky, so maybe player stops reviewing the line. Thus, all
-    Kf1 lines reach their max neglect and are chosen all the time by the move delegator - Bb4+ is played disproportionately
-  - Solutions When white has alternative lines:
-    - always mark all alternatives and all sub positions as studied.
-    - Let moves be marked "ignore" so the move weight calculation does not consider those positions
-    - when white plays one option, then returns to the position, suggest to review the alternatives -
-  - leaning toward the option to suggest the other moves. Perhaps when player starts a study, note the start time. When a position is reached with alternatives for white and one of the options 
-    has been studied since the start time, draw move previews for all options.
-  - but then this leaves the issue of, well the Kf1 line is dumb so I dont want to review it. So, probably combine the idea with the option to 
-    ignore lines
+

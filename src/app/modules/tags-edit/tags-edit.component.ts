@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { ActivateStudyService } from "../study/activate-study.service";
 import { DrawingService } from "../drawing/drawing.service";
 import { FloatingImageService } from "../../services/floating-image/floating-image.service";
@@ -14,26 +14,24 @@ import { PositionService } from "../../services/position.service";
   templateUrl: './tags-edit.component.html',
   styleUrls: ['./tags-edit.component.css']
 })
-export class TagsEditComponent {
+export class TagsEditComponent implements OnChanges {
 
     name = "";
     adding = false;
     toAdd = "";
     tags: string[] = [];
-    editTarget: TaggedObject | null = null;
+    @Input() editTarget: TaggedObject | null = null;
 
-    constructor(private studyNavService: StudyNavigationService, private studyService: StudyService, private positionService: PositionService){
-        this.studyNavService.moveDetail$.subscribe((m) => {
-            if(m?.move?.name == '-'){
-                this.editTarget = this.studyNavService.getStudy();
-                this.tags = this.studyNavService.getStudy()?.tags ?? [];
-                this.name = "Study";
-            }else{
-                this.editTarget = m?.position ?? null;
-                this.tags = m?.position?.tags ?? [];
-                this.name = m?.move?.name ?? 'Position';
-            }
-        })
+    constructor(private studyService: StudyService, private positionService: PositionService){
+    }
+    ngOnChanges(changes: SimpleChanges): void {
+        this.tags =this.editTarget?.tags ?? [];
+
+        if(this.editTarget instanceof Position){
+            this.name = this.editTarget.move?.name ?? 'Position';
+        } else if(this.editTarget instanceof Study){
+            this.name = 'Study';
+        }
     }
 
     startAdding(){

@@ -25,6 +25,10 @@
         <span>{{moveData?.position?.isActive ? 'yes' : 'no'}}</span>
     </div>
     <div>
+        <b>Last Studied</b>
+        <span>{{moveData?.position?.lastStudied | date: 'M/d/yy'}}</span>
+    </div>
+    <div>
         <b>mistakes</b>
         <span>{{moveData?.position?.mistakes}}</span>
     </div>

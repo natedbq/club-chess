@@ -17,6 +17,10 @@ export class ActivateStudyService {
     play$ = this._play.asObservable();
     lockBoard$ = this._lockBoard.asObservable();
 
+    public initStudy() {
+        this.startTime = new Date();
+    }
+
     public getStartTime() {
         return this.startTime;
     }
@@ -27,12 +31,10 @@ export class ActivateStudyService {
 
     public startStudy(){
         this._play.next(true);
-        this.startTime = new Date();
     }
 
     public stopStudy(){
         this._play.next(false);
-        this.startTime = null;
     }
 
     public lockBaord(){

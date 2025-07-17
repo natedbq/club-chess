@@ -104,6 +104,7 @@ export class Study implements TaggedObject {
     lastStudied: Date | null = null;
     accuracy: number | null = null;
     tags: string[] = [];
+    focusTags: string[] = [];
 
     public static toStudy(data: any): Study{
         let study = new Study();
@@ -117,6 +118,7 @@ export class Study implements TaggedObject {
         study.lastStudied = data.lastStudied;
         study.accuracy = data.accuracy;
         study.tags = data.tags;
+        study.focusTags = data.focusTags;
     
         if(data.position){
           study.position = Position.toPosition(data.position);
@@ -124,6 +126,7 @@ export class Study implements TaggedObject {
         return study;
       }  
 }
+
 
 export class Position implements TaggedObject {
     id: string | null = null;

@@ -50,14 +50,14 @@ export class StudyNavigationService {
             this.study = s;
   
             if(this.study.positionId){
-                return this.positionService.getByParentId(this.study.positionId, 5).subscribe(children => {
+                return this.positionService.getByParentId(this.study.positionId, 7).subscribe(children => {
                     if(this.study?.position?.positions){
                         this.study.position.positions = children;
                     }
-
+                    
                     this.studyPointer = new StudyPointer(null, this.study?.position);
-                    this._study.next(this.study);
                     this.root = this.study?.position ?? null;
+                    this._study.next(this.study);
                     this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'load');
                     
                     return s;
@@ -65,6 +65,30 @@ export class StudyNavigationService {
             }
             return of();
         });
+    }
+
+    getPositionTags(): string[] {
+      let tags: string[] = [];
+      if(this.root){
+        this.getPositionTagsHelper(this.root, tags);
+      }
+
+      return tags;
+    }
+
+    private getPositionTagsHelper(position: Position, tags: string[]): void {
+      if(!position.isActive){
+        return;
+      }
+      
+      position.tags.forEach(t => {
+        if(!tags.includes(t)){
+          tags.push(t);
+        }
+      });
+      position.positions.forEach(p => {
+        this.getPositionTagsHelper(p, tags);
+      })
     }
 
     calculateScore(position: Position|null = null): any {
@@ -85,6 +109,9 @@ export class StudyNavigationService {
     }
 
     private calculateScoreHelper(position: Position): any {
+      if(!position.isActive){
+        return {total: 0, mistakes: 0};
+      }
       let score: any = {total: 1, mistakes: position.mistakes};
       position.positions.forEach(p => {
         let s = this.calculateScoreHelper(p);

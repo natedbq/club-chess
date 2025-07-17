@@ -13,7 +13,7 @@ export class StudyService {
   constructor(private http: HttpClient) { }
 
   public saveStudy(study: Study): Observable<Object> {
-    let s = new Study();
+    let s: any = new Study();
     s.id = study.id;
     s.description = study.description;
     s.perspective = study.perspective;
@@ -22,6 +22,7 @@ export class StudyService {
     s.positionId = study.positionId;
     s.accuracy = 0;
     s.tags = study.tags;
+    s.focusTags = study.focusTags ?? [];
 
     return this.http.post(this.api + '/study', s);
   }

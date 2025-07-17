@@ -18,48 +18,38 @@
             </td>
         </tr>
     </table>
-    <div >
-        
-    </div>
-    <div ></div>
     <div *ngIf="whiteGames().length">
         <h1>White</h1>
-        <table>
-            <tr>
-                <td  *ngFor="let game of whiteGames()"> 
-                    <h3>{{game.studyTitle}} <button class="btn btn-icon btn-delete" (click)="delete(game)"><i class="bi bi-trash3 inline-block" ></i></button></h3>
-                </td>
-            </tr>
-            <tr>
-                <td *ngFor="let game of whiteGames()">
+        <div class="card-table">
+            <div class="study-card" *ngFor="let game of whiteGames()">
+                <div class="minor-details">
+                    <div>{{ game.extra.lastStudied | date: 'M/d/yy'}}</div>
+                </div>
+                <div class="study-details">
+                    <h4>{{game.studyTitle}} <button class="btn btn-icon btn-delete" (click)="delete(game)"><i class="bi bi-trash3 inline-block" ></i></button></h4>
                     <h4>{{game.extra.accuracy | number: '1.0-2'}}%</h4>
-                </td>
-            </tr>
-            <tr>
-                <td  *ngFor="let game of whiteGames()"> 
+                </div>
+                <div class="preview">
                     <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>
-                </td>
-            </tr>
-        </table>
+                </div>
+            </div>
+        </div>
     </div>
     <div *ngIf="blackGames().length">
         <h1>Black</h1>
-        <table>
-            <tr>
-                <td  *ngFor="let game of blackGames()"> 
-                    <h3 >{{game.studyTitle}} <button class="btn btn-icon btn-delete" (click)="delete(game)"><i class="bi bi-trash3 inline-block" ></i></button></h3>
-                </td>
-            </tr>
-            <tr>
-                <td *ngFor="let game of blackGames()">
+        <div class="card-table">
+            <div class="study-card" *ngFor="let game of blackGames()">
+                <div class="minor-details">
+                    <div>{{ game.extra.lastStudied | date: 'M/d/yy'}}</div>
+                </div>
+                <div class="study-details">
+                    <h4>{{game.studyTitle}} <button class="btn btn-icon btn-delete" (click)="delete(game)"><i class="bi bi-trash3 inline-block" ></i></button></h4>
                     <h4>{{game.extra.accuracy | number: '1.0-2'}}%</h4>
-                </td>
-            </tr>
-            <tr>
-                <td  *ngFor="let game of blackGames()"> 
-                    <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)" [studyPerspective]="1"> </app-chess-board>
-                </td>
-            </tr>
-        </table>
+                </div>
+                <div class="preview">
+                    <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

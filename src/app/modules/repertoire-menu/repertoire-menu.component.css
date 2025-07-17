@@ -7,6 +7,15 @@
     max-width: 1000px;
 }
 
+
+.minor-details {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  color: white;
+  font-style: italic;
+}
+
 .pill {
     cursor: pointer;
 }
@@ -14,4 +23,30 @@
 .not-selected {
     background-color: var(--gray);
     color: black;
+}
+
+.card-table {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.study-card {
+    display: inline-block;
+    border-radius: 20px;
+    border: 2px solid white;
+    margin: 5px;
+    position: relative;
+}
+
+.study-card h4 {
+    user-select: none;
+}
+
+.study-details {
+    margin: 6px;
+    margin-left: 12px;
+}
+
+.preview {
+    margin: 18px;
 }
