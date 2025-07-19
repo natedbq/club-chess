@@ -6,6 +6,8 @@ import { Router } from "@angular/router";
 import { MoveDelegation, MoveDelegator } from "../../chess-logic/moveDelegator";
 import { StudyNavigationService } from "../study-navigation/study-navigation.service";
 import { StudyService } from "../../services/study.service";
+import { ExternalBoardControlService } from "../chess-board/external-board-control.service";
+import { Color } from "../../chess-logic/models";
 
 @Component({
   selector: 'app-study-control',
@@ -14,6 +16,7 @@ import { StudyService } from "../../services/study.service";
 })
 export class StudyControlComponent {
     active = false;
+
     constructor(private router: Router, private activateStudyService: ActivateStudyService, private drawingService: DrawingService, private floatingImageService: FloatingImageService,
         private studyNavService: StudyNavigationService, private studyService: StudyService
     ){
@@ -40,5 +43,26 @@ export class StudyControlComponent {
     public stopStudy(){
         this.activateStudyService.stopStudy();
         this.floatingImageService.hideImage();
+    }
+
+    public hint(){
+        let hints: string[] = [];
+        let move = this.studyNavService.getPointer()?.pointer;
+        if(move){
+            move.positions.forEach(p => {
+                if(p.move?.from && !hints.includes(p.move.from)){
+                    hints.push(p.move.from);
+                    let x = "abcdefgh".indexOf(p.move.from[0]);
+                    let y = (Number(p.move.from[1]) - 1);
+
+                    if(this.studyNavService.getStudy()?.perspective == Color.White){
+                        y = 7 - y;
+                    }else{
+                        x = 7 - x;
+                    }
+                    this.drawingService.drawHint(x,y);
+                }
+            });
+        }
     }
 }
