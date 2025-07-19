@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { Color } from '../../chess-logic/models';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class FloatingImageService {
   private _visible = new BehaviorSubject<boolean>(false);
   private _src = new BehaviorSubject<string>('');
   private _position = new BehaviorSubject<{ top: number; left: number }>({ top: 0, left: 0 });
-  private _evaluation = new BehaviorSubject<number | null>(0);
+  private _evaluation = new BehaviorSubject<string | null>(null);
 
   visible$ = this._visible.asObservable();
   src$ = this._src.asObservable();
@@ -28,7 +29,7 @@ export class FloatingImageService {
   isVisible(){
     return this._visible.value;
   }
-  showImage(src: string, top: number, left: number, evaluation: number | null = null) {
+  showImage(src: string, top: number, left: number, evaluation: string|null = null) {
     this._src.next('/assets/emotes/' + src);
     this._position.next({ top, left });
     this._visible.next(false);
