@@ -48,6 +48,7 @@ export class DrawingService {
             });
         this.studyNavService.moveDetail$.subscribe((m) => {
             this.scanForCanvas();
+            this.clearPreview();
             this.draw();
         });
         this.settingsService.showPlans$.subscribe((p) => {
@@ -126,6 +127,14 @@ export class DrawingService {
     public addMovePreview(x1:number,y1:number,x2:number,y2:number){
         if(this.stage){
             let plan =  `;arrow.blue.${x1}.${y1}.${x2}.${y2}`;
+            this.previewLayerData = this.addOrRemovePlan(plan, this.previewLayerData);
+            this.draw();
+        }
+    }
+
+    drawHint(x:number,y:number){
+        if(this.stage){
+            let plan = `;circle.blue.${x}.${y}`;
             this.previewLayerData = this.addOrRemovePlan(plan, this.previewLayerData);
             this.draw();
         }
@@ -230,30 +239,31 @@ export class DrawingService {
     }
 
     draw() {
-        if(!this.stage || (this.activateStudyService.isActive() && !this.settingsService.showPlans())){
+        if(this.stage ){
             this.stage?.removeChildren();
-            return;
+
+            var layer = new Konva.Layer({});
+
+            if(!this.activateStudyService.isActive() || this.settingsService.showPlans()){
+            this.stage.add(layer);
+                let position = this.studyNavService.getPointer()?.pointer;
+
+                position?.plans.split(';').forEach((s) => {
+                    this.drawOnLayer(layer, s);
+                })
+            }
+
+            this.stage.removeChildren();
+
+            var previewLayer = new Konva.Layer({});
+            this.previewLayerData.split(';').forEach((s) => {
+                this.drawOnLayer(previewLayer, s)
+            });
+
+            this.stage.add(previewLayer);
         }
 
-        let position = this.studyNavService.getPointer()?.pointer;
-
-        this.stage.removeChildren();
-
-        var layer = new Konva.Layer({});
-
-
-        position?.plans.split(';').forEach((s) => {
-            this.drawOnLayer(layer, s);
-        })
-
-        var previewLayer = new Konva.Layer({});
-        this.previewLayerData.split(';').forEach((s) => {
-            this.drawOnLayer(previewLayer, s)
-        });
-
-
-        this.stage.add(layer);
-        this.stage.add(previewLayer);
+        
     }
 
     public setColor(color: string){
