@@ -19,17 +19,18 @@ export class LichessService {
 
   constructor(private http: HttpClient) { }
 
-  public evaluate(fen: string): Observable<number> {
+  public evaluate(fen: string): Observable<string> {
     const key = fen;
     if(this.evaluateCache.has(key)){
       return of(this.evaluateCache.get(key));
     }
 
-    return this.http.get<number>(this.api + '/eval?fen=' + fen).pipe(map(cp => {
-      if(fen.includes(' b '))
-        return cp *= -1;
+    return this.http.get<{value: string}>(this.api + '/eval?fen=' + fen).pipe(map(evaluation => {
+      if(fen.includes(' b ') && !fen.includes('m')){
+        return (parseInt(evaluation.value) * -1).toString();
+      }
 
-      return cp;
+      return evaluation.value;
     })).pipe(tap(data => this.evaluateCache.put(key, data)), shareReplay(1));
   }
 

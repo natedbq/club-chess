@@ -16,7 +16,6 @@ interface TagSelection {
 })
 export class TagsSelectComponent {
 
-    name = "";
     adding = false;
     toAdd = "";
     tags: TagSelection[] = [];

@@ -2,19 +2,10 @@ BASED FROM: https://github.com/awsomeCStutorials/chess-game.git
 SQL
 - Server=DESKTOP-6KOUAD3\\SQLEXPRESS;Database=chess;Trusted_Connection=True;
 
-TODO: b/board-control
-- change move delegation from nav.next(...) to externalBoardControl.clickUCI(...)
-
-TODO b/explore-optimize 
-- cache lichess explore requests so we don't spam them when going back and forth in study
-- do not make request when position doesn't change (clicking next when there is no next movep)
-
 
 TODO b/drag-n-drop
 - promotion piece
 
-TODO b/scoring 
-- Player gets a score based on whether they respond to computer move according to their study or engine accuracy
 
 
 TODO b/user-interface
@@ -23,8 +14,6 @@ TODO b/user-interface
 TODO b/castle-preview
 - Show the move preview arrow when user highlights a castling move in the lichess explorer
 
-TODO b/engine-rec 
-- Show top x engine moves
 
 TODO b/line-recommend-tags
 - give a tag that highlights when condition is met 
@@ -40,4 +29,9 @@ BUGS
 - eval endpoint fails when the eval is not centerpawn, but mate in x
 
 
+TODO b/position-tags 
+- do not allow more than 100 tags in 1 study 
+- do not allow any duplicate tags
+- hmm... instead of using a path of move names to find the position, can we just use the tag dictionary to keep the position and 
+  activate/deactivate the position?
 

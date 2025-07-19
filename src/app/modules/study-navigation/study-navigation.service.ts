@@ -9,6 +9,7 @@ import { PositionService } from '../../services/position.service';
 import { MoveDelegator } from '../../chess-logic/moveDelegator';
 import { LichessService } from '../../services/lichess.service';
 import { GlobalValues } from '../settings/settings.service';
+import { FIFOCache } from '../../utilities/fifo-cache';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class StudyNavigationService {
     private _study = new BehaviorSubject<Study|null>(null);
     private _moveDetail = new BehaviorSubject<MoveData | null>(null);
     private _proposedMove = new BehaviorSubject<MoveData | null>(null);
+    private _focusTags = new BehaviorSubject<FIFOCache>(new FIFOCache(100));
     private root: Position | null = null;
 
     private studyPointer: StudyPointer | null;
@@ -26,6 +28,7 @@ export class StudyNavigationService {
     study$ = this._study.asObservable();
     moveDetail$ = this._moveDetail.asObservable();
     proposedMove$ = this._proposedMove.asObservable();
+    focusTags$ = this._focusTags.asObservable();
 
     constructor(private router: Router, private studyService: StudyService, private positionService: PositionService,
       private lichessService: LichessService
@@ -68,26 +71,42 @@ export class StudyNavigationService {
     }
 
     getPositionTags(): string[] {
-      let tags: string[] = [];
+      let focusTags = new FIFOCache(100);
       if(this.root){
-        this.getPositionTagsHelper(this.root, tags);
       }
 
-      return tags;
+      this.root?.positions.forEach(p => {
+        this.getPositionTagsHelper(p, focusTags, '');
+      })
+
+      this._focusTags.next(focusTags);
+      let keys: string[] = [];
+      for(let k of focusTags.keys()){
+        keys.push(k);
+      }
+
+      console.log(JSON.stringify(this._focusTags.value))
+
+      return keys;
     }
 
-    private getPositionTagsHelper(position: Position, tags: string[]): void {
+    private getPositionTagsHelper(position: Position,tags: FIFOCache,  path: string): void {
       if(!position.isActive){
         return;
       }
       
+      if(path.length > 0){
+        path += ',';
+      }
+      path += position.move?.name;
+
       position.tags.forEach(t => {
-        if(!tags.includes(t)){
-          tags.push(t);
+        if(!tags.has(t)){
+          tags.put(t, path);
         }
       });
       position.positions.forEach(p => {
-        this.getPositionTagsHelper(p, tags);
+        this.getPositionTagsHelper(p, tags, path);
       })
     }
 
@@ -365,8 +384,20 @@ export class StudyNavigationService {
         this.makeMove(this.studyPointer?.pointer ?? null, 'navigator', 'setDescription');
       }
     
-      getVariations = (): MoveDetail[] => {
-        return this.studyPointer?.getVariations() ?? [];
+      getVariations = (careIfActive: boolean = false): MoveDetail[] => {
+        let variations = this.studyPointer?.getVariations() ?? [];
+
+        if(careIfActive){
+          let filteredVariations: MoveDetail[] = [];
+          variations.forEach(v => {
+            if(v.position?.isActive){
+              filteredVariations.push(v);
+            }
+          });
+          return filteredVariations;
+        }
+
+        return variations;
       }
     
       isVariation = (): boolean => {

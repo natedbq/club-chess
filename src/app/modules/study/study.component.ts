@@ -234,7 +234,8 @@ export class StudyComponent implements OnInit {
         console.log('eval',pointer.move?.name)
         let sub = this.lichessService.evaluate(pointer.move?.fen ?? '-').subscribe({ 
           next: (evaluation) => {
-            this.floatingImageService.showImage('crown-gold.png',  y, x, evaluation / 100);
+            console.log("study",evaluation);
+            this.floatingImageService.showImage('crown-gold.png',  y, x, evaluation);
             if(this.settingsService.autoNextLine()){
               setTimeout(() => {
                 this.continueToNextLine();
@@ -244,6 +245,7 @@ export class StudyComponent implements OnInit {
             }
           },
           error: (e) => {
+            console.log("err",JSON.stringify(e))
             this.floatingImageService.showImage('crown-gold.png',  y, x);
             if(this.settingsService.autoNextLine()){
               setTimeout(() => {
@@ -273,7 +275,6 @@ export class StudyComponent implements OnInit {
       if(pointer){
         let position = pointer.pointer;
         if(position?.mistakes != null && position?.id && this.mistakeCounter < 3){
-          console.log("wrong");
           this.positionService.mistake(position.id).subscribe();
           position.mistakes++;
           this.mistakeCounter++;
@@ -316,7 +317,7 @@ export class StudyComponent implements OnInit {
 
     createMoveDecisions = () => {
       let delegations: MoveDelegation[] = [];
-      let variations = this.studyNavigationService.getVariations()
+      let variations = this.studyNavigationService.getVariations(true)
         .sort((a,b) => new Date(b.position?.lastStudied ?? '').getTime() - new Date(a.position?.lastStudied ?? '').getTime());
 
       const build = (explore: ExploreNode | null) => {
@@ -347,9 +348,9 @@ export class StudyComponent implements OnInit {
               + timeWeight
               + commonWeight
               + notVisitedWeight;
-            console.log(
-              JSON.stringify({name:m.name, mistakes:mistakesWeight, common:commonWeight, time:timeWeight, notVisited:notVisitedWeight, total:branchWeight })
-            );
+            // console.log(
+            //   JSON.stringify({name:m.name, mistakes:mistakesWeight, common:commonWeight, time:timeWeight, notVisited:notVisitedWeight, total:branchWeight })
+            // );
             
             let moveDelegation: MoveDelegation = new MoveDelegation(() => {
               if(this.doStudy){
@@ -406,7 +407,7 @@ export class StudyComponent implements OnInit {
           data.position.lastStudied = BoardUtility.DateNow();
         }
         this.studyNavigationService.next(data.move?.name);
-        if(this.studyNavigationService.getVariations().length == 0){
+        if(this.studyNavigationService.getVariations(true).length == 0){
           this.completeLine(data);
         }else{
           if(data.player == (this.isWhitePerspective ? Color.White : Color.Black)){
