@@ -23,6 +23,7 @@ export class SettingsComponent {
   showPlans: boolean = true;
   autoNextLine: boolean = true;
   favorUnvisited: boolean = true;
+  fastForward: boolean = true;
 
   constructor(private router: Router, private settingsService: SettingsService){
     this.settingsService.showVariations$.subscribe(m => this.showVariations = m);
@@ -50,5 +51,9 @@ export class SettingsComponent {
 
   toggleAutoNextLine() {
     this.settingsService.setAutoNextLine(!this.autoNextLine);
+  }
+
+  toggleFastForward() {
+    this.settingsService.setFastForward(!this.fastForward);
   }
 }

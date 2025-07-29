@@ -245,7 +245,7 @@ export class DrawingService {
             var layer = new Konva.Layer({});
 
             if(!this.activateStudyService.isActive() || this.settingsService.showPlans()){
-            this.stage.add(layer);
+                this.stage.add(layer);
                 let position = this.studyNavService.getPointer()?.pointer;
 
                 position?.plans.split(';').forEach((s) => {
@@ -253,7 +253,6 @@ export class DrawingService {
                 })
             }
 
-            this.stage.removeChildren();
 
             var previewLayer = new Konva.Layer({});
             this.previewLayerData.split(';').forEach((s) => {

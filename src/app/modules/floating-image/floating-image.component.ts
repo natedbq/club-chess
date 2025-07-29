@@ -25,14 +25,13 @@ export class FloatingImageComponent {
         this.left = pos.left;
       });
       this.imageService.evaluation$.subscribe(e => {
-        console.log(e);
         let num = 0;
         if(e?.startsWith('m')){
           num = parseInt( e?.substring(1) ?? '0');
         }else{
           num = parseInt(e ?? '0') / 100.0;
         }
-        console.log('her')
+        
         if(typeof e === 'string'){
           this.favorWhite = num >= 0;
           this.evaluation = (e?.startsWith('m') ? 'm' : '') + Math.abs(num);

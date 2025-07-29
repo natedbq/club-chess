@@ -21,6 +21,7 @@ export class TagsSelectComponent {
     tags: TagSelection[] = [];
     limit: string[] | null = null;
     study: Study | null = null;
+    doubleClick: string | null = null;
 
     constructor(private studyService: StudyService, private positionService: PositionService, private studyNavService: StudyNavigationService){
         this.studyNavService.study$.subscribe(s => {
@@ -43,7 +44,31 @@ export class TagsSelectComponent {
     }
 
     modify(tag: TagSelection){
+        if(this.doubleClick == tag.tag){
+            this.isolate(tag);
+            this.doubleClick = null;
+        }else{
+            this.toggle(tag);
+            this.doubleClick = tag.tag;
+            setTimeout(() => {
+                this.doubleClick = null;
+            }, 500);
+        }
+    }
+
+    toggle(tag: TagSelection){
         tag.isSelected = !tag.isSelected;
+        this.commit();
+    }
+
+    isolate(tag: TagSelection){
+        this.tags.forEach(t => {
+            if(t.tag != tag.tag){
+                t.isSelected = false;
+            }else{
+                t.isSelected = true;
+            }
+        });
         this.commit();
     }
 

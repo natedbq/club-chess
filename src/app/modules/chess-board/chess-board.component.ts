@@ -27,7 +27,9 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() saveAction: () => void = () => {};
   @ViewChild('chessBoard') chessBoardElement: any;
   @Input() moveDelegation: ((data: MoveData) => void) | null = null;
-  @Input() studyPerspective: Color = Color.White;
+  @Input() studyPerspective: Color | null = null;
+  previewFrom = '';
+  previewTo = '';
   destroy$ = new Subject<void>();
   flipMode: boolean = false;
   lastFEN: string = '-';
@@ -114,6 +116,8 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
 
   public ngOnChanges(changes: SimpleChanges){
     if(this.moveData){
+      if(this.studyPerspective == null)
+      this.studyPerspective = this.moveData.player ?? Color.White;
       this.chessBoard.loadFromFEN(this.moveData?.move?.fen ?? '-');
       this.chessBoardView = this.chessBoard.chessBoardView;
       this.flipMode = this.studyPerspective == Color.Black; // we only flip if player is Black. Its not racist, though.
@@ -121,6 +125,10 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
         this.moveSound(new Set<MoveType>([this.pickSoundForNavigator()]));
       }
       this.lastFEN = this.moveData.move?.fen ?? '-';
+      if(!this.isPreview || this.previewFrom == ''){
+        this.previewFrom = this.moveData.move?.from ?? '';
+        this.previewTo = this.moveData.move?.to ?? ''
+      }
     }
 
   }
@@ -200,13 +208,22 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public isSquareLastMove(x: number, y: number): boolean {
-    if(((this.moveData?.move?.from?.length ?? 0) > 0) && (this.moveData?.move?.to?.length ?? 0 > 0)){
-      let from_colum = "abcdefgh".indexOf(this.moveData?.move?.from![0] ?? '-');
-      let from_rank = (parseInt(this.moveData?.move?.from![1] ?? "0")) - 1;
-      let to_column = "abcdefgh".indexOf(this.moveData?.move?.to![0] ?? '-');
-      let to_rank = (parseInt(this.moveData?.move?.to![1] ?? "0")) - 1;
+    if(this.isPreview){
+      let from_colum = "abcdefgh".indexOf(this.previewFrom[0] ?? '-');
+        let from_rank = (parseInt(this.previewFrom[1] ?? "0")) - 1;
+        let to_column = "abcdefgh".indexOf(this.previewTo[0] ?? '-');
+        let to_rank = (parseInt(this.previewTo[1] ?? "0")) - 1;
 
-      return x === from_rank && y === from_colum || x === to_rank && y === to_column;
+        return x === from_rank && y === from_colum || x === to_rank && y === to_column;
+    }else{
+      if(((this.moveData?.move?.from?.length ?? 0) > 0) && (this.moveData?.move?.to?.length ?? 0 > 0)){
+        let from_colum = "abcdefgh".indexOf(this.moveData?.move?.from![0] ?? '-');
+        let from_rank = (parseInt(this.moveData?.move?.from![1] ?? "0")) - 1;
+        let to_column = "abcdefgh".indexOf(this.moveData?.move?.to![0] ?? '-');
+        let to_rank = (parseInt(this.moveData?.move?.to![1] ?? "0")) - 1;
+
+        return x === from_rank && y === from_colum || x === to_rank && y === to_column;
+      }
     }
     return false;
   }
@@ -292,13 +309,11 @@ export class ChessBoardComponent implements OnInit, OnDestroy, OnChanges {
     let from_rank = (prevX + 1).toString();
     let to_column = "abcdefgh".charAt(newY);
     let to_rank = (newX + 1).toString();
-
     let moveName = this.chessBoard.move(prevX, prevY, newX, newY, promotedPiece);
     this.chessBoardView = this.chessBoard.chessBoardView;
     this.markLastMoveAndCheckState(this.chessBoard.lastMove, this.chessBoard.checkState);
     this.unmarkingPreviouslySlectedAndSafeSquares();
     this.chessBoardService.chessBoardState$.next(this.chessBoard.boardAsFEN);
-
     this.gameHistoryPointer++;
 
     let move = new Move();
