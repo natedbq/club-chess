@@ -12,10 +12,24 @@
     --chill-blue: rgba(0, 143, 168,.7);;
 }
 
+.text-input {
+    background-color: var(--gray);
+    border: 2px solid white;
+    outline: none;
+    color: white;
+    padding-left: 4px;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+.flex {
+    display: flex;
 }
 
 html,

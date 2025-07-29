@@ -85,8 +85,6 @@ export class StudyNavigationService {
         keys.push(k);
       }
 
-      console.log(JSON.stringify(this._focusTags.value))
-
       return keys;
     }
 

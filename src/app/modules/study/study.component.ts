@@ -111,7 +111,6 @@ export class StudyComponent implements OnInit {
             };
           }
           this.loading = false;
-          console.log("done loading");
           if(!this.isWhitePerspective){
             
             setTimeout(() => {
@@ -230,11 +229,8 @@ export class StudyComponent implements OnInit {
       
       let pointer = this.studyNavigationService.getPointer()?.pointer;
       if(pointer){
-
-        console.log('eval',pointer.move?.name)
         let sub = this.lichessService.evaluate(pointer.move?.fen ?? '-').subscribe({ 
           next: (evaluation) => {
-            console.log("study",evaluation);
             this.floatingImageService.showImage('crown-gold.png',  y, x, evaluation);
             if(this.settingsService.autoNextLine()){
               setTimeout(() => {

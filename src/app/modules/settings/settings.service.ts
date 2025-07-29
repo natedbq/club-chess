@@ -12,6 +12,7 @@ export class SettingsService {
     private _pauseTime = new BehaviorSubject<number>(2.5);
     private _autoNextLine = new BehaviorSubject<boolean>(false);
     private _favorUnvisited = new BehaviorSubject<boolean>(true);
+    private _fastForward = new BehaviorSubject<boolean>(true);
     
 
     showVariations$ = this._showVariations.asObservable();
@@ -20,6 +21,11 @@ export class SettingsService {
     showPlans$ = this._showPlans.asObservable();
     autoNextLine$ = this._autoNextLine.asObservable();
     _favorUnvisited$ = this._favorUnvisited.asObservable();
+    fastForward$ = this._fastForward.asObservable();
+
+    public setFastForward = (show: boolean) => {
+        this._fastForward.next(show);
+    }
 
     public setShowVariations = (show: boolean) => {
         this._showVariations.next(show);
@@ -59,6 +65,10 @@ export class SettingsService {
 
     public favorUnvisited(){
       return this._favorUnvisited.value;
+    }
+
+    public fastForward(){
+      return this._fastForward.value;
     }
 }
 

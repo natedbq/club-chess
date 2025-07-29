@@ -43,6 +43,7 @@ import { MoveControlsComponent } from './modules/move-controls/move-controls.com
 import { ScoreComponent } from './modules/score/score.component';
 import { TagsEditComponent } from './modules/tags-edit/tags-edit.component';
 import { TagsSelectComponent } from './modules/tags-select/tags-select.component';
+import { StudySearchComponent } from './modules/study-search/study-search.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { TagsSelectComponent } from './modules/tags-select/tags-select.component
     LoadingComponent,
     ScoreComponent,
     TagsEditComponent,
+    StudySearchComponent,
     TagsSelectComponent,
     MoveEditorComponent    
   ],

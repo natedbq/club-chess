@@ -15,6 +15,9 @@
         </td>
         <td style="vertical-align: top; width: 600px">
             <app-tool-menu>
+                <app-tool [name]="'Search'" [icon]="'search'">
+                    <app-study-search></app-study-search>
+                </app-tool>
                 <app-tool [name]="'Info'" [icon]="'book'">
                     <app-study-title></app-study-title>
                     <app-move-editor></app-move-editor>

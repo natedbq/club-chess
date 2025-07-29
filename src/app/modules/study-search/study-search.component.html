@@ -1,0 +1,12 @@
+<h1>Search</h1>
+<div class="flex result">
+    <input class="text-input inline-block" type="text" [(ngModel)]="searchWord">
+    <button class="btn btn-icon btn-commit" (click)="search()" ><i class="bi bi-search" ></i></button>
+</div>
+
+<div>
+    <div *ngFor="let res of searchResults" class="result">
+        <h4>{{res.name}}<span *ngIf="res.title"> ({{res.title}})</span></h4>
+        <app-chess-board [isPreview]="true" [moveData]="res.moveData" (click)="select(res)"> </app-chess-board>
+        </div>
+</div>
