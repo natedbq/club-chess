@@ -108,8 +108,37 @@ export class StudyNavigationService {
       })
     }
 
+    activateLines(tags: string[]){
+      let activateAll = tags.some(t => t == 'All Lines');
+      console.log(JSON.stringify(tags), activateAll);
+
+      if(this.root){
+        let root = new StudyPointer(null, this.root);
+        this.activateLinesHelper(root, tags, activateAll);
+      }
+    }
+
+    private activateLinesHelper(pointer: StudyPointer, tags: string[], foundTag: boolean): boolean {
+      let position = pointer.pointer;
+      if(position){
+        foundTag = foundTag || position?.tags.some(t => tags.some(k => k == t));
+        let anyParents = false;
+        position.positions.forEach(p => {
+          let nextPointer = new StudyPointer(pointer, p);
+          anyParents = this.activateLinesHelper(nextPointer, tags, foundTag) || anyParents;
+        });
+
+        foundTag = foundTag || anyParents;
+
+        position.liveData.isActive = foundTag;
+        return foundTag;
+      }
+
+      return false;
+    }
+
     calculateScore(position: Position|null = null): any {
-      let score: any = {total: 1, mistakes: 0};
+      let score: any = {total: 1, mistakes: 0, asterisk: false};
       if(position == null){
         position = this.root;
       }
@@ -127,13 +156,17 @@ export class StudyNavigationService {
 
     private calculateScoreHelper(position: Position): any {
       if(!position.isActive){
-        return {total: 0, mistakes: 0};
+        return {total: 0, mistakes: 0, asterisk: false};
       }
-      let score: any = {total: 1, mistakes: position.mistakes};
+      if(!position.liveData.isActive){
+        return {total: 0, mistakes: 0, asterisk: true};
+      }
+      let score: any = {total: 1, mistakes: position.mistakes, asterisk: false};
       position.positions.forEach(p => {
         let s = this.calculateScoreHelper(p);
         score.total += s.total;
         score.mistakes += s.mistakes;
+        score.asterisk = s.asterisk || score.asterisk;
       })
       return score;
     }
@@ -388,7 +421,8 @@ export class StudyNavigationService {
         if(careIfActive){
           let filteredVariations: MoveDetail[] = [];
           variations.forEach(v => {
-            if(v.position?.isActive){
+            console.log(v.name, v.position?.liveData.isActive)
+            if(v.position?.isActive && v.position.liveData.isActive){
               filteredVariations.push(v);
             }
           });

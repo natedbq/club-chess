@@ -14,24 +14,25 @@ import { PositionService } from "../../services/position.service";
   templateUrl: './tags-edit.component.html',
   styleUrls: ['./tags-edit.component.css']
 })
-export class TagsEditComponent implements OnChanges {
+export class TagsEditComponent {
 
     name = "";
     adding = false;
     toAdd = "";
     tags: string[] = [];
-    @Input() editTarget: TaggedObject | null = null;
+    editTarget: TaggedObject | null = null;
 
-    constructor(private studyService: StudyService, private positionService: PositionService){
-    }
-    ngOnChanges(changes: SimpleChanges): void {
-        this.tags =this.editTarget?.tags ?? [];
-
-        if(this.editTarget instanceof Position){
-            this.name = this.editTarget.move?.name ?? 'Position';
-        } else if(this.editTarget instanceof Study){
-            this.name = 'Study';
-        }
+    constructor(private studyService: StudyService, private positionService: PositionService, private navService: StudyNavigationService){
+        navService.moveDetail$.subscribe(m => {
+            if(m?.move?.name == '-'){
+                this.editTarget = this.navService.getStudy();
+                this.name = 'Study';
+            }else{
+                this.editTarget = m?.position ?? null;
+                this.name = 'Position';
+            }
+            this.tags = this.editTarget?.tags ?? [];
+        });
     }
 
     startAdding(){

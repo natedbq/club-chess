@@ -10,7 +10,7 @@
     </tr>
     <tr>
         <td style="width: 600px">
-            <h1>
+            <h1>{{ asterisk ? '*' : '' }} 
                 {{score | number: '1.0-2'}}% 
     <span class="better" *ngIf="diff > 0"> + </span>
     <span *ngIf="isBetter() || isWorse()" [ngClass]="{'visible': show, 'better': diff > 0, 'worse': diff < 0}"> {{diff | number: '1.0-2'}}</span>

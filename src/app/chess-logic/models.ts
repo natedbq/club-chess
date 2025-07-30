@@ -127,6 +127,9 @@ export class Study implements TaggedObject {
       }  
 }
 
+export class LivePosition {
+    isActive: boolean = true;
+}
 
 export class Position implements TaggedObject {
     id: string | null = null;
@@ -144,6 +147,7 @@ export class Position implements TaggedObject {
     mistakes: number | null = null;
     isKeyPosition: boolean = false;
     isActive: boolean = true;
+    liveData: LivePosition = new LivePosition();
 
     public static toPosition(data: any): Position {
         let position = new Position();
