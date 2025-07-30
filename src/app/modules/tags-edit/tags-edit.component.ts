@@ -6,7 +6,7 @@ import { Router } from "@angular/router";
 import { MoveDelegation, MoveDelegator } from "../../chess-logic/moveDelegator";
 import { StudyNavigationService } from "../study-navigation/study-navigation.service";
 import { StudyService } from "../../services/study.service";
-import { Position, Study, TaggedObject } from "../../chess-logic/models";
+import { Position, Study, TaggedObject, UpdateType } from "../../chess-logic/models";
 import { PositionService } from "../../services/position.service";
 
 @Component({
@@ -64,7 +64,8 @@ export class TagsEditComponent {
         let preserve: string[] = [];
         this.editTarget.tags.forEach((t) => {
             preserve.push(t);
-        })
+        });
+        this.navService.alertUpdate(UpdateType.Tags);
         this.editTarget.tags = this.tags;
         if(this.editTarget instanceof Position){
             this.editTarget.isDirty = true;

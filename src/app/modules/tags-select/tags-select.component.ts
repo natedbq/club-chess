@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { StudyService } from "../../services/study.service";
-import { Position, Study, TaggedObject } from "../../chess-logic/models";
+import { Position, Study, TaggedObject, UpdateType } from "../../chess-logic/models";
 import { PositionService } from "../../services/position.service";
 import { StudyNavigationService } from "../study-navigation/study-navigation.service";
 
@@ -27,6 +27,12 @@ export class TagsSelectComponent {
         this.studyNavService.study$.subscribe(s => {
             this.study = s;
             this.refreshTags();
+        })
+
+        this.studyNavService.updates$.subscribe(u => {
+            if(u == UpdateType.Tags){
+                this.refreshTags();
+            }
         })
     }
 

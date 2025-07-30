@@ -5,6 +5,12 @@ export enum Color {
     Black
 }
 
+export enum UpdateType {
+    Title,
+    Description,
+    Tags
+}
+
 export type Coords = {
     x: number;
     y: number;

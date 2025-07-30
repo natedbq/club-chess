@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { BehaviorSubject, firstValueFrom, forkJoin, lastValueFrom, Observable, of, shareReplay, Subscription } from 'rxjs';
-import { Study, Move, Position, MoveData, ExploreNode, Color } from '../../chess-logic/models';
+import { Study, Move, Position, MoveData, ExploreNode, Color, UpdateType } from '../../chess-logic/models';
 import { MoveDetail } from './study-navigation.component';
 import { BoardUtility, FENConverter } from '../../chess-logic/FENConverter';
 import { StudyService } from '../../services/study.service';
@@ -19,6 +19,7 @@ export class StudyNavigationService {
     private _moveDetail = new BehaviorSubject<MoveData | null>(null);
     private _proposedMove = new BehaviorSubject<MoveData | null>(null);
     private _focusTags = new BehaviorSubject<FIFOCache>(new FIFOCache(100));
+    private _updates = new BehaviorSubject<UpdateType | null>(null);
     private root: Position | null = null;
 
     private studyPointer: StudyPointer | null;
@@ -29,6 +30,7 @@ export class StudyNavigationService {
     moveDetail$ = this._moveDetail.asObservable();
     proposedMove$ = this._proposedMove.asObservable();
     focusTags$ = this._focusTags.asObservable();
+    updates$ = this._updates.asObservable();
 
     constructor(private router: Router, private studyService: StudyService, private positionService: PositionService,
       private lichessService: LichessService
@@ -46,6 +48,10 @@ export class StudyNavigationService {
           MoveDelegator.clear();
         }
         });
+    }
+
+    alertUpdate(type: UpdateType){
+      this._updates.next(type);
     }
 
     load = (id: string) => {
