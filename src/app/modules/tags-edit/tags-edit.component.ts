@@ -6,7 +6,7 @@ import { Router } from "@angular/router";
 import { MoveDelegation, MoveDelegator } from "../../chess-logic/moveDelegator";
 import { StudyNavigationService } from "../study-navigation/study-navigation.service";
 import { StudyService } from "../../services/study.service";
-import { Position, Study, TaggedObject } from "../../chess-logic/models";
+import { Position, Study, TaggedObject, UpdateType } from "../../chess-logic/models";
 import { PositionService } from "../../services/position.service";
 
 @Component({
@@ -14,24 +14,25 @@ import { PositionService } from "../../services/position.service";
   templateUrl: './tags-edit.component.html',
   styleUrls: ['./tags-edit.component.css']
 })
-export class TagsEditComponent implements OnChanges {
+export class TagsEditComponent {
 
     name = "";
     adding = false;
     toAdd = "";
     tags: string[] = [];
-    @Input() editTarget: TaggedObject | null = null;
+    editTarget: TaggedObject | null = null;
 
-    constructor(private studyService: StudyService, private positionService: PositionService){
-    }
-    ngOnChanges(changes: SimpleChanges): void {
-        this.tags =this.editTarget?.tags ?? [];
-
-        if(this.editTarget instanceof Position){
-            this.name = this.editTarget.move?.name ?? 'Position';
-        } else if(this.editTarget instanceof Study){
-            this.name = 'Study';
-        }
+    constructor(private studyService: StudyService, private positionService: PositionService, private navService: StudyNavigationService){
+        navService.moveDetail$.subscribe(m => {
+            if(m?.move?.name == '-'){
+                this.editTarget = this.navService.getStudy();
+                this.name = 'Study';
+            }else{
+                this.editTarget = m?.position ?? null;
+                this.name = 'Position';
+            }
+            this.tags = this.editTarget?.tags ?? [];
+        });
     }
 
     startAdding(){
@@ -63,7 +64,8 @@ export class TagsEditComponent implements OnChanges {
         let preserve: string[] = [];
         this.editTarget.tags.forEach((t) => {
             preserve.push(t);
-        })
+        });
+        this.navService.alertUpdate(UpdateType.Tags);
         this.editTarget.tags = this.tags;
         if(this.editTarget instanceof Position){
             this.editTarget.isDirty = true;

@@ -207,6 +207,40 @@ export class BoardUtility {
             now.getUTCSeconds()
         ));
     }
+
+    public static pieceOn(coord: string, fen: string): string | null { 
+        let col = "abcdefgh".indexOf(coord[0].toLowerCase());
+        let row = (Number(coord[1]) - 1);
+        let rows = fen.split(" ")[0].split("/");
+        if(rows.length < 8){
+            return null;
+        }
+
+
+        let rowOfInterest = rows[7-row];
+        let colOfInterest: string | null = null;
+        console.log(rowOfInterest, fen.split(" ")[0])
+        for(let i = 0; i < rowOfInterest.length && i <= col; i = i){
+            let c = rowOfInterest[i];
+
+            if(i == col){
+                colOfInterest = c;
+                console.log()
+                i = 8;
+            }
+            if(/\d+/.test(c)){
+                if(colOfInterest != null){
+                    colOfInterest = null;
+                }
+                i +=  Number(c);
+            }else{
+                i ++;
+            }
+        }
+
+        return colOfInterest;
+    }
+
     public static getMoveNames(uci: string, fen: string): string{
         let moveNames: string[] = [];
         try{

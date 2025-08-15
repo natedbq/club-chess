@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { Move, Position, Study } from "../chess-logic/models";
+import { UserService } from "./user.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class StudyService {
   private readonly api: string = "http://localhost/chess.api";
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private userService: UserService) { }
 
   public saveStudy(study: Study): Observable<Object> {
     let s: any = new Study();
@@ -20,9 +21,10 @@ export class StudyService {
     s.summaryFEN = study.summaryFEN;
     s.title = study.title;
     s.positionId = study.positionId;
-    s.accuracy = 0;
+    s.score = 0;
     s.tags = study.tags;
     s.focusTags = study.focusTags ?? [];
+    s.owner = study.owner;
 
     return this.http.post(this.api + '/study', s);
   }
@@ -38,14 +40,14 @@ export class StudyService {
   }
 
   public getStudy(id: string): Observable<Study> {
-    return this.http.get<Study>(this.api + '/study/studies/' + id).pipe(map((apiStudy) => {
+    return this.http.get<Study>(`${this.api}/study/${id}?userId=${this.userService.getUserId()}`).pipe(map((apiStudy) => {
       let study = Study.toStudy(apiStudy);
       return study;
   }));
   }
   
   public getSimpleStudies(): Observable<Study[]> {
-    return this.http.get<Study[]>(this.api + '/study/simplestudies').pipe(map((studies) => {
+    return this.http.get<Study[]>(this.api + '/study/simplestudies/' + this.userService.getUserId()).pipe(map((studies) => {
         return studies.map(s => {
           return Study.toStudy(s);
         })

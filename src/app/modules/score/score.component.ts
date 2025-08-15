@@ -14,6 +14,7 @@ import { NavigationStart, Router } from '@angular/router';
 export class ScoreComponent {
   score: number = 0;
   startScore: number = 0;
+  asterisk = false;
   diff = 0;
   show = false;
   branch = '';
@@ -54,6 +55,7 @@ export class ScoreComponent {
   }
 
   calculateScore(s: any){
+    this.asterisk = s.asterisk;
     return s.total / (s.total + s.mistakes);
   }
 

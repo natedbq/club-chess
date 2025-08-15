@@ -27,7 +27,7 @@
                 </div>
                 <div class="study-details">
                     <h4>{{game.studyTitle}} <button class="btn btn-icon btn-delete" (click)="delete(game)"><i class="bi bi-trash3 inline-block" ></i></button></h4>
-                    <h4>{{game.extra.accuracy | number: '1.0-2'}}%</h4>
+                    <h4>{{game.extra.score | number: '1.0-2'}}%</h4>
                 </div>
                 <div class="preview">
                     <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="study-details">
                     <h4>{{game.studyTitle}} <button class="btn btn-icon btn-delete" (click)="delete(game)"><i class="bi bi-trash3 inline-block" ></i></button></h4>
-                    <h4>{{game.extra.accuracy | number: '1.0-2'}}%</h4>
+                    <h4>{{game.extra.score | number: '1.0-2'}}%</h4>
                 </div>
                 <div class="preview">
                     <app-chess-board [isPreview]="true" [moveData]="game" (click)="loadStudy(game.studyId)"> </app-chess-board>

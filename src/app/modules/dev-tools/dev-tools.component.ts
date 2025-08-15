@@ -50,4 +50,7 @@ export class DevToolsComponent {
     return this.studyNavService.printTree();
   }
   
+  getTags() {
+    return JSON.stringify(this.moveData?.position?.tags);
+  }
 }

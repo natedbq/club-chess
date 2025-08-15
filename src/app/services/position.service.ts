@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { finalize, forkJoin, lastValueFrom, map, mergeMap, Observable, of, tap } from "rxjs";
 import { Move, Position, Study } from "../chess-logic/models";
+import { UserService } from "./user.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class PositionService {
   private readonly api: string = "http://localhost/chess.api/position";
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private userService: UserService) { }
 
   public save(position: Position): Observable<Object> {
     let dirty = this.getDirtyPositions(position);
@@ -27,7 +28,7 @@ export class PositionService {
   }
 
   public getByParentId(id: string, depth: number = 0): Observable<Position[]> {
-    return this.http.get<Position[]>(this.api + `/parentId/${id}?depth=${depth}`).pipe(
+    return this.http.get<Position[]>(this.api + `/parentId/${id}?depth=${depth}&userId=${this.userService.getUserId()}`).pipe(
       map(apiChildren => apiChildren.map(c => Position.toPosition(c))),
       mergeMap((children: Position[]) => {
         // Gather all tail node calls into an array of observables
@@ -61,11 +62,11 @@ export class PositionService {
   }
 
   public mistake(id: string): Observable<Object> {
-    return this.http.put(`${this.api}/${id}/mistake`, null);
+    return this.http.put(`${this.api}/${id}/mistake/${this.userService.getUserId()}`, null);
   }
 
   public correct(id: string): Observable<Object> {
-    return this.http.put(`${this.api}/${id}/correct`, null);
+    return this.http.put(`${this.api}/${id}/correct/${this.userService.getUserId()}`, null);
   }
 
   public delete(id: string): Observable<Object> {
@@ -73,7 +74,7 @@ export class PositionService {
   }
 
   public study(id: string): Observable<Object> {
-    return this.http.put(`${this.api}/${id}/study`, null);
+    return this.http.put(`${this.api}/${id}/study/${this.userService.getUserId()}`, null);
   }
 
   private getTailNodes(position: Position): Position[] {

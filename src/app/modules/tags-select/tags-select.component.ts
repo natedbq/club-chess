@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { StudyService } from "../../services/study.service";
-import { Position, Study, TaggedObject } from "../../chess-logic/models";
+import { Position, Study, TaggedObject, UpdateType } from "../../chess-logic/models";
 import { PositionService } from "../../services/position.service";
 import { StudyNavigationService } from "../study-navigation/study-navigation.service";
 
@@ -28,6 +28,12 @@ export class TagsSelectComponent {
             this.study = s;
             this.refreshTags();
         })
+
+        this.studyNavService.updates$.subscribe(u => {
+            if(u == UpdateType.Tags){
+                this.refreshTags();
+            }
+        })
     }
 
     refreshTags(){
@@ -41,11 +47,21 @@ export class TagsSelectComponent {
                 });
             })
         }
+        this.tags = [{isSelected: !this.tags.some(t => t.isSelected), tag: "All Lines"}].concat(this.tags);
+        this.activateLines();
+    }
+
+    activateLines() {
+        this.studyNavService.activateLines(this.tags.filter(t => t.isSelected).map(t => t.tag));
     }
 
     modify(tag: TagSelection){
         if(this.doubleClick == tag.tag){
-            this.isolate(tag);
+            if(this.isIsolated(tag)){
+                this.unisolate();
+            }else{
+                this.isolate(tag);
+            }
             this.doubleClick = null;
         }else{
             this.toggle(tag);
@@ -61,6 +77,11 @@ export class TagsSelectComponent {
         this.commit();
     }
 
+    isIsolated(tag: TagSelection){
+        let active = this.tags.filter(t => t.isSelected || t.tag == tag.tag);
+        return active.length <= 1;
+    }
+
     isolate(tag: TagSelection){
         this.tags.forEach(t => {
             if(t.tag != tag.tag){
@@ -72,11 +93,19 @@ export class TagsSelectComponent {
         this.commit();
     }
 
+    unisolate(){
+        this.tags.forEach(t => {
+            t.isSelected = true;
+        });
+        this.commit();
+    }
+
     commit(){
         if(!this.study){
             return;
         }
         if(this.study){
+            this.activateLines();
             this.study.focusTags = this.tags.filter(t => t.isSelected).map(t => t.tag);
             this.studyService.saveStudy(this.study).subscribe();
         }

@@ -50,7 +50,7 @@ export class RepertoireMenuComponent {
             source: 'repertoire-menu',
             direction: 'preview',
             player: study.perspective,
-            extra: {accuracy: study.accuracy, tags: study.tags, lastStudied: new Date(study.lastStudied ?? '')}
+            extra: {score: study.score, tags: study.tags, lastStudied: new Date(study.lastStudied ?? '')}
           })
         } )
     });

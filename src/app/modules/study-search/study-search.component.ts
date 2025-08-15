@@ -7,6 +7,7 @@ import { ActivateStudyService } from '../study/activate-study.service';
 import { NavigationStart, Router } from '@angular/router';
 import { FIFOCache } from '../../utilities/fifo-cache';
 import { columns } from '../chess-board/models';
+import { BoardUtility } from '../../chess-logic/FENConverter';
 
 @Component({
   selector: 'app-study-search',
@@ -64,46 +65,96 @@ export class StudySearchComponent {
     }
   }
 
-  search(){
+  /**
+   * 
+   * I accidentally clicked to the next line and lost a position. I need to find a position where Na3 is played while a black Knight is on d3
+   * "Na3 & [on=nd3]" => "{search clause} {operator} [on={FENchar}{coordinate}]"
+   */
+
+  parseSearch(){
     this.searchResults = [];
-    if(this.searchWord.trim() == ''){
+    let hasClauses = true;
+    let remainingSearch = this.searchWord;
+    let operator: string | null = null;
+    while(hasClauses){
+      let indexOfAnd = remainingSearch.indexOf('&&');
+      let indexOfOr = remainingSearch.indexOf('||');
+      if(indexOfAnd == -1 && indexOfOr == -1){
+        hasClauses = false;
+      }
+
+      let current: string = '';
+      let nextOperator: string | null = null;
+
+      if(indexOfAnd == -1 && indexOfOr == -1){
+        current = remainingSearch;
+      }else if(indexOfAnd < indexOfOr || indexOfOr == -1){
+        current = remainingSearch.substring(0, indexOfAnd);
+        remainingSearch = remainingSearch.substring(indexOfAnd + 2);
+        nextOperator = '&';
+      }else if(indexOfOr < indexOfAnd || indexOfAnd == -1){
+        current = remainingSearch.substring(0, indexOfOr);
+        remainingSearch = remainingSearch.substring(indexOfOr + 2);
+        nextOperator = '|';
+      }
+
+      this.search(current.trim(), operator);
+
+      operator = nextOperator;
+    }
+  }
+
+  search(searchWord: string, operator: string | null = null){
+    if(searchWord.trim() == ''){
       return;
     }
     let root = this.navService.getStudy()?.position;
     let path = '';
     if(root){
       let matcher = this.matchWord;
-      if(this.searchWord.trim() == '[title]')
+      if(searchWord.trim() == '[title]')
         matcher = this.hasTitle;
-      if(this.searchWord.trim() == '[desc]' || this.searchWord.trim() == '[description]')
+      if(searchWord.trim() == '[desc]' || this.searchWord.trim() == '[description]')
         matcher = this.hasDescription;
-      if(this.searchWord.trim() == '[tag]' || this.searchWord.trim() == '[tags]')
+      if(searchWord.trim() == '[tag]' || this.searchWord.trim() == '[tags]')
         matcher = this.hasTags;
+      if(searchWord.trim() == '[inactive]')
+        matcher = this.isNotActive;
+      if(/\[on=\w\w\d\]/.test(searchWord.trim()))
+        matcher = this.pieceOn;
 
-      this.searchHelper(this.searchWord, root, path, null, matcher);
+      if(operator == '&'){
+        this.filterResults(searchWord, matcher);
+      }else{
+        this.searchHelper(searchWord, root, path, null, matcher, operator);
+      }
     }
   }
 
 
+  filterResults(searchWord: string, matcher: (position: Position, searchWord: string | null) => boolean){
+    this.searchResults = this.searchResults.filter(r => matcher(r.position, searchWord));
+  }
 
 
-  private searchHelper(searchWord: string, position: Position, path: string, title: string | null, matcher: (position: Position) => boolean){
+  private searchHelper(searchWord: string, position: Position, path: string, title: string | null, matcher: (position: Position, searchWord: string | null) => boolean, operator: string|null = null){
     if(position.title != null && position.title.trim() != ''){
       title = position.title;
     }
-    if(matcher(position)){
+    if(matcher(position, searchWord)){
       this.createResult(position, path, title);
     }
     
     position.positions.forEach(p => {
-      
       this.searchHelper(searchWord, p, `${path},${p.move?.name}`, title, matcher);
     })
   }
 
   private createResult(position: Position, path: string, title: string|null){
+    if(this.searchResults.some(r => r.position.id == position.id)){
+      return;
+    }
     let perspective = this.navService.getStudy()?.perspective;
-    console.log(Color.White, Color.Black, perspective)
     this.searchResults.push({
       name: position.move?.name ?? `Result ${this.searchResults.length + 1}`,
       path: path,
@@ -122,17 +173,33 @@ export class StudySearchComponent {
     });
   }
 
-  matchWord = (position: Position): boolean => {
-    let s = this.searchWord;
+  pieceOn = (position: Position, searchWord: string | null): boolean => {
+    if(searchWord == null){
+      return false;
+    }
+
+
+    let pieceSearchedFor = searchWord[4];
+    let coord = searchWord.substring(5,7);
+    let p = BoardUtility.pieceOn(coord, position.move?.fen ?? '');
+    
+    return p === pieceSearchedFor;
+  }
+
+  matchWord = (position: Position, searchWord: string | null): boolean => {
+    let s = searchWord?.toLowerCase() ?? '';
     var wordMatch = (position.move?.name?.toLowerCase().includes(s) ?? false)
      || (position.move?.from?.toLowerCase().includes(s) ?? false)
+     || (position.move?.to?.toLowerCase().includes(s) ?? false)
      || (position.title?.toLowerCase().includes(s) ?? false)
-     || (position.description?.toLowerCase().includes(s) ?? false);
-    if(/^\w\w\d/.test(this.searchWord)){
-      s = `${this.searchWord.substring(0,1)}x${this.searchWord.substring(1)}`;
+     || (position.description?.toLowerCase().includes(s) ?? false)
+     || (position.tags.some(t => t.includes(s)));
+    if(/^\w\w\d/.test(s)){
+      s = `${s.substring(0,1)}x${s.substring(1)}`;
       wordMatch = wordMatch ||
           (position.move?.name?.toLowerCase().includes(s) ?? false)
         || (position.move?.from?.toLowerCase().includes(s) ?? false)
+        || (position.move?.to?.toLowerCase().includes(s) ?? false)
         || (position.title?.toLowerCase().includes(s) ?? false)
         || (position.description?.toLowerCase().includes(s) ?? false);
     }
@@ -140,16 +207,20 @@ export class StudySearchComponent {
     return wordMatch;
   }
 
-  hasTitle = (position: Position): boolean => {
+  hasTitle = (position: Position, searchWord: string | null = null): boolean => {
     return position.title ? true:false;
   }
   
-  hasDescription = (position: Position): boolean => {
+  hasDescription = (position: Position, searchWord: string | null = null): boolean => {
     return position.description ? true:false;
   }
   
-  hasTags = (position: Position): boolean => {
+  hasTags = (position: Position, searchWord: string | null = null): boolean => {
     return position.tags.length > 0;
+  }
+
+  isNotActive = (position: Position, searchWord: string | null = null): boolean => {
+    return !position.isActive;
   }
 }
 

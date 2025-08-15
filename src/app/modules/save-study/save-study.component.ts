@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { PositionService } from '../../services/position.service';
-import { SettingsService } from '../settings/settings.service';
 import { StudyNavigationService } from '../study-navigation/study-navigation.service';
 import { Move, Position } from '../../chess-logic/models';
 

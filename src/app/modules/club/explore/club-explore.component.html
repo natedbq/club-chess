@@ -1,0 +1,29 @@
+<div class="page">
+    <div class="club-detail"  *ngFor="let club of clubs$ | async">
+        <div class="detail-body">
+            <div class="inline-block intro-column">
+                <img [src]="club.picUrl || getDefault()"/>
+                <div >
+                    <span class="host-tag">Hosted by </span> <span>{{club.owner?.username ?? 'the public'}}</span>
+                </div>
+                <div>
+                    <button class="btn b1" (click)="join()">Join</button>
+                    <button class="btn b1" (click)="leave()">Leave</button>
+                </div>
+            </div>
+            <div class="inline-block desc-column">
+                <h1>{{club.name}}</h1>
+                <div class="desc">{{club.description}}</div>
+            </div>
+            <div class="inline-block member-column">
+                <div class="member-container">
+                    <div class="inline-block pill" *ngFor="let member of club.members">
+                        {{member.username}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+</div>

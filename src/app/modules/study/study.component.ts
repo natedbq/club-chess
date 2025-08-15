@@ -81,11 +81,6 @@ export class StudyComponent implements OnInit {
       }
 
       this.studyNavigationService.moveDetail$.subscribe((m) => {
-        if(m?.move?.name == '-'){
-          this.tagEditTarget = this.studyNavigationService.getStudy();
-        }else{
-          this.tagEditTarget = m?.position ?? null;
-        }
         if(this.floatingImageService.isVisible()){
           this.floatingImageService.hideImage();
         }

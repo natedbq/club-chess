@@ -5,6 +5,12 @@ export enum Color {
     Black
 }
 
+export enum UpdateType {
+    Title,
+    Description,
+    Tags
+}
+
 export type Coords = {
     x: number;
     y: number;
@@ -102,9 +108,10 @@ export class Study implements TaggedObject {
     positionId: string | null = null;
     isDirty: boolean = true;
     lastStudied: Date | null = null;
-    accuracy: number | null = null;
+    score: number | null = null;
     tags: string[] = [];
     focusTags: string[] = [];
+    owner: User | null = null;
 
     public static toStudy(data: any): Study{
         let study = new Study();
@@ -116,9 +123,10 @@ export class Study implements TaggedObject {
         study.isDirty = false;
         study.positionId = data.positionId;
         study.lastStudied = data.lastStudied;
-        study.accuracy = data.accuracy;
+        study.score = data.score;
         study.tags = data.tags;
         study.focusTags = data.focusTags;
+        study.owner = data.owner;
     
         if(data.position){
           study.position = Position.toPosition(data.position);
@@ -127,6 +135,65 @@ export class Study implements TaggedObject {
       }  
 }
 
+export class LivePosition {
+    isActive: boolean = true;
+}
+
+
+export class Club {
+    id: string | null = null;;
+    name: string | null = null;;
+    description: string | null = null;;
+    members: User[] = [];
+    owner: User | null = null;
+    studies: Study[] = [];
+    picUrl: string | null = null;
+    
+    public static toClub(data: any){
+        let club = new Club();
+        club.id = data.id;
+        club.name = data.name;
+        club.description = data.description;
+        if(data.members){
+            club.members = data.members.map((m: User) => User.toUser(m));
+        }
+        if(data.owner){
+            club.owner = User.toUser(data.owner);
+        }
+        if(data.studies){
+            club.studies = data.studies.map((s: Study) => Study.toStudy(s));
+        }
+        club.picUrl = data.picUrl;
+
+        return club;
+    }
+}
+
+export class User {
+    id: string | null  = null;
+    username: string | null = null;
+    firstName: string | null = null;
+    lastName: string | null = null;
+    studies: Study[] = [];
+    clubs: Club[] = []
+    picUrl: string | null = null;
+
+    public static toUser(data: any){
+        let user = new User();
+        user.id = data.id;
+        user.username = data.username;
+        user.firstName = data.firstName;
+        user.lastName = data.lastName;
+        if(data.studies){
+            user.studies = data.studies.map((s: Study) => Study.toStudy(s));
+        }
+        if(data.clubs){
+            user.clubs = data.clubs.map((c: Club) => Club.toClub(c));
+        }
+        user.picUrl = data.picUrl;
+        return user;
+    }
+}
 
 export class Position implements TaggedObject {
     id: string | null = null;
@@ -144,9 +211,14 @@ export class Position implements TaggedObject {
     mistakes: number | null = null;
     isKeyPosition: boolean = false;
     isActive: boolean = true;
+    liveData: LivePosition = new LivePosition();
 
     public static toPosition(data: any): Position {
         let position = new Position();
+        if(!data){
+            position.title = "!!ERROR"
+            return position;
+        }
         position.id = data.id;
         position.title = data.title;
         position.tags = data.tags;
