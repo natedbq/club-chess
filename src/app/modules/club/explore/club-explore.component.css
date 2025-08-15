@@ -22,9 +22,11 @@ img {
 div {
     margin: 8px;
     vertical-align: top;
-    font-size: 20px;
 }
 
+.bottom {
+    margin-top: auto;
+}
 h1 {
     text-wrap: none;
     overflow-x: hidden;
@@ -41,7 +43,7 @@ h1 {
 .member-column {
     width: 100%;
     overflow-y: auto;
-    max-height: 260px;
+    max-height: 230px;
 }
 
 .desc-column {

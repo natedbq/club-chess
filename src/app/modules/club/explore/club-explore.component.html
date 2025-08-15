@@ -6,14 +6,14 @@
                 <div >
                     <span class="host-tag">Hosted by </span> <span>{{club.owner?.username ?? 'the public'}}</span>
                 </div>
-                <div>
-                    <button class="btn b1" (click)="join()">Join</button>
-                    <button class="btn b1" (click)="leave()">Leave</button>
-                </div>
             </div>
             <div class="inline-block desc-column">
                 <h1>{{club.name}}</h1>
                 <div class="desc">{{club.description}}</div>
+                <div class="bottom">
+                    <button class="btn b1" (click)="join()">Join</button>
+                    <button class="btn b1" (click)="leave()">Leave</button>
+                </div>
             </div>
             <div class="inline-block member-column">
                 <div class="member-container">
