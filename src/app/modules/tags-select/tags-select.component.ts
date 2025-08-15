@@ -38,7 +38,7 @@ export class TagsSelectComponent {
 
     refreshTags(){
         this.limit = this.studyNavService.getPositionTags();
-        this.tags = [{isSelected: false, tag: 'All Lines'}];
+        this.tags = [];
         if(this.limit){
             this.limit.forEach(ltag => {
                 this.tags.push({
@@ -47,6 +47,7 @@ export class TagsSelectComponent {
                 });
             })
         }
+        this.tags = [{isSelected: !this.tags.some(t => t.isSelected), tag: "All Lines"}].concat(this.tags);
         this.activateLines();
     }
 

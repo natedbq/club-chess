@@ -30,7 +30,7 @@ export class FloatingImageService {
     return this._visible.value;
   }
   showImage(src: string, top: number, left: number, evaluation: string|null = null) {
-    this._src.next('/assets/emotes/' + src);
+    this._src.next('assets/emotes/' + src);
     this._position.next({ top, left });
     this._visible.next(false);
     this._evaluation.next(evaluation);

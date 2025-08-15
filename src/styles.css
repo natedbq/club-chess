@@ -175,6 +175,7 @@ img {
     color: black;
     font-size: 21px;
     border-radius: 20px;
+    user-select: none;
 }
 
 button:disabled {
@@ -266,4 +267,17 @@ textarea {
   /* Styling the corner when both scrollbars are present */
   ::-webkit-scrollbar-corner {
     background-color: #f1f1f1; /* match track color */
+  }
+
+  h1 {
+    user-select: none;
+  }
+  h2 {
+    user-select: none;
+  }
+  h3 {
+    user-select: none;
+  }
+  h4 {
+    user-select: none;
   }

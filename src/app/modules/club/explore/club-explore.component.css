@@ -1,0 +1,67 @@
+img {
+  width: 200px;
+  height: 200px;
+  object-fit:cover;
+  background-color: transparent;
+  border-radius: 10px;
+  padding-bottom: 15px;
+  background-color: green;
+  padding: 0;
+}
+
+.host-tag {
+    font-size: 16px;
+    font-style: italic;
+    opacity: .8;
+    padding-right: 10px;
+}
+
+.intro-column {
+    width: 400px;
+}
+div {
+    margin: 8px;
+    vertical-align: top;
+    font-size: 20px;
+}
+
+h1 {
+    text-wrap: none;
+    overflow-x: hidden;
+}
+
+
+.half {
+    width: 50%;
+}
+
+.italic{
+    font-style: italic;
+}
+.member-column {
+    width: 100%;
+    overflow-y: auto;
+    max-height: 260px;
+}
+
+.desc-column {
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+}
+
+.page {
+    padding: 20px;
+    overflow-y: auto
+}
+
+.detail-body{
+    display: flex;
+}
+.club-detail {
+    margin: 15px;
+    padding: 15px;
+    border: 2px solid white;
+    border-radius: 20px;
+}

@@ -32,7 +32,6 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SliderModule } from 'primeng/slider';
 import { MoveEditorComponent } from './modules/move-editor/move-editor.component';
 import { SaveStudyComponent } from './modules/save-study/save-study.component';
-import { ActivateStudyService } from './modules/study/activate-study.service';
 import { StudyControlComponent } from './modules/study-control/study-control.component';
 import { DrawingControlsComponent } from './modules/drawing/drawing-controls.component';
 import { ExploreComponent } from './modules/explore/explore.component';
@@ -44,6 +43,7 @@ import { ScoreComponent } from './modules/score/score.component';
 import { TagsEditComponent } from './modules/tags-edit/tags-edit.component';
 import { TagsSelectComponent } from './modules/tags-select/tags-select.component';
 import { StudySearchComponent } from './modules/study-search/study-search.component';
+import { ClubExploreComponent } from './modules/club/explore/club-explore.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +73,9 @@ import { StudySearchComponent } from './modules/study-search/study-search.compon
     TagsEditComponent,
     StudySearchComponent,
     TagsSelectComponent,
-    MoveEditorComponent    
+    MoveEditorComponent,
+
+    ClubExploreComponent
   ],
   imports: [
     BrowserModule,

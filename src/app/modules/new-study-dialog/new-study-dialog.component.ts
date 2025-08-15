@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { Color, Move, Position, Study } from '../../chess-logic/models';
+import { Color, Move, Position, Study, User } from '../../chess-logic/models';
 import { StudyService } from '../../services/study.service';
 import { FormsModule } from '@angular/forms';
 import { PositionService } from '../../services/position.service';
 import { BoardUtility } from '../../chess-logic/FENConverter';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-new-study-dialog',
@@ -22,7 +23,8 @@ export class NewStudyDialogComponent {
   constructor(private dialog: MatDialog,
       private router: Router,
       private studyService: StudyService,
-      private positionService: PositionService){
+      private positionService: PositionService,
+      private userService: UserService){
 
   }
 
@@ -38,6 +40,14 @@ export class NewStudyDialogComponent {
     let position = new Position();
     study.position = position;
     study.summaryFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+    let owner = new User();
+    owner.id = this.userService.getUserId();
+    owner.username = "";
+    owner.firstName = "";
+    owner.lastName = "";
+
+    study.owner = owner;
     
     position.id = crypto.randomUUID();
     position.title = "";

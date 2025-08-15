@@ -578,6 +578,7 @@ export class StudyNavigationService {
       }
     
       private printTreeHelper(p: StudyPointer | null, depth: number){
+        console.log(p?.pointer?.id);
         if(p == null){
             return;
         }
