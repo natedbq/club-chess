@@ -17,7 +17,7 @@ export class ClubExploreComponent {
   }
 
   getDefault(){
-    return 'assets/avatars/club/default-pic.png';
+    return 'assets/club-chess/sign.png';
   }
   join(){
 

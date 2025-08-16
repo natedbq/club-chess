@@ -1,15 +1,34 @@
 
+ 
+  <div *ngIf="orientation == 'top'">
+    <div class="tool-menu-top" >
+      <div *ngFor="let option of tools" class="tool-option-top btn-commit" 
+        [ngStyle]="{'background-color': backgroundColor }"
+        [ngClass]="{'selected': option.selected}" (click)="selectTool(option)">
+        <i class="bi bi-large bi-{{option.icon}}" ></i>
+      </div>
+      <div class="tool-option" *ngIf="!hideSave">
+        <app-save-study class="inline-block"></app-save-study>
+      </div>
+    </div>
+  </div>
+
  <div class="menu-container">
-  <div class="tool-viewport">
+  <div [ngClass]="{'tool-viewport-top': orientation == 'top','tool-viewport-side': orientation == 'side'}" 
+    [ngStyle]="{'width': width, 'background-color': backgroundColor, 'height': height }">
     <ng-content></ng-content>
   </div>
 
-  <div class="tool-menu">
-    <div *ngFor="let option of tools" class="tool-option btn-commit" [ngClass]="{'selected': option.selected}" (click)="selectTool(option)">
-      <i class="bi bi-large bi-{{option.icon}}" ></i>
-    </div>
-    <div class="tool-option">
-      <app-save-study class="inline-block"></app-save-study>
+  <div *ngIf="orientation == 'side'">
+    <div class="tool-menu-side" >
+      <div *ngFor="let option of tools" class="tool-option-side btn-commit" 
+        [ngStyle]="{'background-color': backgroundColor }"
+        [ngClass]="{'selected': option.selected}" (click)="selectTool(option)">
+        <i class="bi bi-large bi-{{option.icon}}" ></i>
+      </div>
+      <div class="tool-option" *ngIf="!hideSave">
+        <app-save-study class="inline-block"></app-save-study>
+      </div>
     </div>
   </div>
 

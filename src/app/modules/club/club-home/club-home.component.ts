@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
 import { ClubService } from '../../../services/club.service';
 import { map, Observable } from 'rxjs';
-import { Club, Color, Move, MoveData, Study } from '../../../chess-logic/models';
+import { Club, Color, Move, MoveData, Study, User } from '../../../chess-logic/models';
 import { UserService } from '../../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { StudyService } from '../../../services/study.service';
 
-class StudyCard extends Study {
-  moveData: MoveData | null = null;
-}
 
 @Component({
   selector: 'app-club-home',
@@ -20,12 +18,15 @@ export class ClubHomeComponent {
   isMember: boolean = false;
   clubId: string = "";
   club: Club | null = null;
-  whiteStudies: StudyCard[] = [];
-  blackStudies: StudyCard[] = [];
-  constructor(private titleService: Title, private router: Router, private route: ActivatedRoute, private clubService: ClubService, private userService: UserService){
+  whiteStudies: Study[] = [];
+  blackStudies: Study[] = [];
+  privateWhiteStudies: Study[] = [];
+  privateBlackStudies: Study[] = [];
+  constructor(private titleService: Title, private router: Router, private route: ActivatedRoute,
+    private studyService: StudyService, private clubService: ClubService, private userService: UserService){
     this.clubId = this.route.snapshot.paramMap.get('id') ?? '';
     
-    let hasMemberPromise = this.clubService.hasMember(this.clubId, this.userService.getUserId())
+    this.clubService.hasMember(this.clubId, this.userService.getUserId())
       .pipe(map((hasMember) => {
         this.isMember = hasMember;
 
@@ -34,54 +35,24 @@ export class ClubHomeComponent {
             this.titleService.setTitle(c.name ?? 'Club Home');
 
             this.club = c;
-            this.whiteStudies = c.studies.filter(s => s.perspective == Color.White).map((s) => {
-              let sc = <StudyCard>s;
-              let move = new Move();
-              move.fen = s.summaryFEN;
-              move.name = "";
-              move.from = "";
-              move.to = "";
-              sc.moveData = {
-                  move: move,
-                  studyId: null,
-                  studyTitle: null,
-                  source: null,
-                  direction: null,
-                  player: s.perspective ?? Color.White,
-                  extra: null
-              }
-              return sc;
-            });
-            this.blackStudies = c.studies.filter(s => s.perspective == Color.Black).map((s) => {
-              let sc = <StudyCard>s;
-              let move = new Move();
-              move.fen = s.summaryFEN;
-              move.name = "";
-              move.from = "";
-              move.to = "";
-              sc.moveData = {
-                  move: move,
-                  studyId: null,
-                  studyTitle: null,
-                  source: null,
-                  direction: null,
-                  player: s.perspective ?? Color.White,
-                  extra: null
-              }
-              return sc;
-            });
+            this.updateStudies();
+
+            this.studyService.getSimpleStudies().subscribe((studies) => {
+              this.privateWhiteStudies = studies.filter(s => s.perspective == Color.White);
+              this.privateBlackStudies = studies.filter(s => s.perspective == Color.Black);
+            })
           });
         }
       }))
       .subscribe();
   }
 
-  isOwner(username: string){
+  isOwner = (username: string) => {
     return username == this.club?.owner?.username;
   }
 
   getDefault(){
-    return 'assets/avatars/club/default-pic.png';
+    return 'assets/club-chess/sign.png';
   }
   join(){
 
@@ -93,8 +64,36 @@ export class ClubHomeComponent {
 
   gotoStudy = (study: Study | null) => {
     if(study){
-    console.log("goto")
       this.router.navigate(['study/' + study.id]);
     }
+  }
+
+  updateStudies(){
+      this.whiteStudies = this.club?.studies.filter(s => s.perspective == Color.White) ?? [];
+      this.blackStudies = this.club?.studies.filter(s => s.perspective == Color.Black) ?? [];
+  }
+
+  addToClub(study: Study){
+    if(this.club?.id && study.id){
+      this.clubService.addToClub(this.club?.id, study.id).subscribe();
+      this.club.studies.push(study);
+      this.updateStudies();
+    }
+  }
+  
+  removeFromClub(study: Study){
+    if(this.club?.id && study.id){
+      this.clubService.removeFromClub(this.club?.id, study.id).subscribe();
+      this.club.studies = this.club.studies.filter(s => s.id != study.id);
+      this.updateStudies();
+    }
+  }
+
+  hasStudy = (id: string | null) => {
+    return this.whiteStudies.some(s => s.id == id) || this.blackStudies.some(s => s.id == id);
+  }
+
+  kick(member:User){
+    
   }
 }

@@ -8,6 +8,10 @@ img {
   margin: 10px;
 }
 
+.club-pic {
+  background-color: black;
+}
+
 .content {   /* or give it a class like .member-page */
   display: flex;
   flex-direction: row;   /* default, but explicit */
@@ -25,6 +29,7 @@ img {
   width: 25px;
   height: 25px;
   margin: 0;
+  background-color: none;
 }
 
 
@@ -51,7 +56,6 @@ h3 {
     border-radius: 20px;
     padding: 15px;
     margin: 15px;
-    width: 70%;
 }
 
 .member-container {
@@ -62,4 +66,38 @@ h3 {
 
 .pill {
     font-size: 16px;
+}
+
+td {
+  padding-right: 30px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+tr {
+  border-bottom: 1px solid var(--gray);
+  user-select: none;
+}
+
+tr:hover {
+  background-color: var(--chill-blue);
+}
+
+.table-wrapper {
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.fixed-header {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.fixed-header thead {
+  position: sticky;
+  top: 0;
+  background-color: black;
+  z-index: 2;
+  overflow-x: hidden;
 }

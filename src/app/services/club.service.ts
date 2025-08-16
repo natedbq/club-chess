@@ -23,6 +23,14 @@ export class ClubService {
     }));
   }
 
+  public addToClub(clubId: string, studyId: string){
+    return this.http.post<void>(`${this.api}/${clubId}/addStudy/${studyId}`, null);
+  }
+
+  public removeFromClub(clubId: string, studyId: string){
+    return this.http.post<void>(`${this.api}/${clubId}/removeStudy/${studyId}`, null);
+  }
+
   public getClub(clubId: string){
     return this.http.get<Club>(`${this.api}/${clubId}?userId=${this.userService.getUserId()}`).pipe(map((club) => {
       return Club.toClub(club);

@@ -22,7 +22,6 @@ class StudyCard extends Study {
 })
 export class StudyCardComponent implements OnChanges {
     @Input() study: Study | null = null;
-    @Input() action: (study: Study|null) => void = () => {};
     studyPreview: StudyCard | null = null;
     constructor(){
         

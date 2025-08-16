@@ -14,7 +14,7 @@
             <app-study-navigation [onUpdate]="updateBoard" ></app-study-navigation>
         </td>
         <td style="vertical-align: top; width: 600px">
-            <app-tool-menu>
+            <app-tool-menu [backgroundColor]="'var(--gray)'" [height]="'800px'">
                 <app-tool [name]="'Search'" [icon]="'search'">
                     <app-study-search></app-study-search>
                 </app-tool>

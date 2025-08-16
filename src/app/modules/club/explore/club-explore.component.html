@@ -2,7 +2,7 @@
     <div class="club-detail"  *ngFor="let club of clubs$ | async">
         <div class="detail-body">
             <div class="inline-block intro-column">
-                <img [src]="club.picUrl || getDefault()" (click)="visit(club.id)"/>
+                <img [src]="club.picUrl || getDefault()" class="club-pic" (click)="visit(club.id)"/>
                 <div >
                     <span class="host-tag">Hosted by </span> <span>{{club.owner?.username ?? 'the public'}}</span>
                 </div>

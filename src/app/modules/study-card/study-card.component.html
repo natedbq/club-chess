@@ -8,6 +8,9 @@
         <h4 *ngIf="!study?.score">import</h4>
     </div>
     <div class="preview">
-        <app-chess-board [isPreview]="true" [moveData]="studyPreview?.moveData ?? null" (click)="action(study)"> </app-chess-board>
+        <app-chess-board [isPreview]="true" [moveData]="studyPreview?.moveData ?? null"> </app-chess-board>
+    </div>
+    <div class="extra">
+        <ng-content></ng-content>
     </div>
 </div>
