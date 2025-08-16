@@ -1,0 +1,15 @@
+.welcome-image {
+  height: 50vh;
+  object-fit:cover;
+  background-color: transparent;
+  border-radius: 10px;
+  padding: 0;
+  margin: 10px;
+}
+
+.page {
+    height: 100vh;
+    display: flex;
+    justify-content: center; /* horizontal center */
+    align-items: center;  
+}

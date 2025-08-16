@@ -105,7 +105,7 @@ export class PositionService {
     p.isKeyPosition = position.isKeyPosition;
     p.isActive = position.isActive;
     p.positions = [];
-    return this.http.post(this.api, p).pipe(finalize(() => {
+    return this.http.post(`${this.api}?userId=${this.userService.getUserId()}`, p).pipe(finalize(() => {
         position.isDirty = false;
     }));
   }

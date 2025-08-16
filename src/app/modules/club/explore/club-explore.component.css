@@ -7,6 +7,11 @@ img {
   padding-bottom: 15px;
   background-color: green;
   padding: 0;
+  cursor: pointer;
+}
+
+.title {
+    cursor: pointer;
 }
 
 .host-tag {

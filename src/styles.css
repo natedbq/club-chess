@@ -4,9 +4,10 @@
     --purple: #a347ff;
     --orange: #fcaf42;
     --soft-white: rgb(235, 233, 233);
-    --gray: rgb(42, 42, 42);
-    --green: rgb(12, 227, 80);
     --blue: #66f2ff;
+    --gray: #303234;
+   /* --gray: rgb(42, 42, 42); */
+    --green: rgb(12, 227, 80);
     --dark-blue: #343aeb;
     --red: rgb(249, 30, 74);
     --chill-blue: rgba(0, 143, 168,.7);;

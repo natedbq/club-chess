@@ -1,0 +1,13 @@
+<div class="study-card">
+    <div class="minor-details">
+        <div>{{studyPreview?.lastStudied | date: 'M/d/yy'}}</div>
+    </div>
+    <div class="study-details">
+        <h4>{{studyPreview?.title}}</h4>
+        <h4 *ngIf="study?.score">{{study?.score | number: '1.0-2'}}%</h4>
+        <h4 *ngIf="!study?.score">import</h4>
+    </div>
+    <div class="preview">
+        <app-chess-board [isPreview]="true" [moveData]="studyPreview?.moveData ?? null" (click)="action(study)"> </app-chess-board>
+    </div>
+</div>
