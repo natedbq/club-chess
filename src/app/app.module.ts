@@ -44,6 +44,9 @@ import { TagsEditComponent } from './modules/tags-edit/tags-edit.component';
 import { TagsSelectComponent } from './modules/tags-select/tags-select.component';
 import { StudySearchComponent } from './modules/study-search/study-search.component';
 import { ClubExploreComponent } from './modules/club/explore/club-explore.component';
+import { ClubHomeComponent } from './modules/club/club-home/club-home.component';
+import { StudyCardComponent } from './modules/study-card/study-card.component';
+import { WelcomeComponent } from './modules/welcome/welcome.component';
 
 @NgModule({
   declarations: [
@@ -74,8 +77,11 @@ import { ClubExploreComponent } from './modules/club/explore/club-explore.compon
     StudySearchComponent,
     TagsSelectComponent,
     MoveEditorComponent,
+    StudyCardComponent,
+    WelcomeComponent,
 
-    ClubExploreComponent
+    ClubExploreComponent,
+    ClubHomeComponent
   ],
   imports: [
     BrowserModule,

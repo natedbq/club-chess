@@ -1,0 +1,99 @@
+<div class="page">
+    <div *ngIf="isMember" class="content" >
+        <div class="inline-block club-section">
+            <h1>{{club?.name}}</h1>
+            <span class="host-tag">Hosted by </span> <span>{{club?.owner?.username ?? 'the public'}}</span>
+            <img [src]="club?.picUrl || getDefault()" class="club-pic"/>
+            <div>
+                {{club?.description}}
+            </div>
+            <h3>Members</h3>
+            <div class="member-container">
+                <div class="inline-block pill" *ngFor="let member of club?.members" [ngClass]="{owner: isOwner(member.username ?? '')}">
+                    <img *ngIf="isOwner(member.username ?? '')" src="assets/emotes/crown-gold.png" class="owner-token"/>
+                    {{member.username}}
+                </div>
+            </div>
+        </div>
+        <div>
+            <app-tool-menu [hideSave]="true" [width]="'100%'"  [orientation]="'top'">
+                <app-tool [name]="'Shared Studies'" [icon]="'book'" >
+                    <div class="inline-block content-section">
+                        <h1>{{(!whiteStudies.length && !blackStudies.length) ? 'No ' : ''}}Shared Studies</h1>
+                        <div *ngIf="whiteStudies.length">
+                            <h3>White</h3>
+                            <div class="inline-block study" *ngFor="let study of whiteStudies">
+                                <app-study-card [study]="study" (click)="gotoStudy(study)">
+                                </app-study-card>
+                            </div>
+                        </div>
+                        <div *ngIf="blackStudies.length">
+                            <h3>Black</h3>
+                            <div class="inline-block study" *ngFor="let study of blackStudies">
+                                <app-study-card [study]="study"></app-study-card>
+                            </div>
+                        </div>
+                    </div>
+                </app-tool>
+                <app-tool [name]="'Members'" [icon]="'person'" >
+                        <h1>Members</h1>
+                        <div class="table-wrapper">
+                            <table class="fixed-header">
+                                <thead class="header">
+                                        <th></th>
+                                        <th><h4>Role</h4></th>
+                                        <th><h4>Username</h4></th>
+                                        <th><h4>First</h4></th>
+                                        <th><h4>Last</h4></th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let member of club?.members">
+                                        <td><button *ngIf="!isOwner(member.username ?? '')" class="btn b1" (click)="kick(member)">Kick</button></td>
+                                        <td>
+                                            <img *ngIf="isOwner(member.username ?? '')" src="assets/emotes/crown-gold.png" class="owner-token"/>
+                                            {{isOwner(member.username ?? '') ? 'Owner' : 'Member'}}
+                                        </td>
+                                        <td>{{member.username}}</td>
+                                        <td>{{member.firstName}}</td>
+                                        <td>{{member.lastName}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </app-tool>
+                <app-tool [name]="'My Studies'" [icon]="'folder'" >
+                    <h1>My Studies</h1>
+                    <div *ngIf="privateWhiteStudies.length">
+                            <h3>White</h3>
+                            <div class="inline-block study" *ngFor="let study of privateWhiteStudies">
+                                <app-study-card [study]="study">
+                                    <div *ngIf="!hasStudy(study.id)">
+                                        <button  class="btn b1" (click)="addToClub(study)">Add to Club</button>
+                                    </div>
+                                    <div *ngIf="hasStudy(study.id)">
+                                        <button  class="btn b1" (click)="removeFromClub(study)" >Remove from Club</button>
+                                    </div>
+                                </app-study-card>
+                            </div>
+                        </div>
+                        <div *ngIf="privateBlackStudies.length">
+                            <h3>Black</h3>
+                            <div class="inline-block study" *ngFor="let study of privateBlackStudies">
+                                <app-study-card [study]="study">
+                                    <div *ngIf="!hasStudy(study.id)">
+                                        <button  class="btn b1" (click)="addToClub(study)">Add to Club</button>
+                                    </div>
+                                    <div *ngIf="hasStudy(study.id)">
+                                        <button  class="btn b1" (click)="removeFromClub(study)" >Remove from Club</button>
+                                    </div>
+                                </app-study-card>
+                            </div>
+                        </div>
+                </app-tool>
+            </app-tool-menu>
+        </div>
+    </div>
+    <div *ngIf="!isMember">
+        You are not a member of this club!
+    </div>
+</div>

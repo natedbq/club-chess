@@ -36,6 +36,12 @@ export class ToolMenuComponent implements AfterContentInit {
   tools!: QueryList<ToolComponent>;
 
   selectedTool?: ToolComponent;
+  @Input() hideSave: boolean = false;
+  @Input() width: string = '400px';
+  @Input() height: string = '100%';
+  @Input() orientation: string = 'side';
+  @Input() backgroundColor: string = 'none'
+  
   
   constructor() {}
 
