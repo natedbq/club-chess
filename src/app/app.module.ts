@@ -47,12 +47,18 @@ import { ClubExploreComponent } from './modules/club/explore/club-explore.compon
 import { ClubHomeComponent } from './modules/club/club-home/club-home.component';
 import { StudyCardComponent } from './modules/study-card/study-card.component';
 import { WelcomeComponent } from './modules/welcome/welcome.component';
+import { LoginComponent } from './modules/dialogs/login/login.component';
+import { SendInviteComponent } from './modules/dialogs/sendInvite/send-invite.component';
+import { MembersComponent } from './modules/club/club-home/members/members.component';
 
 @NgModule({
   declarations: [
+    LoginComponent,
+    SendInviteComponent,
     AppComponent,
     StudyControlComponent,
     ChessBoardComponent,
+    MembersComponent,
     ComputerModeComponent,
     ExploreComponent,
     RepertoireMenuComponent,

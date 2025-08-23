@@ -60,7 +60,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     margin: 8px;
 }
 
-
+.column {
+    display: flex;
+    flex-direction: column;
+}
 .edit {
     background-color: var(--gray);
     border: none;

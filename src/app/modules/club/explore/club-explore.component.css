@@ -77,3 +77,26 @@ h1 {
     border: 2px solid white;
     border-radius: 20px;
 }
+
+.invites {
+    background-color: var(--gray);
+    border-radius: 20px;
+    padding: 15px;
+}
+
+.invite {
+    justify-content: center;
+}
+
+img.small {
+    width: 75px;
+    height: 75px;
+}
+
+.margin-right {
+    margin-right: 15px;
+}
+
+td {
+    padding: 6px;
+}

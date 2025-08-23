@@ -139,6 +139,26 @@ export class LivePosition {
     isActive: boolean = true;
 }
 
+export class ClubInvite {
+    toUsername: string | null = null;
+    fromUsername: string | null = null;
+    clubId: string | null = null;
+    clubName: string | null = null;
+    message: string | null = null;
+    clubPic: string | null = null;
+    public static toClubInvite(data: any){
+        let invite = new ClubInvite();
+        invite.toUsername = data.toUsername;
+        invite.fromUsername = data.fromUsername;
+        invite.clubId = data.clubId;
+        invite.clubName = data.clubName;
+        invite.message = data.message;
+        invite.clubPic = data.clubPic;
+
+        return invite;
+    }
+}
+
 
 export class Club {
     id: string | null = null;;

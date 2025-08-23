@@ -8,6 +8,10 @@ img {
   margin: 10px;
 }
 
+.margin-top {
+  margin-top: 50px;
+}
+
 .club-pic {
   background-color: black;
 }
@@ -32,11 +36,20 @@ img {
   background-color: none;
 }
 
+.owner-token-large {
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  background-color: none;
+}
 
 h3 {
     margin: 15px;
 }
 
+.hug-top {
+  align-items: top;
+}
 .club-section {
     flex: 0 ;   /* stay at 20% width */
     display: flex;
@@ -74,17 +87,23 @@ td {
   padding-top: 5px;
 }
 
-tr {
-  border-bottom: 1px solid var(--gray);
+td {
+  border-top: 1px solid var(--gray);
   user-select: none;
 }
 
-tr:hover {
+.hover-row:hover {
   background-color: var(--chill-blue);
 }
 
+.text-input {
+  width: 80%;
+  margin: 5px;
+}
+
 .table-wrapper {
-  max-height: 80vh;
+  max-height: 50vh;
+  width: 800px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -100,4 +119,10 @@ tr:hover {
   background-color: black;
   z-index: 2;
   overflow-x: hidden;
+}
+
+.centered {
+  display:flex;
+  justify-content: center; /* centers horizontally */
+  align-items: center;  
 }

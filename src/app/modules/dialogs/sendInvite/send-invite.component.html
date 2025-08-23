@@ -1,0 +1,15 @@
+<mat-dialog-content>
+    <h2 mat-dialog-title>Invite to {{name}}</h2>
+    <div class="padding">
+        <label>Username</label>
+        <input class="edit" type="text" [(ngModel)]="username">
+    </div>
+    <div class="padding">
+        <label>Message</label>
+        <input class="edit" type="text" [(ngModel)]="message">
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="send()">Submit</button>
+    <button mat-button mat-dialog-close (click)="cancel()">Cancel</button>
+</mat-dialog-actions>

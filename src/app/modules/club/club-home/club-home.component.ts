@@ -6,6 +6,8 @@ import { UserService } from '../../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { StudyService } from '../../../services/study.service';
+import { MatDialog } from '@angular/material/dialog';
+import { SendInviteComponent } from '../../dialogs/sendInvite/send-invite.component';
 
 
 @Component({
@@ -22,8 +24,10 @@ export class ClubHomeComponent {
   blackStudies: Study[] = [];
   privateWhiteStudies: Study[] = [];
   privateBlackStudies: Study[] = [];
+  creatingInvite = false;
+  inviteUsername = '';
   constructor(private titleService: Title, private router: Router, private route: ActivatedRoute,
-    private studyService: StudyService, private clubService: ClubService, private userService: UserService){
+    private studyService: StudyService, private clubService: ClubService, private userService: UserService, private dialog: MatDialog){
     this.clubId = this.route.snapshot.paramMap.get('id') ?? '';
     
     this.clubService.hasMember(this.clubId, this.userService.getUserId())
@@ -32,10 +36,20 @@ export class ClubHomeComponent {
 
         if(this.isMember){
           this.clubService.getClub(this.clubId).subscribe((c) => {
+            
             this.titleService.setTitle(c.name ?? 'Club Home');
 
             this.club = c;
             this.updateStudies();
+            c.members.sort((a,b) => {
+              if(this.isOwner(a.username ?? '')){
+                return -1;
+              }
+              if(this.isOwner(b.username ?? '')){
+                return 1;
+              }
+              return (a.username ?? '').localeCompare(b.username ?? '');
+            })
 
             this.studyService.getSimpleStudies().subscribe((studies) => {
               this.privateWhiteStudies = studies.filter(s => s.perspective == Color.White);
@@ -47,8 +61,12 @@ export class ClubHomeComponent {
       .subscribe();
   }
 
-  isOwner = (username: string) => {
-    return username == this.club?.owner?.username;
+  isOwner = (username?: string) => {
+    if(username){
+      return username == this.club?.owner?.username;
+    }else{
+      return this.userService.getUser()?.username == this.club?.owner?.username;
+    }
   }
 
   getDefault(){
@@ -95,5 +113,9 @@ export class ClubHomeComponent {
 
   kick(member:User){
     
+  }
+
+  createInvite(){
+    this.dialog.open(SendInviteComponent, {data: { clubId: this.clubId, clubName: this.club?.name}});
   }
 }

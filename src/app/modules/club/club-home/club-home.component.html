@@ -36,7 +36,9 @@
                     </div>
                 </app-tool>
                 <app-tool [name]="'Members'" [icon]="'person'" >
-                        <h1>Members</h1>
+                    <app-club-home-members [club]="club"></app-club-home-members>
+                        <!-- <button  class="btn b1" (click)="createInvite()" *ngIf="isOwner()"><i class="bi bi-person"> </i> Invite</button>
+                        <h1 class="margin-top">Members</h1>
                         <div class="table-wrapper">
                             <table class="fixed-header">
                                 <thead class="header">
@@ -48,9 +50,13 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let member of club?.members">
-                                        <td><button *ngIf="!isOwner(member.username ?? '')" class="btn b1" (click)="kick(member)">Kick</button></td>
+                                        <td >
+                                            <div class="centered">
+                                                <img *ngIf="isOwner(member.username ?? '')" src="assets/emotes/crown-gold.png" class="owner-token"/>
+                                                <button *ngIf="!isOwner(member.username ?? '')" class="btn b1" (click)="kick(member)">Kick</button>
+                                            </div>
+                                        </td>
                                         <td>
-                                            <img *ngIf="isOwner(member.username ?? '')" src="assets/emotes/crown-gold.png" class="owner-token"/>
                                             {{isOwner(member.username ?? '') ? 'Owner' : 'Member'}}
                                         </td>
                                         <td>{{member.username}}</td>
@@ -59,7 +65,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
                 </app-tool>
                 <app-tool [name]="'My Studies'" [icon]="'folder'" >
                     <h1>My Studies</h1>

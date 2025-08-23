@@ -1,0 +1,62 @@
+<div class="view">
+<button  class="btn b1" (click)="createInvite()" *ngIf="userIsOwner"><i class="bi bi-person"> </i> Invite</button>
+<h1 class="margin-top">Members</h1>
+<div class="table-wrapper">
+    <table class="fixed-header">
+        <thead class="header">
+            <tr>
+                <th></th>
+                <th><h4>Role</h4></th>
+                <th><h4>Username</h4></th>
+                <th><h4>First</h4></th>
+                <th><h4>Last</h4></th>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th><input type="text" [(ngModel)]="usernameFilter" (ngModelChange)="filter()" class="edit text-input"/></th>
+                <th><input type="text" [(ngModel)]="firstFilter" (ngModelChange)="filter()" class="edit text-input"/></th>
+                <th><input type="text" [(ngModel)]="lastFilter" (ngModelChange)="filter()" class="edit text-input"/></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let member of filteredMembers" class="hover-row">
+                <td >
+                    <div class="centered">
+                        <img *ngIf="isOwner(member.username ?? '')" src="assets/emotes/crown-gold.png" class="owner-token-large"/>
+                        <button *ngIf="!isOwner(member.username ?? '') && userIsOwner" class="btn b1" (click)="kick(member)" >Kick</button>
+                    </div>
+                </td>
+                <td>
+                    {{isOwner(member.username ?? '') ? 'Owner' : 'Member'}}
+                </td>
+                <td>{{member.username}}</td>
+                <td>{{member.firstName}}</td>
+                <td>{{member.lastName}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div *ngIf="invites.length">
+    <h1 class="margin-top">Pending Invitations</h1>
+    <div class="table-wrapper">
+        <table class="fixed-header">
+            <thead class="header">
+                    <th>
+                    </th>
+                    <th><h4>To</h4></th>
+                    <th><h4>From</h4></th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let invite of invites">
+                    <td>
+                        <button *ngIf="userIsOwner" class="btn b1" (click)="cancel(invite)" >Cancel</button>
+                    </td>
+                    <td>{{invite.toUsername}}</td>
+                    <td>{{invite.fromUsername}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>

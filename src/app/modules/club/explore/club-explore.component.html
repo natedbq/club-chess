@@ -1,5 +1,32 @@
 <div class="page">
-    <div class="club-detail"  *ngFor="let club of clubs$ | async">
+    <div class="invites" *ngIf="invites.length">
+        <table>
+            <tr *ngFor="let invite of invites" class="invite">
+                <td>
+                    <img src="{{invite.clubPic}}" class="small margin-right"/>
+                </td>
+                <td>
+                    <h4 class="inline-block">{{invite.clubName}}</h4>
+                    <div class="host-tag">
+                        invited you to join.
+                    </div>
+                </td>
+                <td>
+                    <div class="column">
+                        <button class="btn b1" (click)="accept(invite)">Accept</button>
+                        <button class="btn b1" (click)="decline(invite)">Decline</button>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <div><span class="host-tag">from </span>{{invite.fromUsername}}</div>
+                    </div>
+                    {{invite.message}}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="club-detail"  *ngFor="let club of clubs">
         <div class="detail-body">
             <div class="inline-block intro-column">
                 <img [src]="club.picUrl || getDefault()" class="club-pic" (click)="visit(club.id)"/>
