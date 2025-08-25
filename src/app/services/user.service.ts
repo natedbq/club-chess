@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, map, Observable } from "rxjs";
+import { BehaviorSubject, map, Observable, tap } from "rxjs";
 import { Club, ClubInvite, Move, Position, Study, User } from "../chess-logic/models";
 
 @Injectable({
@@ -15,10 +15,20 @@ export class UserService {
 
   constructor(private http: HttpClient) {
     this.getUser();
+    this.loadMe().subscribe();
    }
 
+  public loadMe(){
+    return this.http.get<User>(`${this.api}/me`).pipe(tap((u) => {
+      sessionStorage.setItem(this.USER_KEY, JSON.stringify(u));
+      let user = User.toUser(u);
+      this.userSubject.next(user);
+      return user;
+    }));
+  }
+
   public getUser(): User | null {
-    const saved = localStorage.getItem(this.USER_KEY);
+    const saved = sessionStorage.getItem(this.USER_KEY);
     return saved ? JSON.parse(saved) : null;
   }
 
@@ -30,21 +40,9 @@ export class UserService {
     return this.getUser()?.username ?? '';
   }
 
-  public login(username: string, password: string){
-    return this.http.post<User>(`${this.api}/auth`, {username, password}).pipe(map((user) => {
-      if(user){
-        let u = User.toUser(user);
-        localStorage.setItem(this.USER_KEY, JSON.stringify(u));
-      }
-
-      this.userSubject.next(user);
-
-      return user;
-    }));
-  }
 
   public logout() {
-    localStorage.removeItem(this.USER_KEY);
+    sessionStorage.removeItem(this.USER_KEY);
     this.userSubject.next(null);
   }
   
