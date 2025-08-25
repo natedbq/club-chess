@@ -23,13 +23,15 @@ export class NavMenuComponent {
   constructor(private dialog: MatDialog, public userService: UserService,private router: Router,) {
     let user = userService.getUser();
     userService.user$.subscribe((u) =>{
-       this.username = u.username;
+       this.username = u?.username  ?? 'logged out';
        this.isLoggedIn = !(u == undefined || u == null);
     });
     if(user){
       console.log("logged in!")
       this.isLoggedIn = true;
       this.username = user.username ?? 'logged out';
+    }else{
+      this.isLoggedIn = false;
     }
   }
 
@@ -50,7 +52,7 @@ export class NavMenuComponent {
   }
 
   logOut(){
-    this.router.navigate(['']);
     this.userService.logout();
+    this.router.navigate(['']);
   }
 }

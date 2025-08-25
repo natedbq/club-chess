@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'; 
 
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { AppComponent } from './app.component';
 import { ChessBoardComponent } from './modules/chess-board/chess-board.component';
 import { ComputerModeComponent } from './modules/computer-mode/computer-mode.component';
@@ -50,6 +50,7 @@ import { WelcomeComponent } from './modules/welcome/welcome.component';
 import { LoginComponent } from './modules/dialogs/login/login.component';
 import { SendInviteComponent } from './modules/dialogs/sendInvite/send-invite.component';
 import { MembersComponent } from './modules/club/club-home/members/members.component';
+import { AuthInterceptor } from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -107,7 +108,11 @@ import { MembersComponent } from './modules/club/club-home/members/members.compo
     SliderModule,
     
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

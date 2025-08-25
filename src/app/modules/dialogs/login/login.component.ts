@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UserService } from '../../../services/user.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,12 +10,12 @@ import { UserService } from '../../../services/user.service';
 export class LoginComponent {
   username: string = '';
   password: string = '';
-  constructor(private userService: UserService){
+  constructor(private userService: UserService, private authService: AuthService){
   }
 
   login(){
-    this.userService.login(this.username, this.password).subscribe((user) => {
-      window.location.reload();
+    this.authService.authenticate(this.username, this.password).subscribe((jwt) => {
+        this.userService.loadMe().subscribe();
     });
   }
   cancel(){
