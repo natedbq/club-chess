@@ -1,56 +1,57 @@
 <div class="page">
-    <div class="invites" *ngIf="invites.length">
-        <table>
-            <tr *ngFor="let invite of invites" class="invite">
-                <td>
-                    <img src="{{invite.clubPic}}" class="small margin-right"/>
-                </td>
-                <td>
-                    <h4 class="inline-block">{{invite.clubName}}</h4>
-                    <div class="host-tag">
-                        invited you to join.
-                    </div>
-                </td>
-                <td>
-                    <div class="column">
-                        <button class="btn b1" (click)="accept(invite)">Accept</button>
-                        <button class="btn b1" (click)="decline(invite)">Decline</button>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <div><span class="host-tag">from </span>{{invite.fromUsername}}</div>
-                    </div>
-                    {{invite.message}}
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="club-detail"  *ngFor="let club of clubs">
-        <div class="detail-body">
-            <div class="inline-block intro-column">
-                <img [src]="club.picUrl || getDefault()" class="club-pic" (click)="visit(club.id)"/>
-                <div >
-                    <span class="host-tag">Hosted by </span> <span>{{club.owner?.username ?? 'the public'}}</span>
-                </div>
-            </div>
-            <div class="inline-block desc-column">
-                <h1 (click)="visit(club.id)" class="title">{{club.name}}</h1>
-                <div class="desc">{{club.description}}</div>
-                <div class="bottom">
-                    <button class="btn b1" (click)="join()">Join</button>
-                    <button class="btn b1" (click)="leave()">Leave</button>
-                </div>
-            </div>
-            <div class="inline-block member-column">
-                <div class="member-container">
-                    <div class="inline-block pill" *ngFor="let member of club.members">
-                        {{member.username}}
-                    </div>
-                </div>
-            </div>
+    <div class="page-content">
+        <div class="invites" *ngIf="invites.length">
+            <table>
+                <tr *ngFor="let invite of invites" class="invite">
+                    <td>
+                        <img src="{{invite.clubPic}}" class="small margin-right"/>
+                    </td>
+                    <td>
+                        <h4 class="inline-block">{{invite.clubName}}</h4>
+                        <div class="host-tag">
+                            invited you to join.
+                        </div>
+                    </td>
+                    <td>
+                        <div class="column">
+                            <button class="btn b1" (click)="accept(invite)">Accept</button>
+                            <button class="btn b1" (click)="decline(invite)">Decline</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <div><span class="host-tag">from </span>{{invite.fromUsername}}</div>
+                        </div>
+                        {{invite.message}}
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div>
+        <div class="club-detail"  *ngFor="let club of clubs">
+            <div class="detail-body">
+                <div class="inline-block intro-column">
+                    <img [src]="club.picUrl || getDefault()" class="club-pic" (click)="visit(club.id)"/>
+                    <div >
+                        <span class="host-tag">Hosted by </span> 
+                    </div>
+                    <div>
+                        <span>{{club.owner?.username ?? 'the public'}}</span>
+                    </div>
+                </div>
+                <div class="inline-block desc-column">
+                    <h1 (click)="visit(club.id)" class="title">{{club.name}}</h1>
+                    <div class="desc">{{club.description}}</div>
+                </div>
+                <!-- <div class="inline-block member-column">
+                    <div class="member-container">
+                        <div class="inline-block pill" *ngFor="let member of club.members">
+                            {{member.username}}
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <div>
+            </div>
         </div>
     </div>
 </div>

@@ -28,7 +28,7 @@ export class PositionService {
   }
 
   public getByParentId(id: string, depth: number = 0): Observable<Position[]> {
-    return this.http.get<Position[]>(this.api + `/parentId/${id}?depth=${depth}&userId=${this.userService.getUserId()}`).pipe(
+    return this.http.get<Position[]>(this.api + `/parentId/${id}?depth=${depth}`).pipe(
       map(apiChildren => apiChildren.map(c => Position.toPosition(c))),
       mergeMap((children: Position[]) => {
         // Gather all tail node calls into an array of observables
@@ -62,11 +62,11 @@ export class PositionService {
   }
 
   public mistake(id: string): Observable<Object> {
-    return this.http.put(`${this.api}/${id}/mistake/${this.userService.getUserId()}`, null);
+    return this.http.put(`${this.api}/${id}/mistake/me`, null);
   }
 
   public correct(id: string): Observable<Object> {
-    return this.http.put(`${this.api}/${id}/correct/${this.userService.getUserId()}`, null);
+    return this.http.put(`${this.api}/${id}/correct/me`, null);
   }
 
   public delete(id: string): Observable<Object> {
@@ -74,7 +74,7 @@ export class PositionService {
   }
 
   public study(id: string): Observable<Object> {
-    return this.http.put(`${this.api}/${id}/study/${this.userService.getUserId()}`, null);
+    return this.http.put(`${this.api}/${id}/study}/me`, null);
   }
 
   private getTailNodes(position: Position): Position[] {

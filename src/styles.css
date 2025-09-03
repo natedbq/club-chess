@@ -58,6 +58,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .page {
     margin: 8px;
+    min-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.page-content {
+    width: 70%;
 }
 
 .column {

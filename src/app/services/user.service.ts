@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, map, Observable, tap } from "rxjs";
 import { Club, ClubInvite, Move, Position, Study, User } from "../chess-logic/models";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UserService {
   private userSubject = new BehaviorSubject<any>(this.getUser());
   user$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private router: Router) {
     this.getUser();
     this.loadMe().subscribe();
    }
@@ -23,6 +24,9 @@ export class UserService {
       sessionStorage.setItem(this.USER_KEY, JSON.stringify(u));
       let user = User.toUser(u);
       this.userSubject.next(user);
+      if(u == null){
+        this.router.navigate(['']);
+      }
       return user;
     }));
   }

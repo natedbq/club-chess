@@ -14,7 +14,7 @@ export class ClubService {
   constructor(private http: HttpClient, private userService: UserService) { }
 
   public hasMember(clubId: string, userId: string){
-    return this.http.get<boolean>(`${this.api}/${clubId}/hasMember/${userId}`);
+    return this.http.get<boolean>(`${this.api}/${clubId}/hasMember/me`);
   }
 
   public getClubs(): Observable<Club[]> {
@@ -24,11 +24,11 @@ export class ClubService {
   }
 
   public addMember(clubId: string, username: string){
-    return this.http.post<void>(`${this.api}/${clubId}/add/${username}`, null);
+    return this.http.post<void>(`${this.api}/${clubId}/acceptInvite/${username}`, null);
   }
 
   public removeMember(clubId: string, username: string){
-    return this.http.post<void>(`${this.api}/${clubId}/remove/${username}`, null);
+    return this.http.post<void>(`${this.api}/${clubId}/removeMember/${username}`, null);
   }
 
   public declineInvite(clubId: string, username: string){
@@ -68,7 +68,7 @@ export class ClubService {
   }
 
   public getClub(clubId: string){
-    return this.http.get<Club>(`${this.api}/${clubId}?userId=${this.userService.getUserId()}`).pipe(map((club) => {
+    return this.http.get<Club>(`${this.api}/${clubId}`).pipe(map((club) => {
       return Club.toClub(club);
     }));
   }

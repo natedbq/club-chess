@@ -43,7 +43,6 @@ export class AuthInterceptor implements HttpInterceptor {
                 this.tries++;
                 if(this.tries > 5){
                     this.tries = 0;
-                    console.log(JSON.stringify(err));
                     return of();
                 }
                 sessionStorage.removeItem(Keys.JWT_KEY);

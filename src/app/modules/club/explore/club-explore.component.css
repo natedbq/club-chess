@@ -1,6 +1,6 @@
 img {
-  width: 200px;
-  height: 200px;
+  width: 75px;
+  height: 75px;
   object-fit:cover;
   background-color: transparent;
   border-radius: 10px;
@@ -17,6 +17,7 @@ img {
 
 .title {
     cursor: pointer;
+    font-size: 20px;
 }
 
 .host-tag {
@@ -27,8 +28,11 @@ img {
 }
 
 .intro-column {
-    width: 400px;
+    width: 200px;
+    min-width: 200px;
 }
+
+
 div {
     margin: 8px;
     vertical-align: top;
@@ -56,13 +60,6 @@ h1 {
     max-height: 230px;
 }
 
-.desc-column {
-    user-select: none;
-    display: flex;
-    flex-direction: column;
-    width: 45%;
-}
-
 .page {
     padding: 20px;
     overflow-y: auto
@@ -73,7 +70,6 @@ h1 {
 }
 .club-detail {
     margin: 15px;
-    padding: 15px;
     border: 2px solid white;
     border-radius: 20px;
 }

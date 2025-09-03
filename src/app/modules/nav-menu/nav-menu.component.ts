@@ -20,7 +20,7 @@ import { LoginComponent } from '../dialogs/login/login.component';
 export class NavMenuComponent {
   isLoggedIn = false;
   username: string = 'logged out';
-  constructor(private dialog: MatDialog, public userService: UserService,private router: Router,) {
+  constructor(private dialog: MatDialog, public userService: UserService,private router: Router) {
     let user = userService.getUser();
     userService.user$.subscribe((u) =>{
        this.username = u?.username  ?? 'logged out';

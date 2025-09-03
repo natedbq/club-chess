@@ -40,14 +40,14 @@ export class StudyService {
   }
 
   public getStudy(id: string): Observable<Study> {
-    return this.http.get<Study>(`${this.api}/study/${id}?userId=${this.userService.getUserId()}`).pipe(map((apiStudy) => {
+    return this.http.get<Study>(`${this.api}/study/${id}/me`).pipe(map((apiStudy) => {
       let study = Study.toStudy(apiStudy);
       return study;
   }));
   }
   
   public getSimpleStudies(): Observable<Study[]> {
-    return this.http.get<Study[]>(this.api + '/study/simplestudies/' + this.userService.getUserId()).pipe(map((studies) => {
+    return this.http.get<Study[]>(this.api + '/study/simplestudies/me').pipe(map((studies) => {
         return studies.map(s => {
           return Study.toStudy(s);
         })
@@ -55,6 +55,6 @@ export class StudyService {
   }  
 
   public study(id: string){
-    return this.http.put(`${this.api}/study/${id}/study`, null);
+    return this.http.put(`${this.api}/study/${id}/study/me`, null);
   }
 }
