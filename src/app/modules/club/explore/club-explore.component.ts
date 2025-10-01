@@ -4,6 +4,8 @@ import { map, Observable } from 'rxjs';
 import { Club, ClubInvite } from '../../../chess-logic/models';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { NewClubDialogComponent } from '../../dialogs/newClub/new-club.component';
 
 @Component({
   selector: 'app-club-explore',
@@ -14,7 +16,7 @@ export class ClubExploreComponent {
 
   clubs: Club[] = [];
   invites: ClubInvite[] = [];
-  constructor(private router: Router, private clubService: ClubService, private userService: UserService){
+  constructor(private router: Router, private clubService: ClubService, private userService: UserService, private dialog: MatDialog){
     clubService.getClubs().subscribe(clubs => this.clubs = clubs);
     userService.getClubInvites().subscribe(invites => this.invites = invites);
   }
@@ -39,6 +41,10 @@ export class ClubExploreComponent {
 
   getClubInvites() {
     this.userService.getClubInvites().subscribe();
+  }
+
+  newClub(){
+      this.dialog.open(NewClubDialogComponent, {data: { ower: this.userService.getUser() }});
   }
 
   accept(invite: ClubInvite){

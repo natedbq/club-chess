@@ -3,12 +3,13 @@ import { Injectable } from "@angular/core";
 import { finalize, forkJoin, lastValueFrom, map, mergeMap, Observable, of, tap } from "rxjs";
 import { Move, Position, Study } from "../chess-logic/models";
 import { UserService } from "./user.service";
+import { Configuration } from "../app.configuration";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PositionService {
-  private readonly api: string = "http://localhost/chess.api/position";
+  private readonly api: string = `${Configuration.apiUrl}/position`;
 
 
   constructor(private http: HttpClient, private userService: UserService) { }
@@ -74,7 +75,7 @@ export class PositionService {
   }
 
   public study(id: string): Observable<Object> {
-    return this.http.put(`${this.api}/${id}/study}/me`, null);
+    return this.http.put(`${this.api}/${id}/study/me`, null);
   }
 
   private getTailNodes(position: Position): Position[] {

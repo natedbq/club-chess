@@ -51,11 +51,13 @@ import { LoginComponent } from './modules/dialogs/login/login.component';
 import { SendInviteComponent } from './modules/dialogs/sendInvite/send-invite.component';
 import { MembersComponent } from './modules/club/club-home/members/members.component';
 import { AuthInterceptor } from './services/auth.service';
+import { NewClubDialogComponent } from './modules/dialogs/newClub/new-club.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
     SendInviteComponent,
+    NewClubDialogComponent,
     AppComponent,
     StudyControlComponent,
     ChessBoardComponent,

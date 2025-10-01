@@ -3,12 +3,13 @@ import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { Club, ClubInvite, Move, Position, Study } from "../chess-logic/models";
 import { UserService } from "./user.service";
+import { Configuration } from "../app.configuration";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClubService {
-  private readonly api: string = "http://localhost/chess.api/club";
+  private readonly api: string = `${Configuration.apiUrl}/club`;
 
 
   constructor(private http: HttpClient, private userService: UserService) { }

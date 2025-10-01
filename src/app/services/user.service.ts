@@ -3,13 +3,14 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, map, Observable, tap } from "rxjs";
 import { Club, ClubInvite, Move, Position, Study, User } from "../chess-logic/models";
 import { Router } from "@angular/router";
+import { Configuration } from "../app.configuration";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private readonly api: string = "http://localhost/chess.api/user";
-  private USER_KEY = 'app_user';
+  private readonly api: string = `${Configuration.apiUrl}/user`;
+  public USER_KEY = 'app_user';
 
   private userSubject = new BehaviorSubject<any>(this.getUser());
   user$ = this.userSubject.asObservable();

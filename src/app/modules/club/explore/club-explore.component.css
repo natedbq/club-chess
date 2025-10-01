@@ -70,8 +70,9 @@ h1 {
 }
 .club-detail {
     margin: 15px;
-    border: 2px solid white;
+    background-color: var(--gray);
     border-radius: 20px;
+    padding-top: 3px;
 }
 
 .invites {

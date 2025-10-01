@@ -1,5 +1,8 @@
 <div class="page">
     <div class="page-content">
+        <div>
+            <button class="btn b1" (click)="newClub()">New Club <i class="bi bi-plus-lg"></i></button>
+        </div>
         <div class="invites" *ngIf="invites.length">
             <table>
                 <tr *ngFor="let invite of invites" class="invite">
@@ -49,8 +52,6 @@
                         </div>
                     </div>
                 </div> -->
-            </div>
-            <div>
             </div>
         </div>
     </div>

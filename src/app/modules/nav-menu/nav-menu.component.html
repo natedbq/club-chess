@@ -12,6 +12,7 @@
     <div class="push-right" *ngIf="(userService.user$ | async)">
         <h4 class="inline-block mr-10" >{{username}}</h4>
         <button class="btn b1 " (click)="logOut()" >Log Out</button>
+        <button class="btn b1 " (click)="refresh()" >Refresh Token</button>
     </div>
     <div class="push-right" *ngIf="!(userService.user$ | async)">
         <button class="btn b1 " (click)="openLogin()" >Log In</button>

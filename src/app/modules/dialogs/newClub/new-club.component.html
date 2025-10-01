@@ -1,0 +1,15 @@
+<mat-dialog-content>
+    <h2 mat-dialog-title>Create New Club</h2>
+    <div class="padding">
+        <label>Club Name</label>
+        <input class="edit" type="text" [(ngModel)]="title">
+    </div>
+    <div class="padding">
+        <label>Description</label>
+        <input class="edit" type="text" [(ngModel)]="description">
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="submit()">Submit</button>
+    <button mat-button mat-dialog-close (click)="cancel()">Cancel</button>
+</mat-dialog-actions>

@@ -7,6 +7,7 @@ import { PlayAgainstComputerDialogComponent } from '../play-against-computer-dia
 import { UserService } from '../../services/user.service';
 import { AsyncPipe, NgIf } from '@angular/common';   // 👈 add these
 import { LoginComponent } from '../dialogs/login/login.component';
+import { AuthInterceptor, AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -20,7 +21,7 @@ import { LoginComponent } from '../dialogs/login/login.component';
 export class NavMenuComponent {
   isLoggedIn = false;
   username: string = 'logged out';
-  constructor(private dialog: MatDialog, public userService: UserService,private router: Router) {
+  constructor(private dialog: MatDialog, public userService: UserService, private authInterceptor: AuthInterceptor, private router: Router) {
     let user = userService.getUser();
     userService.user$.subscribe((u) =>{
        this.username = u?.username  ?? 'logged out';
@@ -54,5 +55,9 @@ export class NavMenuComponent {
   logOut(){
     this.userService.logout();
     this.router.navigate(['']);
+  }
+
+  refresh(){
+    this.authInterceptor.refreshToken().subscribe();
   }
 }
